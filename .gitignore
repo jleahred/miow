@@ -1,0 +1,4 @@
+.spyder*
+*.pyc
+prov/*
+temp/*
