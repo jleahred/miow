@@ -10,11 +10,10 @@ if(__name__ == '__main__'):
 
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout
-from PyQt4.QtGui import QPlainTextEdit
+from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
 from misc.Mixin import mixin
-from components.edit.MqEdit import WithHighlight
+from components.edit.MqEdit import WithHighlight, WithFixedFont
 
 
 class CommandEditor(QWidget):
@@ -24,19 +23,22 @@ class CommandEditor(QWidget):
         super(CommandEditor, self).__init__(parent)
 
         self.setMinimumWidth(400)
-        self.setMinimumHeight(400)
+        self.setMinimumHeight(100)
 
         # create widgets
-        command_editor = mixin(QPlainTextEdit, WithHighlight)(self)
-        command_result = QPlainTextEdit(self)
+        command_editor = mixin(QPlainTextEdit,
+                               WithHighlight,
+                               WithFixedFont)(self)
+        command_result = mixin(QPlainTextEdit, WithFixedFont)(self)
 
         # create a horizontal splitter
         v_splitter = QSplitter(Qt.Horizontal, self)
         v_splitter.addWidget(command_editor)
         v_splitter.addWidget(command_result)
 
-        layout = QVBoxLayout()
+        layout = QVBoxLayout(self)
         layout.addWidget(v_splitter)
+        layout.setMargin(0)
         self.setLayout(layout)
 
 
