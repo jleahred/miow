@@ -19,7 +19,8 @@ if(__name__ == '__main__'):
 from  core.Mixin import mixin
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
-                          WithLineNumbers)
+                          WithLineNumbers,
+                          WithWordCompletion)
 
 
 class SimpleEdit(QWidget):
@@ -36,7 +37,8 @@ class SimpleEdit(QWidget):
         self.editor = mixin(QPlainTextEdit,
                        WithHighlight,
                        WithFixedFont,
-                       WithLineNumbers)(self)
+                       WithLineNumbers,
+                       WithWordCompletion)(self)
         layout = QVBoxLayout(self)
         layout.addWidget(self.editor)
         layout.setMargin(0)
