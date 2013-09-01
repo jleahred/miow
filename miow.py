@@ -32,6 +32,7 @@ class MainWindow(QWidget):
         layout.addWidget(self.v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
+        ce.setFocus()
 
     def add_widget(self, widget_class, label="???"):
         """Add any kind of components"""

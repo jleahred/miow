@@ -2,7 +2,6 @@
 """
 Created on Sun Sep  1 14:26:12 2013
 
-@author: maiquel
 """
 
 

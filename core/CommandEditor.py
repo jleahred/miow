@@ -19,6 +19,43 @@ from MqEdit import WithHighlight, WithFixedFont
 #WidthLineEnterEvent
 from PyQt4.QtGui import (QTextCursor)
 
+# Interpreter
+import code
+import sys
+from cStringIO import StringIO
+
+
+def h():
+    print """\
+This is the help
+kkkkkkk"""
+
+
+class Interpreter():
+    def __init__(self):
+        self.ii = code.InteractiveInterpreter()
+
+    def process_command(self, command, result):
+        if command == '.reset':
+            self.ii = code.InteractiveInterpreter()
+        else:
+            backup_out = sys.stdout
+            sys.stdout = StringIO()      # capture output
+            backup_error = sys.stderr
+            sys.stderr = StringIO()
+
+            try:
+                self.ii.runsource(command)
+                out = sys.stdout.getvalue()  # release output
+                error = sys.stderr.getvalue()
+            except Exception as _error:
+                result.append(str(_error))
+            sys.stdout = backup_out          # restore original stdout
+            sys.stderr = backup_error
+            result.append(out)
+            if(error):
+                result.append(error)
+
 
 class WidthLineEnterEvent(QPlainTextEdit):
     """Mixin to add LineEnterEvent to QPlainTextEdit"""
@@ -34,6 +71,8 @@ class WidthLineEnterEvent(QPlainTextEdit):
             tc.select(QTextCursor.BlockUnderCursor)
             line = ''.join(unicode(tc.selectedText()).splitlines())
             self.on_line_event(line)
+            if not self.textCursor().atBlockEnd():
+                return
         super(WidthLineEnterEvent, self).keyPressEvent(event)
 
 
@@ -64,9 +103,22 @@ class CommandEditor(QWidget):
         layout.setMargin(0)
         self.setLayout(layout)
 
-    def _on_line_event(self, line):
-        self.command_result.appendPlainText(">>> " + line)
+        self.interpreter = Interpreter()
 
+    def focusInEvent(self, focus_event):
+        super(CommandEditor, self).focusInEvent(focus_event)
+        self.command_editor.setFocus()
+
+    def _on_line_event(self, line):
+        self.command_result.appendPlainText(
+                                "__________________________________________")
+        self.command_result.appendPlainText(">>> " + line)
+        results = []
+        self.interpreter.process_command(line, results)
+        for lines in results:
+            for line in lines.splitlines():
+                self.command_result.appendPlainText(unicode(line))
+        self.command_result.appendPlainText("")
 
 if(__name__ == '__main__'):
     def test():
