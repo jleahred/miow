@@ -57,8 +57,8 @@ if(__name__ == '__main__'):
         app = QApplication([])
         mainw = MainWindow()
         mainw.show()
-        mainw.add_widget(SimpleEdit, "test1")
-        mainw.add_widget(SimpleEdit, "test2")
+        #mainw.add_widget(SimpleEdit, "test1")
+        #mainw.add_widget(SimpleEdit, "test2")
 
         app.exec_()
     main()
