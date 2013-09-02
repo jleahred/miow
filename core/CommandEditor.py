@@ -14,7 +14,9 @@ from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
 from Mixin import mixin
 from Event import Event
-from MqEdit import WithHighlight, WithFixedFont
+from MqEdit import(WithHighlight,
+                   WithFixedFont,
+                   WithBasicIdentationManager)
 
 #WidthLineEnterEvent
 from PyQt4.QtGui import (QTextCursor)
@@ -33,19 +35,27 @@ kkkkkkk"""
 
 class Interpreter():
     def __init__(self):
-        self.ii = code.InteractiveInterpreter()
+        #self.ii = code.InteractiveInterpreter()
+        self.ii = code.InteractiveConsole()
 
-    def process_command(self, command, result):
+    def process_command(self, command, result, partial):
         if command == '.reset':
-            self.ii = code.InteractiveInterpreter()
+            self.ii = code.InteractiveConsole()
         else:
             backup_out = sys.stdout
             sys.stdout = StringIO()      # capture output
             backup_error = sys.stderr
             sys.stderr = StringIO()
 
+            out = ""
+            error = ""
             try:
-                self.ii.runsource(command)
+                #self.ii.runsource(command)
+                #self.ii.runcode(command)
+                #code.compile_command(command).runcode()
+                partial.append(self.ii.push(command))
+                #code.compile_command(command)
+                #exec(command)
                 out = sys.stdout.getvalue()  # release output
                 error = sys.stderr.getvalue()
             except Exception as _error:
@@ -89,6 +99,7 @@ class CommandEditor(QWidget):
         self.command_editor = mixin(QPlainTextEdit,
                                WithHighlight,
                                WithFixedFont,
+                               WithBasicIdentationManager,
                                WidthLineEnterEvent)(self)
         self.command_editor.on_line_event += self._on_line_event
         self.command_result = mixin(QPlainTextEdit, WithFixedFont)(self)
@@ -104,21 +115,32 @@ class CommandEditor(QWidget):
         self.setLayout(layout)
 
         self.interpreter = Interpreter()
+        self.previous_partial = False
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)
         self.command_editor.setFocus()
 
     def _on_line_event(self, line):
-        self.command_result.appendPlainText(
-                                "__________________________________________")
-        self.command_result.appendPlainText(">>> " + line)
         results = []
-        self.interpreter.process_command(line, results)
-        for lines in results:
-            for line in lines.splitlines():
-                self.command_result.appendPlainText(unicode(line))
-        self.command_result.appendPlainText("")
+        partials = []
+        self.interpreter.process_command(line, results, partials)
+
+        if not partials[0] or not self.previous_partial:
+            self.command_result.appendPlainText(
+                                "__________________________________________")
+            self.command_result.appendPlainText(">>> " + line)
+            for lines in results:
+                for line in lines.splitlines():
+                    self.command_result.appendPlainText(unicode(line))
+            #self.command_result.appendPlainText(
+            #                    "__________________________________________")
+            if not partials[0]:
+                self.command_result.appendPlainText("")
+        else:
+            self.command_result.appendPlainText("... " + line)
+        self.previous_partial = partials[0]
+
 
 if(__name__ == '__main__'):
     def test():

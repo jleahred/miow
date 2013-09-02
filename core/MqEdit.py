@@ -72,7 +72,7 @@ class WithFixedFont(QPlainTextEdit):
 
 
 class WithLineNumbers(QPlainTextEdit):
-    """Mixin to add Highlight on current line to QPlainTextEdit"""
+    """Mixin to add line numbers to QPlainTextEdit"""
 
     class LineNumber(QWidget):
 
@@ -155,7 +155,16 @@ class WithLineNumbers(QPlainTextEdit):
 
 
 class WithWordCompletion(QPlainTextEdit):
-    """Mixin to add simple word completion to QPlainTextEdit"""
+    """\
+Mixin to add simple word completion to QPlainTextEdit
+
+It will propose completion with words from current file
+
+When the word you are writting is bigger than two, it will propose completion
+but with no default selection.
+
+If you press Ctrl-Space, the proposal will choose the first one as default
+"""
     def __init__(self, *args):
         self.model_completer = QStringListModel()
         self.completer = QCompleter(self)
@@ -172,7 +181,6 @@ class WithWordCompletion(QPlainTextEdit):
         if (self.completer.popup().isVisible()):
             #The following keys are forwarded by the completer to the widget
             event_key = event.key()
-            print self.completer.popup().currentIndex().row()
             if(event_key in [Qt.Key_Enter,
                              Qt.Key_Return,
                              Qt.Key_Escape,
@@ -248,7 +256,15 @@ class WithWordCompletion(QPlainTextEdit):
 
 
 class WithBasicIdentationManager(QPlainTextEdit):
-    """Mixin to add simple identation manager to QPlainTextEdit"""
+    """Mixin to add simple identation manager to QPlainTextEdit
+
+TAB key will add spaces stopping on multiples of 4
+
+When TAB is pressed with more than one line pressed, it will increase ident
+for all lines. Opposite pressing Shift-TAB
+
+Adding new lines with RETURN key, will keep previous line identation
+"""
     def __init__(self, *args):
         pass
 
@@ -368,21 +384,17 @@ class WithBasicIdentationManager(QPlainTextEdit):
             if str(cursor.selectedText()).strip() == "":
                 cursor.removeSelectedText()
             else:
-                super(WithWordCompletion, self).keyPressEvent(event)
+                super(WithBasicIdentationManager, self).keyPressEvent(event)
 
     def process_newline(self):
         def get_previous_line_spaces(self):
             tc = self.textCursor()
-            while tc.selectedText().size() == 0 and tc.blockNumber() > 1:
+            #while tc.selectedText().size() == 0 and tc.blockNumber() > 1:
+            for i in range(0, 1):
                 tc.movePosition(QTextCursor.StartOfBlock)
                 tc.movePosition(QTextCursor.PreviousBlock)
-                #tc.select(QTextCursor.BlockUnderCursor)
-                    # for avoiding paragraph separator...
                 tc.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
-                print tc.selectedText().size()
-                found_after_spaces = re.search('[^ ]', tc.selectedText())
-                if not found_after_spaces or  found_after_spaces.start() == 0:
-                    tc.clearSelection()
+
             if tc.selectedText() < 2:
                 return 0
             else:
@@ -395,6 +407,9 @@ class WithBasicIdentationManager(QPlainTextEdit):
         tc = self.textCursor()
         if tc.atBlockStart():
             tc.insertText(' ' * get_previous_line_spaces(self))
+            tc2 = self.textCursor()
+            tc2.movePosition(QTextCursor.EndOfBlock)
+            self.setTextCursor(tc2)
 
 
 if(__name__ == '__main__'):
