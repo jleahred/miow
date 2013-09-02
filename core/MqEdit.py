@@ -172,17 +172,19 @@ class WithWordCompletion(QPlainTextEdit):
         if (self.completer.popup().isVisible()):
             #The following keys are forwarded by the completer to the widget
             event_key = event.key()
+            print self.completer.popup().currentIndex().row()
             if(event_key in [Qt.Key_Enter,
                              Qt.Key_Return,
                              Qt.Key_Escape,
                              Qt.Key_Tab,
-                             Qt.Key_Backtab]):
+                             Qt.Key_Backtab]
+                         and self.completer.popup().currentIndex().row() >= 0):
                 event.ignore()
                 return  # let the completer do default behavior
 
         super(WithWordCompletion, self).keyPressEvent(event)
         if((event.modifiers() | event.key()) == QKeySequence("Ctrl+Space")):
-            self.show_completer()
+            self.show_completer(True)
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
             text_under_cursor = self.text_under_cursor()
@@ -190,7 +192,7 @@ class WithWordCompletion(QPlainTextEdit):
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
                     or  self.completer.popup().isVisible())):
-                self.show_completer()
+                self.show_completer(False)
             else:
                 self.completer.popup().hide()
 
@@ -211,7 +213,7 @@ class WithWordCompletion(QPlainTextEdit):
                 completion_list_not_start_with.append(str)
         return completion_list + completion_list_not_start_with
 
-    def show_completer(self):
+    def show_completer(self, select_first):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         completion_words = self.get_text_completion_list()
 
@@ -224,8 +226,9 @@ class WithWordCompletion(QPlainTextEdit):
             + self.completer.popup().verticalScrollBar().sizeHint().width())
         cr.setWidth(width if width < 300 else 300)
         self.completer.complete(cr)
-        self.completer.popup().setCurrentIndex(
-                        self.completer.completionModel().index(0, 0))
+        if select_first:
+            self.completer.popup().setCurrentIndex(
+                            self.completer.completionModel().index(0, 0))
 
     def text_under_cursor(self):
         tc = self.textCursor()
@@ -268,8 +271,11 @@ class WithBasicIdentationManager(QPlainTextEdit):
                 self.increase_identation()
             else:
                 self.insert_tab()
+        elif event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            super(WithBasicIdentationManager, self).keyPressEvent(event)
+            self.process_newline()
         else:
-            super(WithWordCompletion, self).keyPressEvent(event)
+            super(WithBasicIdentationManager, self).keyPressEvent(event)
 
     def insert_tab(self):
         cursor = self.textCursor()
@@ -362,7 +368,33 @@ class WithBasicIdentationManager(QPlainTextEdit):
             if str(cursor.selectedText()).strip() == "":
                 cursor.removeSelectedText()
             else:
-               super(WithWordCompletion, self).keyPressEvent(event) 
+                super(WithWordCompletion, self).keyPressEvent(event)
+
+    def process_newline(self):
+        def get_previous_line_spaces(self):
+            tc = self.textCursor()
+            while tc.selectedText().size() == 0 and tc.blockNumber() > 1:
+                tc.movePosition(QTextCursor.StartOfBlock)
+                tc.movePosition(QTextCursor.PreviousBlock)
+                #tc.select(QTextCursor.BlockUnderCursor)
+                    # for avoiding paragraph separator...
+                tc.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
+                print tc.selectedText().size()
+                found_after_spaces = re.search('[^ ]', tc.selectedText())
+                if not found_after_spaces or  found_after_spaces.start() == 0:
+                    tc.clearSelection()
+            if tc.selectedText() < 2:
+                return 0
+            else:
+                found_spaces = re.search('[^ ]', tc.selectedText() + '.')
+                if found_spaces:
+                    return found_spaces.start()
+                else:
+                    return 0
+
+        tc = self.textCursor()
+        if tc.atBlockStart():
+            tc.insertText(' ' * get_previous_line_spaces(self))
 
 
 if(__name__ == '__main__'):
