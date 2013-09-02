@@ -244,6 +244,127 @@ class WithWordCompletion(QPlainTextEdit):
         self.setTextCursor(tc)
 
 
+class WithBasicIdentationManager(QPlainTextEdit):
+    """Mixin to add simple identation manager to QPlainTextEdit"""
+    def __init__(self, *args):
+        pass
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Backtab:
+            anchor_pos_cursor = self.textCursor()
+            anchor_pos_cursor.setPosition(self.textCursor().anchor())
+            if(self.textCursor().blockNumber()
+                                    != anchor_pos_cursor.blockNumber()):
+                self.decrease_identation()
+
+        elif event.key() == Qt.Key_Backspace:
+            self.delete_back(event)
+
+        elif event.key() == Qt.Key_Tab:
+            anchor_pos_cursor = self.textCursor()
+            anchor_pos_cursor.setPosition(self.textCursor().anchor())
+            if(self.textCursor().blockNumber()
+                                    != anchor_pos_cursor.blockNumber()):
+                self.increase_identation()
+            else:
+                self.insert_tab()
+        else:
+            super(WithWordCompletion, self).keyPressEvent(event)
+
+    def insert_tab(self):
+        cursor = self.textCursor()
+        num_spaces2add = 4 - cursor.positionInBlock() % 4
+        if num_spaces2add == 0:
+            num_spaces2add = 3
+        spaces2add = ' ' * num_spaces2add
+        cursor.insertText(spaces2add)
+
+    def increase_identation(self):
+        cursor = self.textCursor()
+        first_block_selected = 0
+        last_block_selected = 0
+        min_pos = 0
+        extra_line = 0
+        if cursor.position() > cursor.anchor():
+            last_block_selected = cursor.blockNumber()
+            if cursor.atBlockStart() == False:
+                extra_line = 1
+            cursor.setPosition(cursor.anchor())
+            first_block_selected = cursor.blockNumber()
+            min_pos = cursor.position()
+        else:
+            first_block_selected = cursor.blockNumber()
+            min_pos = cursor.position()
+            cursor.setPosition(cursor.anchor())
+            last_block_selected = cursor.blockNumber()
+            if cursor.atBlockStart() == False:
+                extra_line = 1
+        if first_block_selected != last_block_selected:
+            cursor.setPosition(min_pos)
+            for i in range(first_block_selected,
+                                       last_block_selected + extra_line):
+                cursor.movePosition(QTextCursor.StartOfBlock)
+                cursor.insertText("    ")
+                cursor.movePosition(QTextCursor.NextBlock)
+                if cursor.atEnd():
+                    break
+
+    def decrease_identation(self):
+        cursor = self.textCursor()
+        first_block_selected = 0
+        last_block_selected = 0
+        min_pos = 0
+        extra_line = 0
+        if cursor.position() > cursor.anchor():
+            last_block_selected = cursor.blockNumber()
+            if cursor.atBlockStart() == False:
+                extra_line = 1
+            cursor.setPosition(cursor.anchor())
+            first_block_selected = cursor.blockNumber()
+            min_pos = cursor.position()
+        else:
+            first_block_selected = cursor.blockNumber()
+            min_pos = cursor.position()
+            cursor.setPosition(cursor.anchor())
+            last_block_selected = cursor.blockNumber()
+            if cursor.atBlockStart() == False:
+                extra_line = 1
+
+        if first_block_selected != last_block_selected:
+            cursor.setPosition(min_pos)
+            cursor.movePosition(cursor.StartOfBlock)
+            for i in range(first_block_selected,
+                                    last_block_selected + extra_line):
+                #  try to remove 4 spaces at the beginning
+                for j in range(0, 4):
+                    cursor.movePosition(QTextCursor.Right,
+                                                        QTextCursor.KeepAnchor)
+                    if cursor.selectedText() == " ":
+                        cursor.removeSelectedText()
+                    else:
+                        break
+
+                cursor.movePosition(QTextCursor.NextBlock)
+                if cursor.atEnd():
+                    break
+
+    def delete_back(self, event):
+        #  if spaces till previous tab point, remove all of them
+        if self.textCursor().selectedText() != "":
+            self.textCursor().removeSelectedText()
+        else:
+            cursor = self.textCursor()
+            dist_prev_tab = cursor.positionInBlock() % 4
+            if dist_prev_tab == 0:
+                dist_prev_tab = 4
+            cursor.setPosition(cursor.position() - dist_prev_tab,
+                                       QTextCursor.KeepAnchor)
+            if str(cursor.selectedText()).strip() == "":
+                cursor.removeSelectedText()
+            else:
+               super(WithWordCompletion, self).keyPressEvent(event) 
+
+
 if(__name__ == '__main__'):
     def test_with_hightlight():
         """simple test"""
@@ -267,7 +388,8 @@ if(__name__ == '__main__'):
                        WithHighlight,
                        WithFixedFont,
                        WithLineNumbers,
-                       WithWordCompletion)()
+                       WithWordCompletion,
+                       WithBasicIdentationManager)()
         widget.show()
         app.exec_()
 
