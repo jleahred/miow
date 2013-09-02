@@ -3,6 +3,7 @@
 
 TODO: control-enter to add new lines without sending command
 TODO: multiexecution with several selected lines
+TODO: if partial command, add identation on editor???
 """
 
 if(__name__ == '__main__'):
@@ -79,10 +80,11 @@ class WidthLineEnterEvent(QPlainTextEdit):
             tc = self.textCursor()
             tc.select(QTextCursor.BlockUnderCursor)
             line = ''.join(unicode(tc.selectedText()).splitlines())
+            if self.textCursor().atBlockEnd():
+                super(WidthLineEnterEvent, self).keyPressEvent(event)
             self.on_line_event(line)
-            if not self.textCursor().atBlockEnd():
-                return
-        super(WidthLineEnterEvent, self).keyPressEvent(event)
+        else:
+            super(WidthLineEnterEvent, self).keyPressEvent(event)
 
 
 class CommandEditor(QWidget):
@@ -136,6 +138,11 @@ class CommandEditor(QWidget):
                 self.command_result.appendPlainText("")
         else:
             self.command_result.appendPlainText("... " + line)
+#==============================================================================
+#         if(partials[0] and not self.previous_partial
+#                         and self.command_editor.textCursor().atBlockStart()):
+#             self.command_editor.insert_tab()
+#==============================================================================
         self.previous_partial = partials[0]
 
 
