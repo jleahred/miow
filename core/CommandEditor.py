@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Command editor component
+
+TODO: control-enter to add new lines without sending command
+TODO: multiexecution with several selected lines
 """
 
 if(__name__ == '__main__'):
@@ -35,7 +38,6 @@ kkkkkkk"""
 
 class Interpreter():
     def __init__(self):
-        #self.ii = code.InteractiveInterpreter()
         self.ii = code.InteractiveConsole()
 
     def process_command(self, command, result, partial):
@@ -50,13 +52,10 @@ class Interpreter():
             out = ""
             error = ""
             try:
-                #self.ii.runsource(command)
-                #self.ii.runcode(command)
-                #code.compile_command(command).runcode()
-                partial.append(self.ii.push(command))
-                #code.compile_command(command)
-                #exec(command)
-                out = sys.stdout.getvalue()  # release output
+                partial.append(
+                                    self.ii.push(command)
+                              )
+                out = sys.stdout.getvalue()
                 error = sys.stderr.getvalue()
             except Exception as _error:
                 result.append(str(_error))
@@ -133,8 +132,6 @@ class CommandEditor(QWidget):
             for lines in results:
                 for line in lines.splitlines():
                     self.command_result.appendPlainText(unicode(line))
-            #self.command_result.appendPlainText(
-            #                    "__________________________________________")
             if not partials[0]:
                 self.command_result.appendPlainText("")
         else:

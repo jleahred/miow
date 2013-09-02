@@ -374,6 +374,8 @@ Adding new lines with RETURN key, will keep previous line identation
         #  if spaces till previous tab point, remove all of them
         if self.textCursor().selectedText() != "":
             self.textCursor().removeSelectedText()
+        elif self.textCursor().atBlockStart():
+            super(WithBasicIdentationManager, self).keyPressEvent(event)
         else:
             cursor = self.textCursor()
             dist_prev_tab = cursor.positionInBlock() % 4
