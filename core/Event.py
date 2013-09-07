@@ -23,8 +23,9 @@ class Event:
         return self
 
     def fire(self, *args, **kargs):
+        results = []
         for handler in self.handlers:
-            handler(*args, **kargs)
+            results.append(handler(*args, **kargs))
 
     def getHandlerCount(self):
         return len(self.handlers)
