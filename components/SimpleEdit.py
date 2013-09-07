@@ -34,11 +34,12 @@ class SimpleEdit(QWidget):
         self.setMinimumHeight(100)
 
         # create widgets
-        self.editor = mixin(QPlainTextEdit,
+        self.editor = mixin(
                        WithHighlight,
                        WithFixedFont,
                        WithLineNumbers,
-                       WithWordCompletion)(self)
+                       WithWordCompletion,
+                       QPlainTextEdit)(self)
         layout = QVBoxLayout(self)
         layout.addWidget(self.editor)
         layout.setMargin(0)

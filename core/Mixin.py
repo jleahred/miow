@@ -11,11 +11,11 @@ def mixin(base, *mixs):
     """
     def mixin__internal(base, addition):
         """Internal closure"""
-        class NewClass(addition, base):
+        class NewClass(base, addition):
             """Created class mixings the params"""
             def __init__(self, *args):
-                base.__init__(self, *args)
                 addition.__init__(self, *args)
+                base.__init__(self, *args)
         return NewClass
 
     new_class = base

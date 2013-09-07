@@ -421,9 +421,10 @@ if(__name__ == '__main__'):
         from Mixin import mixin
 
         app = QApplication([])
-        widget = mixin(QPlainTextEdit,
+        widget = mixin(
                        WithHighlight,
-                       WithFixedFont)()
+                       WithFixedFont,
+                       QPlainTextEdit)()
         widget.show()
         app.exec_()
 
@@ -433,12 +434,13 @@ if(__name__ == '__main__'):
         from Mixin import mixin
 
         app = QApplication([])
-        widget = mixin(QPlainTextEdit,
+        widget = mixin(
+                       WithWordCompletion,
+                       WithBasicIdentationManager,
+                       WithLineNumbers,
                        WithHighlight,
                        WithFixedFont,
-                       WithLineNumbers,
-                       WithWordCompletion,
-                       WithBasicIdentationManager)()
+                       QPlainTextEdit)()
         widget.show()
         app.exec_()
 

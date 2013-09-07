@@ -97,13 +97,14 @@ class CommandEditor(QWidget):
         self.setMinimumHeight(100)
 
         # create widgets
-        self.command_editor = mixin(QPlainTextEdit,
+        self.command_editor = mixin(
+                               WithBasicIdentationManager,
+                               WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
-                               WithBasicIdentationManager,
-                               WidthLineEnterEvent)(self)
+                               QPlainTextEdit)(self)
         self.command_editor.on_line_event += self._on_line_event
-        self.command_result = mixin(QPlainTextEdit, WithFixedFont)(self)
+        self.command_result = mixin(WithFixedFont, QPlainTextEdit)(self)
 
         # create a horizontal splitter
         v_splitter = QSplitter(Qt.Horizontal, self)
