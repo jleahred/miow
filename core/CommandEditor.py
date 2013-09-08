@@ -4,6 +4,7 @@
 TODO: control-enter to add new lines without sending command
 TODO: multiexecution with several selected lines
 TODO: if partial command, add identation on editor???
+
 """
 
 if(__name__ == '__main__'):
@@ -31,65 +32,83 @@ import sys
 from cStringIO import StringIO
 
 
-def h():
-    print """\
-This is the help
-kkkkkkk"""
+START_COMMANDS = """\
+from core.CommandEditorCommands import (h, clear, reset)
+
+h()
+"""
+
+WELLCOME_MESSAGE = """\
+Wellcome to myow... CommandEditor
+=================================
 
 
-class Interpreter():
-    def __init__(self):
-        self.ii = code.InteractiveConsole()
-
-    def process_command(self, command, result, partial):
-        if command == '.reset':
-            self.ii = code.InteractiveConsole()
-        else:
-            backup_out = sys.stdout
-            sys.stdout = StringIO()      # capture output
-            backup_error = sys.stderr
-            sys.stderr = StringIO()
-
-            out = ""
-            error = ""
-            try:
-                partial.append(
-                                    self.ii.push(command)
-                              )
-                out = sys.stdout.getvalue()
-                error = sys.stderr.getvalue()
-            except Exception as _error:
-                result.append(str(_error))
-            sys.stdout = backup_out          # restore original stdout
-            sys.stderr = backup_error
-            result.append(out)
-            if(error):
-                result.append(error)
-
-
-class WidthLineEnterEvent(QPlainTextEdit):
-    """Mixin to add LineEnterEvent to QPlainTextEdit"""
-
-    def __init__(self, *args):
-        self.on_line_event = Event()
-
-    def keyPressEvent(self, event):
-        if((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
-                and (not event.modifiers()
-                            or event.modifiers() == Qt.KeypadModifier)):
-            tc = self.textCursor()
-            tc.select(QTextCursor.BlockUnderCursor)
-            line = ''.join(unicode(tc.selectedText()).splitlines())
-            if self.textCursor().atBlockEnd():
-                super(WidthLineEnterEvent, self).keyPressEvent(event)
-            self.on_line_event(line)
-        else:
-            super(WidthLineEnterEvent, self).keyPressEvent(event)
+"""
 
 
 class CommandEditor(QWidget):
     """Command editor component
     """
+
+    class Interpreter():
+        def __init__(self):
+            self.ii = code.InteractiveConsole()
+
+        def _process_commands(self, commands):
+            def process_command(self, command):
+                result = []
+                partial = False
+                if command == '.reset':
+                    self.ii = code.InteractiveConsole()
+                else:
+                    backup_out = sys.stdout
+                    sys.stdout = StringIO()      # capture output
+                    backup_error = sys.stderr
+                    sys.stderr = StringIO()
+
+                    out = ""
+                    error = ""
+                    try:
+                        partial = self.ii.push(command)
+                        out = sys.stdout.getvalue()
+                        error = sys.stderr.getvalue()
+                    except Exception as _error:
+                        result.append(str(_error))
+                    sys.stdout = backup_out          # restore original stdout
+                    sys.stderr = backup_error
+                    result.append(out)
+                    if(error):
+                        result.append(error)
+                    return result, partial
+
+            results = []
+            partial = False
+            for command in commands.splitlines():
+                c_result, partial = process_command(self, command)
+                results += c_result
+            return results, partial
+
+    class WidthLineEnterEvent(QPlainTextEdit):
+        """Mixin to add LineEnterEvent to QPlainTextEdit"""
+
+        def __init__(self, *args):
+            self.on_line_event = Event()
+
+        def keyPressEvent(self, event):
+            if((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
+                    and (not event.modifiers()
+                                or event.modifiers() == Qt.KeypadModifier)):
+                tc = self.textCursor()
+                tc.select(QTextCursor.BlockUnderCursor)
+                line = ''.join(unicode(tc.selectedText()).splitlines())
+                if self.textCursor().atBlockEnd():
+                    super(CommandEditor.WidthLineEnterEvent,
+                                              self).keyPressEvent(event)
+                self.on_line_event(line)
+            else:
+                super(CommandEditor.WidthLineEnterEvent,
+                                              self).keyPressEvent(event)
+
     def __init__(self, parent=None):
         super(CommandEditor, self).__init__(parent)
 
@@ -99,12 +118,13 @@ class CommandEditor(QWidget):
         # create widgets
         self.command_editor = mixin(
                                WithBasicIdentationManager,
-                               WidthLineEnterEvent,
+                               CommandEditor.WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
         self.command_editor.on_line_event += self._on_line_event
         self.command_result = mixin(WithFixedFont, QPlainTextEdit)(self)
+        self.command_result.appendPlainText(WELLCOME_MESSAGE)
 
         # create a horizontal splitter
         v_splitter = QSplitter(Qt.Horizontal, self)
@@ -116,39 +136,38 @@ class CommandEditor(QWidget):
         layout.setMargin(0)
         self.setLayout(layout)
 
-        self.interpreter = Interpreter()
+        self.interpreter = CommandEditor.Interpreter()
         self.previous_partial = False
+        self._on_line_event(START_COMMANDS)
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)
         self.command_editor.setFocus()
 
     def _on_line_event(self, line):
-        results = []
-        partials = []
-        self.interpreter.process_command(line, results, partials)
+        results, partials = self.interpreter._process_commands(line)
 
-        if not partials[0] or not self.previous_partial:
+        if not partials or not self.previous_partial:
             self.command_result.appendPlainText(
                                 "__________________________________________")
             self.command_result.appendPlainText(">>> " + line)
             for lines in results:
                 for line in lines.splitlines():
                     self.command_result.appendPlainText(unicode(line))
-            if not partials[0]:
+            if not partials:
                 self.command_result.appendPlainText("")
         else:
             self.command_result.appendPlainText("... " + line)
 #==============================================================================
-#         if(partials[0] and not self.previous_partial
+#         if(partials and not self.previous_partial
 #                         and self.command_editor.textCursor().atBlockStart()):
 #             self.command_editor.insert_tab()
 #==============================================================================
-        self.previous_partial = partials[0]
+        self.previous_partial = partials
 
 
 if(__name__ == '__main__'):
-    def test():
+    def test_gui():
         """Isolated execution for testing"""
         from PyQt4.QtGui import QApplication
 
@@ -156,4 +175,5 @@ if(__name__ == '__main__'):
         widget = CommandEditor()
         widget.show()
         app.exec_()
-    test()
+
+    test_gui()
