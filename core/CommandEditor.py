@@ -32,6 +32,8 @@ import sys
 from cStringIO import StringIO
 
 
+CURRENT_WIDGET = None
+
 START_COMMANDS = """\
 from core.CommandEditorCommands import (h, clear, reset)
 
@@ -58,28 +60,25 @@ class CommandEditor(QWidget):
             def process_command(self, command):
                 result = []
                 partial = False
-                if command == '.reset':
-                    self.ii = code.InteractiveConsole()
-                else:
-                    backup_out = sys.stdout
-                    sys.stdout = StringIO()      # capture output
-                    backup_error = sys.stderr
-                    sys.stderr = StringIO()
+                backup_out = sys.stdout
+                sys.stdout = StringIO()      # capture output
+                backup_error = sys.stderr
+                sys.stderr = StringIO()
 
-                    out = ""
-                    error = ""
-                    try:
-                        partial = self.ii.push(command)
-                        out = sys.stdout.getvalue()
-                        error = sys.stderr.getvalue()
-                    except Exception as _error:
-                        result.append(str(_error))
-                    sys.stdout = backup_out          # restore original stdout
-                    sys.stderr = backup_error
-                    result.append(out)
-                    if(error):
-                        result.append(error)
-                    return result, partial
+                out = ""
+                error = ""
+                try:
+                    partial = self.ii.push(command)
+                    out = sys.stdout.getvalue()
+                    error = sys.stderr.getvalue()
+                except Exception as _error:
+                    result.append(str(_error))
+                sys.stdout = backup_out          # restore original stdout
+                sys.stderr = backup_error
+                result.append(out)
+                if(error):
+                    result.append(error)
+                return result, partial
 
             results = []
             partial = False
@@ -111,6 +110,9 @@ class CommandEditor(QWidget):
 
     def __init__(self, parent=None):
         super(CommandEditor, self).__init__(parent)
+        import core.CommandEditorCommands
+        core.CommandEditorCommands.EVENT_COMMAND_CLEAR += self.clear
+        core.CommandEditorCommands.EVENT_COMMAND_RESET += self.reset
 
         self.setMinimumWidth(400)
         self.setMinimumHeight(100)
@@ -139,6 +141,16 @@ class CommandEditor(QWidget):
         self.interpreter = CommandEditor.Interpreter()
         self.previous_partial = False
         self._on_line_event(START_COMMANDS)
+        global CURRENT_WIDGET
+        CURRENT_WIDGET = self
+
+    def clear(self):
+        """\
+It will delete the result console"""
+        self.command_result.clear()
+
+    def reset(self):
+        self.interpreter = CommandEditor.Interpreter()
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)

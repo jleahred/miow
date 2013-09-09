@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Sep  8 14:28:40 2013
-@author: maiquel
+"""\
+    Created on Sun Sep  8 14:28:40 2013
+    @author: maiquel
 
-try h(), or h(core.Commands) or even h(h)
+    try h(), or h(core.Commands) or even h(h)
 
 
 """
@@ -19,21 +19,28 @@ if(__name__ == '__main__'):
     sys.path.append(lib_path)
 
 import core.CommandEditorCommands
+import core.CommandEditor
+
+
+from Event import Event
+
+EVENT_COMMAND_CLEAR = Event()
+EVENT_COMMAND_RESET = Event()
 
 
 def h(thing=None):
     """\
-h is a function to get information about an element
+    h is a function to get information about an element
 
-I will print on console the information about the provided parameter
-This parameter can be a module, a class, a method or a function
+    I will print on console the information about the provided parameter
+    This parameter can be a module, a class, a method or a function
 
-* Modules: doc, classes and functions
-* Classes: doc, methods, and members
-* Methods: doc
-* Functions: doc
+        * Modules: doc, classes and functions
+        * Classes: doc, methods, and members
+        * Methods: doc
+        * Functions: doc
 
-NOTE: To get information with h() you have to import the module previously
+    NOTE: To get information with h() you have to import the module previously
 """
 
     def get_data_same_module(thing):
@@ -66,24 +73,32 @@ NOTE: To get information with h() you have to import the module previously
         #print(__doc__)
         print(h.__doc__)
         h(core.CommandEditorCommands)
+        print("\n\nCURRENT_WIDGET..............................")
+        if core.CommandEditor.CURRENT_WIDGET:
+            h(core.CommandEditor.CURRENT_WIDGET)
+        else:
+            print("None")
+        return
 
     if inspect.ismodule(thing):
         classes, functions, doc = get_info_from_module(thing)
-        print("MODULE: %s" % thing.__name__)
+        print("\nMODULE: %s" % thing.__name__)
 
         print("\n%s\n\n" % doc)
 
-        print("\nclasses:")
-        for c in classes:
-            print("    %s" % c)
+        if len(classes):
+            print("\nclasses:")
+            for c in classes:
+                print("    %s" % c)
 
-        print("\nfunctions:")
-        for c in functions:
-            print("    %s" % c)
+        if len(functions):
+            print("\nfunctions:")
+            for c in functions:
+                print("    %s" % c)
 
     elif inspect.isclass(thing):
         methods, properties, doc = get_info_from_class(thing)
-        print("CLASS: %s" % thing.__name__)
+        print("\nCLASS: %s" % thing.__name__)
 
         print("\n%s\n\n" % doc)
 
@@ -91,12 +106,32 @@ NOTE: To get information with h() you have to import the module previously
         for c in methods:
             print("    %s" % c)
 
-        print("\nproperties:")
+    elif inspect.isclass(type(thing)):
+        methods, properties, doc = get_info_from_class(type(thing))
+        print("\nINSTANCE FROM: %s" % type(thing).__name__)
+
+        print("\n%s\n\n" % doc)
+
+        print("\nmethods:")
+        for c in methods:
+            print("    %s" % c)
+
+        #print("\nproperties:")
         #for c in functions:
         #    print("    %s" % c)
 
     elif inspect.isfunction(thing):
-        print("FUNCTION: %s" % thing.__name__)
+        print("\nFUNCTION: %s" % thing.__name__)
+
+        print("\n%s\n\n" % inspect.getdoc(thing))
+
+    elif inspect.ismethod(thing):
+        print("\nMETHOD: %s" % thing.__name__)
+
+        print("\n%s\n\n" % inspect.getdoc(thing))
+
+    else:
+        print("\n???: ")
 
         print("\n%s\n\n" % inspect.getdoc(thing))
 
@@ -104,20 +139,17 @@ NOTE: To get information with h() you have to import the module previously
 def clear():
     """\
 It will delete the result console"""
-    pass
+    EVENT_COMMAND_CLEAR()
 
 
 def reset():
     """\
 It will restart the console deleting all in the current session"""
-    pass
+    EVENT_COMMAND_RESET()
 
 
 if(__name__ == '__main__'):
-    import core.Commands
-    import core.CommandEditor
-
     print("\n\n***************************************")
     h()
     print("\n\n***************************************")
-    h(core.Commands)
+    h(core.CommandEditorCommands)
