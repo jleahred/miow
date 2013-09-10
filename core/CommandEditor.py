@@ -32,10 +32,16 @@ import sys
 from cStringIO import StringIO
 
 
+MAIN_WINDOW = None
 CURRENT_WIDGET = None
+
 
 START_COMMANDS = """\
 from core.CommandEditorCommands import (h, clear, reset)
+
+import core.CommandEditor
+cw = core.CommandEditor.get_current_widget
+mw = core.CommandEditor.get_main_window
 
 h()
 """
@@ -44,8 +50,26 @@ WELLCOME_MESSAGE = """\
 Wellcome to myow... CommandEditor
 =================================
 
+    clear() to delete the result window
+    reset() to restart the interpreter
+
+
+    try h() or h(core.CommandEditor) or h(cw()) or h(mw())
+
+
+    cw  is the working widget on miow
+
+    mw  is the miow window
 
 """
+
+
+def get_current_widget():
+    return CURRENT_WIDGET
+
+
+def get_main_window():
+    return MAIN_WINDOW
 
 
 class CommandEditor(QWidget):
@@ -91,7 +115,7 @@ class CommandEditor(QWidget):
         """Mixin to add LineEnterEvent to QPlainTextEdit"""
 
         def __init__(self, *args):
-            self.on_line_event = Event()
+            self.on_lines_event = Event()
 
         def keyPressEvent(self, event):
             if((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
@@ -99,11 +123,11 @@ class CommandEditor(QWidget):
                                 or event.modifiers() == Qt.KeypadModifier)):
                 tc = self.textCursor()
                 tc.select(QTextCursor.BlockUnderCursor)
-                line = ''.join(unicode(tc.selectedText()).splitlines())
+                lines = ''.join(unicode(tc.selectedText()).splitlines())
                 if self.textCursor().atBlockEnd():
                     super(CommandEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
-                self.on_line_event(line)
+                self.on_lines_event(lines)
             else:
                 super(CommandEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
@@ -124,9 +148,8 @@ class CommandEditor(QWidget):
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
-        self.command_editor.on_line_event += self._on_line_event
+        self.command_editor.on_lines_event += self._process_lines
         self.command_result = mixin(WithFixedFont, QPlainTextEdit)(self)
-        self.command_result.appendPlainText(WELLCOME_MESSAGE)
 
         # create a horizontal splitter
         v_splitter = QSplitter(Qt.Horizontal, self)
@@ -140,9 +163,8 @@ class CommandEditor(QWidget):
 
         self.interpreter = CommandEditor.Interpreter()
         self.previous_partial = False
-        self._on_line_event(START_COMMANDS)
-        global CURRENT_WIDGET
-        CURRENT_WIDGET = self
+        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
+        self._process_lines(START_COMMANDS)
 
     def clear(self):
         """\
@@ -151,31 +173,39 @@ It will delete the result console"""
 
     def reset(self):
         self.interpreter = CommandEditor.Interpreter()
+        self.clear()
+        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
+        self._process_lines(START_COMMANDS)
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)
         self.command_editor.setFocus()
 
-    def _on_line_event(self, line):
-        results, partials = self.interpreter._process_commands(line)
+    def _process_lines(self, lines):
+        def process_line(line):
+            results, partials = self.interpreter._process_commands(line)
 
-        if not partials or not self.previous_partial:
-            self.command_result.appendPlainText(
-                                "__________________________________________")
-            self.command_result.appendPlainText(">>> " + line)
-            for lines in results:
-                for line in lines.splitlines():
-                    self.command_result.appendPlainText(unicode(line))
-            if not partials:
-                self.command_result.appendPlainText("")
-        else:
-            self.command_result.appendPlainText("... " + line)
+            if len(line):
+                if not partials or not self.previous_partial:
+                    self.command_result.appendPlainText(
+                                 "__________________________________________")
+                    self.command_result.appendPlainText(">>> " + line)
+                    for lines in results:
+                        for line in lines.splitlines():
+                            self.command_result.appendPlainText(unicode(line))
+                    if not partials:
+                        self.command_result.appendPlainText("")
+                else:
+                    self.command_result.appendPlainText("... " + line)
 #==============================================================================
 #         if(partials and not self.previous_partial
 #                         and self.command_editor.textCursor().atBlockStart()):
 #             self.command_editor.insert_tab()
 #==============================================================================
-        self.previous_partial = partials
+                    self.previous_partial = partials
+
+        for line in lines.splitlines():
+            process_line(line)
 
 
 if(__name__ == '__main__'):

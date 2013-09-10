@@ -2,10 +2,6 @@
 """\
     Created on Sun Sep  8 14:28:40 2013
     @author: maiquel
-
-    try h(), or h(core.Commands) or even h(h)
-
-
 """
 
 
@@ -28,9 +24,12 @@ EVENT_COMMAND_CLEAR = Event()
 EVENT_COMMAND_RESET = Event()
 
 
-def h(thing=None):
+def h(thing="__empty__"):
     """\
     h is a function to get information about an element
+
+    It's similar to python help function but reducing information to show
+
 
     I will print on console the information about the provided parameter
     This parameter can be a module, a class, a method or a function
@@ -69,13 +68,19 @@ def h(thing=None):
                 r_methods.append(name)
         return r_methods, r_properties, inspect.getdoc(cls)
 
-    if thing == None:
+    if thing == "__empty__":
         #print(__doc__)
+        print("\n\n\n\n" + core.CommandEditor.WELLCOME_MESSAGE)
         print(h.__doc__)
         h(core.CommandEditorCommands)
         print("\n\nCURRENT_WIDGET..............................")
-        if core.CommandEditor.CURRENT_WIDGET:
-            h(core.CommandEditor.CURRENT_WIDGET)
+        if core.CommandEditor.get_current_widget():
+            h(core.CommandEditor.get_current_widget())
+        else:
+            print("None")
+        print("\n\nMAIN_WINDOW..............................")
+        if core.CommandEditor.get_main_window():
+            h(core.CommandEditor.get_main_window())
         else:
             print("None")
         return

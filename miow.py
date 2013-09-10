@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This Is Not An Editor
+"""MY OWn...
 """
 
 from  PyQt4.QtGui import(QWidget,
@@ -9,6 +9,7 @@ from  PyQt4.QtGui import(QWidget,
 
 from  PyQt4.QtCore import Qt
 
+import core.CommandEditor
 from  core.CommandEditor import CommandEditor
 
 
@@ -35,28 +36,33 @@ class MainWindow(QWidget):
         ce.setFocus()
 
     def add_widget(self, widget_class, label="???"):
-        """Add any kind of components"""
+        """Add any kind of widget"""
         widget = widget_class(self.main_tab)
         self.main_tab.addTab(widget, label)
         if self.main_tab.count() == 1:
             #self.v_splitter.setStretchFactor(0, 10)
             #self.v_splitter.setStretchFactor(1, 3)
             total_size = sum(self.v_splitter.sizes())
-            self.v_splitter.setSizes([total_size / 100 * 85,
-                                      total_size / 100 * 15])
+            self.v_splitter.setSizes([total_size / 100 * 70,
+                                      total_size / 100 * 30])
         widget.setFocus()
+        core.CommandEditor.CURRENT_WIDGET = widget
 
 
 if(__name__ == '__main__'):
     from PyQt4.QtGui import QApplication
 
-    register_components = "from components.SimpleEdit import SimpleEdit"
+    register_components = "from widgets.SimpleEdit import SimpleEdit"
     exec(register_components)
 
     def main():
         """execute miow"""
+
+        import core.CommandEditor
+
         app = QApplication([])
         mainw = MainWindow()
+        core.CommandEditor.MAIN_WINDOW = mainw
         mainw.show()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")
