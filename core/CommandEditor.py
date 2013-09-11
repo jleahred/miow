@@ -37,13 +37,15 @@ CURRENT_WIDGET = None
 
 
 START_COMMANDS = """\
-from core.CommandEditorCommands import (h, clear, reset)
+from pprint import pprint
 
 import core.CommandEditor
 cw = core.CommandEditor.get_current_widget
 mw = core.CommandEditor.get_main_window
 
+from core.CommandEditorCommands import (h, clear, reset)
 h()
+
 """
 
 WELLCOME_MESSAGE = """\
@@ -54,12 +56,9 @@ Wellcome to myow... CommandEditor
     reset() to restart the interpreter
 
 
-    try h() or h(core.CommandEditor) or h(cw()) or h(mw())
+    cw()  gets the working widget on miow
+    mw()  gets the miow window
 
-
-    cw  is the working widget on miow
-
-    mw  is the miow window
 
 """
 
@@ -106,7 +105,7 @@ class CommandEditor(QWidget):
 
             results = []
             partial = False
-            for command in commands.splitlines():
+            for command in commands.splitlines() or ['']:
                 c_result, partial = process_command(self, command)
                 results += c_result
             return results, partial
@@ -185,7 +184,7 @@ It will delete the result console"""
         def process_line(line):
             results, partials = self.interpreter._process_commands(line)
 
-            if len(line):
+            if len(line) or self.previous_partial:
                 if not partials or not self.previous_partial:
                     self.command_result.appendPlainText(
                                  "__________________________________________")
@@ -202,9 +201,9 @@ It will delete the result console"""
 #                         and self.command_editor.textCursor().atBlockStart()):
 #             self.command_editor.insert_tab()
 #==============================================================================
-                    self.previous_partial = partials
+            self.previous_partial = partials
 
-        for line in lines.splitlines():
+        for line in lines.splitlines() or ['']:
             process_line(line)
 
 

@@ -12,6 +12,13 @@ from  PyQt4.QtCore import Qt
 import core.CommandEditor
 from  core.CommandEditor import CommandEditor
 
+import os
+
+# These will be readed at starting
+# if nothing defined, this is de default configuration
+WIDGETS_FOLDERS = ['./widgets']
+#-----------------------------------------------------
+
 
 class MainWindow(QWidget):
     """Miow main window
@@ -35,7 +42,7 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         ce.setFocus()
 
-    def add_widget(self, widget_class, label="???"):
+    def _add_widget(self, widget_class, label="???"):
         """Add any kind of widget"""
         widget = widget_class(self.main_tab)
         self.main_tab.addTab(widget, label)
@@ -48,12 +55,24 @@ class MainWindow(QWidget):
         widget.setFocus()
         core.CommandEditor.CURRENT_WIDGET = widget
 
+    @property
+    def widgets_folders(self):
+        return WIDGETS_FOLDERS
+
+    @property
+    def available_widgets(self):
+        return [(base, f)
+                        for folder in self.widgets_folders
+                        for base, _, files in os.walk(folder)
+                        for f in files if (f.endswith(".py")
+                                            and not f.startswith("_"))]
+
 
 if(__name__ == '__main__'):
     from PyQt4.QtGui import QApplication
 
-    register_components = "from widgets.SimpleEdit import SimpleEdit"
-    exec(register_components)
+    #register_components = "from widgets.SimpleEdit import SimpleEdit"
+    #exec(register_components)
 
     def main():
         """execute miow"""
