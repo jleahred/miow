@@ -59,6 +59,8 @@ def h(thing="__empty__"):
                 if current_module.__name__ == inspect.getmodule(
                                                         thing).__name__:
                     yield name, data
+            elif inspect.isdatadescriptor(data):
+                yield name, data
 
     def get_info_from_module(module):
         r_classes = []
@@ -77,6 +79,8 @@ def h(thing="__empty__"):
         for name, data in get_data_same_module(cls):
             if inspect.ismethod(data):
                 r_methods.append(name)
+            elif inspect.isdatadescriptor(data):
+                r_properties.append(name)
         #return r_methods, r_properties, inspect.getdoc(cls)
         return r_methods, r_properties, cls.__doc__
 
@@ -113,11 +117,25 @@ def h(thing="__empty__"):
             for c in functions:
                 print("        %s" % c)
 
+    elif inspect.isfunction(thing):
+        print("\nFUNCTION: %s" % thing.__name__)
+        print("    " + str(inspect.getargspec(thing)))
+        print("\n%s" % inspect.getdoc(thing))
+
+    elif inspect.ismethod(thing):
+        print("\nMETHOD: %s" % thing.__name__)
+        print("    " + str(inspect.getargspec(thing)))
+        print("\n%s" % thing.__doc__)
+
     elif inspect.isclass(thing):
         methods, properties, doc = get_info_from_class(thing)
         print("\nCLASS: %s" % thing.__name__)
 
         print("\n%s" % doc)
+
+        print("\n    properties:")
+        for c in properties:
+            print("        %s" % c)
 
         print("\n    methods:")
         for c in methods:
@@ -129,6 +147,10 @@ def h(thing="__empty__"):
 
         print("\n%s" % doc)
 
+        print("\n    properties:")
+        for c in properties:
+            print("        %s" % c)
+
         print("\n    methods:")
         for c in methods:
             print("        %s" % c)
@@ -136,14 +158,6 @@ def h(thing="__empty__"):
         #print("\nproperties:")
         #for c in functions:
         #    print("    %s" % c)
-
-    elif inspect.isfunction(thing):
-        print("\nFUNCTION: %s" % thing.__name__)
-        print("\n%s" % inspect.getdoc(thing))
-
-    elif inspect.ismethod(thing):
-        print("\nMETHOD: %s" % thing.__name__)
-        print("\n%s" % inspect.getdoc(thing))
 
     else:
         print("\n???: ")
