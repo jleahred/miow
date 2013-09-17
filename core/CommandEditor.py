@@ -35,6 +35,9 @@ import code
 import sys
 from cStringIO import StringIO
 
+# completer
+import core.jedi
+
 
 MAIN_WINDOW = None
 CURRENT_WIDGET = None
@@ -44,8 +47,8 @@ START_COMMANDS = """\
 from pprint import pprint
 
 import core.CommandEditor
-cw = core.CommandEditor.get_current_widget
-mw = core.CommandEditor.get_main_window
+cw = core.CommandEditor.get_current_widget()
+mw = core.CommandEditor.get_main_window()
 
 from core.CommandEditorCommands import (h, clear, reset)
 h()
@@ -60,8 +63,8 @@ Wellcome to myow... CommandEditor
     reset() to restart the interpreter
 
 
-    cw()  gets the working widget on miow
-    mw()  gets the miow window
+    cw  gets the working widget on miow
+    mw  gets the miow window
 
 
 """
@@ -81,7 +84,7 @@ class CommandEditor(QWidget):
 
     class Interpreter():
         def __init__(self):
-            self.ii = code.InteractiveConsole()
+            self.ii = code.InteractiveConsole(globals())
 
         def _process_commands(self, commands):
             def process_command(self, command):
@@ -145,13 +148,33 @@ Mixin to add interpreter word completion to WithCompletion
         event_wicompl_send_command_interpreter = Event()
 
         def get_text_completion_list(self):
+            namespace = globals()
+            QTextCursor.beginEditBlock
+            cursor = self.textCursor()
+            cursor.movePosition(cursor.StartOfBlock, QTextCursor.KeepAnchor)
+            line_till_cursor = str(cursor.selectedText())
+
+            script = core.jedi.api.Interpreter(line_till_cursor, [namespace])
+
             completion_list = []
-            tc = self.textCursor()
-            tc.select(QTextCursor.WordUnderCursor)
-            completion_list.append(tc.selectedText())
-            #return completion_list
-            #self.event_wicompl_send_command_interpreter("dir()")
-            return []
+            for completion in script.completions():
+                completion_list.append(completion.name)
+
+            return completion_list
+
+    def clear(self):
+        """\
+It will delete the result console"""
+        self.command_result.clear()
+
+    def reset(self):
+        self.interpreter = CommandEditor.Interpreter()
+        self.command_editor.event_wicompl_send_command_interpreter \
+                                += self.interpreter._process_commands
+        self.clear()
+        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
+        self.previous_partial = False
+        self._process_lines(START_COMMANDS)
 
     def __init__(self, parent=None):
         super(CommandEditor, self).__init__(parent)
@@ -164,10 +187,10 @@ Mixin to add interpreter word completion to WithCompletion
 
         # create widgets
         self.command_editor = mixin(
-                               WithBasicIdentationManager,
-                               CommandEditor.WidthLineEnterEvent,
                                CommandEditor.WithInterpreterCompletion,
                                WithCompletion,
+                               WithBasicIdentationManager,
+                               CommandEditor.WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
@@ -183,24 +206,7 @@ Mixin to add interpreter word completion to WithCompletion
         layout.addWidget(v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
-
-        self.interpreter = CommandEditor.Interpreter()
-        self.command_editor.event_wicompl_send_command_interpreter \
-                                += self.interpreter._process_commands
-        self.previous_partial = False
-        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
-        self._process_lines(START_COMMANDS)
-
-    def clear(self):
-        """\
-It will delete the result console"""
-        self.command_result.clear()
-
-    def reset(self):
-        self.interpreter = CommandEditor.Interpreter()
-        self.clear()
-        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
-        self._process_lines(START_COMMANDS)
+        self.reset()
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)

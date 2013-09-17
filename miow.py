@@ -77,12 +77,10 @@ if(__name__ == '__main__'):
     def main():
         """execute miow"""
 
-        import core.CommandEditor
-
         app = QApplication([])
         mainw = MainWindow()
         core.CommandEditor.MAIN_WINDOW = mainw
-        mainw.show()
+        mainw.showMaximized()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")
 

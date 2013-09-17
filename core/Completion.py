@@ -48,9 +48,9 @@ Specific mixings will have to implement the get_text_completion_list method
         self.completer.activated.connect(self.insert_completion)
 
     def keyPressEvent(self, event):
+        event_key = event.key()
         if (self.completer.popup().isVisible()):
             #The following keys are forwarded by the completer to the widget
-            event_key = event.key()
             if(event_key in [Qt.Key_Enter,
                              Qt.Key_Return,
                              Qt.Key_Escape,
@@ -61,26 +61,35 @@ Specific mixings will have to implement the get_text_completion_list method
                 return  # let the completer do default behavior
 
         super(WithCompletion, self).keyPressEvent(event)
+
         if((event.modifiers() | event.key()) == QKeySequence("Ctrl+Space")):
             self.show_completer(True)
+        elif(event_key in [Qt.Key_Enter,
+                             Qt.Key_Return,
+                             Qt.Key_Escape,
+                             Qt.Key_Tab,
+                             Qt.Key_Backtab]):
+            pass
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
             text_under_cursor = self.text_under_cursor()
-            if(text_under_cursor.size() > 2  and
+            if((text_under_cursor.size() > 2) and
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
                     or  self.completer.popup().isVisible())):
-                self.show_completer(False)
+                self.show_completer(self.completer.popup()
+                                                .currentIndex().row() >= 0)
             else:
+                self.completer.popup().setCurrentIndex(
+                            self.completer.completionModel().index(-1, 0))
                 self.completer.popup().hide()
 
     def show_completer(self, select_first):
-
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         completion_words = self.get_text_completion_list()
         QApplication.restoreOverrideCursor()
 
-        if not completion_words:
+        if not completion_words or len(completion_words) < 1:
             return
 
         self.model_completer.setStringList(completion_words)
