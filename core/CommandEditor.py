@@ -15,6 +15,7 @@ if(__name__ == '__main__'):
 
 
 from PyQt4.QtCore import Qt
+
 from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
 from Mixin import mixin
@@ -22,6 +23,9 @@ from Event import Event
 from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
+
+from Completion import WithCompletion
+
 
 #WidthLineEnterEvent
 from PyQt4.QtGui import (QTextCursor)
@@ -131,6 +135,24 @@ class CommandEditor(QWidget):
                 super(CommandEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
 
+    class WithInterpreterCompletion(QPlainTextEdit):
+        """\
+Mixin to add interpreter word completion to WithCompletion
+"""
+        def __init__(self, *args):
+            pass
+
+        event_wicompl_send_command_interpreter = Event()
+
+        def get_text_completion_list(self):
+            completion_list = []
+            tc = self.textCursor()
+            tc.select(QTextCursor.WordUnderCursor)
+            completion_list.append(tc.selectedText())
+            #return completion_list
+            #self.event_wicompl_send_command_interpreter("dir()")
+            return []
+
     def __init__(self, parent=None):
         super(CommandEditor, self).__init__(parent)
         import core.CommandEditorCommands
@@ -144,6 +166,8 @@ class CommandEditor(QWidget):
         self.command_editor = mixin(
                                WithBasicIdentationManager,
                                CommandEditor.WidthLineEnterEvent,
+                               CommandEditor.WithInterpreterCompletion,
+                               WithCompletion,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
@@ -161,6 +185,8 @@ class CommandEditor(QWidget):
         self.setLayout(layout)
 
         self.interpreter = CommandEditor.Interpreter()
+        self.command_editor.event_wicompl_send_command_interpreter \
+                                += self.interpreter._process_commands
         self.previous_partial = False
         #self.command_result.appendPlainText(WELLCOME_MESSAGE)
         self._process_lines(START_COMMANDS)

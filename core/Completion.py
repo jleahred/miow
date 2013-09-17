@@ -75,10 +75,13 @@ Specific mixings will have to implement the get_text_completion_list method
                 self.completer.popup().hide()
 
     def show_completer(self, select_first):
+
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         completion_words = self.get_text_completion_list()
-
         QApplication.restoreOverrideCursor()
+
+        if not completion_words:
+            return
 
         self.model_completer.setStringList(completion_words)
 
