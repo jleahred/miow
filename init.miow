@@ -1,0 +1,6 @@
+INIT_FOLDERS += ['./widgets']
+
+REGISTERED_WIDGETS += [
+    {"module": "core.CommandEditor",
+     "widget": "CommandEditor"}
+    ]

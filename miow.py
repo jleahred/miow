@@ -2,6 +2,9 @@
 """MY OWn...
 """
 
+import os
+from string import Template
+
 from  PyQt4.QtGui import(QWidget,
                          QSplitter,
                          QVBoxLayout,
@@ -12,11 +15,11 @@ from  PyQt4.QtCore import Qt
 import core.CommandEditor
 from  core.CommandEditor import CommandEditor
 
-import os
 
 # These will be readed at starting
 # if nothing defined, this is de default configuration
-WIDGETS_FOLDERS = ['./widgets']
+INIT_FOLDERS = ['.']
+REGISTERED_WIDGETS = []
 #-----------------------------------------------------
 
 
@@ -41,6 +44,22 @@ class MainWindow(QWidget):
         layout.setMargin(0)
         self.setLayout(layout)
         ce.setFocus()
+        self._run_init_miows()
+        self._auto_register_widgets()
+
+    def _auto_register_widgets(self):
+        for reg_widget in REGISTERED_WIDGETS:
+            reg = Template("""\
+def _new_widget(self):
+    _self = self
+    def __new_widget(caption):
+        from $module import $widget
+        _self._add_widget($widget, caption)
+    return __new_widget
+
+self.new_widget_$widget = _new_widget(self)
+""").substitute(module=reg_widget["module"], widget=reg_widget["widget"])
+            exec(reg)
 
     def _add_widget(self, widget_class, label="???"):
         """Add any kind of widget"""
@@ -56,19 +75,28 @@ class MainWindow(QWidget):
         core.CommandEditor.CURRENT_WIDGET = widget
 
     @property
-    def widgets_folders(self):
-        return WIDGETS_FOLDERS
+    def init_folders(self):
+        return INIT_FOLDERS
 
     @property
     def available_widgets(self):
-        return [(base, f)
-                        for folder in self.widgets_folders
+        return REGISTERED_WIDGETS
+        #return [(base, f)
+        #                for folder in self.init_folders
+        #                for base, _, files in os.walk(folder)
+        #                for f in files if (f.endswith(".py")
+        #                                    and not f.startswith("_"))]
+
+    def _run_init_miows(self):
+        miows_inits = [(base, f)
+                        for folder in self.init_folders
                         for base, _, files in os.walk(folder)
-                        for f in files if (f.endswith(".py")
-                                            and not f.startswith("_"))]
+                        for f in files if (f == "init.miow")]
+        for folder, fname in miows_inits:
+            execfile(os.path.join(folder, fname))
 
 
-if(__name__ == '__main__'):
+if __name__ == '__main__':
     from PyQt4.QtGui import QApplication
 
     #register_components = "from widgets.SimpleEdit import SimpleEdit"

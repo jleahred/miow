@@ -6,9 +6,7 @@ Created on Sat Aug 31 11:03:22 2013
 """
 
 
-from  PyQt4.QtGui import(QWidget,
-                         QPlainTextEdit,
-                         QVBoxLayout)
+from  PyQt4.QtGui import(QPlainTextEdit)
 
 if(__name__ == '__main__'):
     import os
@@ -16,38 +14,30 @@ if(__name__ == '__main__'):
     lib_path = os.path.abspath('..')
     sys.path.append(lib_path)
 
-from  core.Mixin import mixin
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
-                          WithLineNumbers,
-                          WithWordCompletion)
+                          WithLineNumbers)
+
+from core.Completion import (WithCompletion,
+                             WithWordCompletion)
 
 
-class SimpleEdit(QWidget):
+class SimpleEdit(WithHighlight,
+                 WithFixedFont,
+                 WithLineNumbers,
+                 WithWordCompletion,
+                 WithCompletion,
+                 QPlainTextEdit):
     """SimpleEdit to test
     """
 
     def __init__(self, parent=None):
-        super(SimpleEdit, self).__init__(parent)
-
-        self.setMinimumWidth(100)
-        self.setMinimumHeight(100)
-
-        # create widgets
-        self.editor = mixin(
-                       WithHighlight,
-                       WithFixedFont,
-                       WithLineNumbers,
-                       WithWordCompletion,
-                       QPlainTextEdit)(self)
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.editor)
-        layout.setMargin(0)
-        self.setLayout(layout)
-
-    def focusInEvent(self, focus_event):
-        super(SimpleEdit, self).focusInEvent(focus_event)
-        self.editor.setFocus()
+        super(QPlainTextEdit, self).__init__(parent)
+        super(WithCompletion, self).__init__(parent)
+        super(WithWordCompletion, self).__init__(parent)
+        super(WithLineNumbers, self).__init__(parent)
+        super(WithFixedFont, self).__init__(parent)
+        super(WithHighlight, self).__init__(parent)
 
 
 if(__name__ == '__main__'):
@@ -57,6 +47,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = SimpleEdit()
+
         widget.show()
         app.exec_()
     test()

@@ -64,6 +64,7 @@ Specific mixings will have to implement the get_text_completion_list method
 
         if((event.modifiers() | event.key()) == QKeySequence("Ctrl+Space")):
             self.show_completer(True)
+
         elif(event_key in [Qt.Key_Enter,
                              Qt.Key_Return,
                              Qt.Key_Escape,
@@ -86,7 +87,10 @@ Specific mixings will have to implement the get_text_completion_list method
 
     def show_completer(self, select_first):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        completion_words = self.get_text_completion_list()
+        try:
+            completion_words = self.get_text_completion_list()
+        except:
+            completion_words = []
         QApplication.restoreOverrideCursor()
 
         if not completion_words or len(completion_words) < 1:
