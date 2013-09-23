@@ -36,8 +36,11 @@ import sys
 from cStringIO import StringIO
 
 # completer
-import core.jedi
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import core.jedi
+sys.path.pop(0)
 
 MAIN_WINDOW = None
 CURRENT_WIDGET = None

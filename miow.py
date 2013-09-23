@@ -105,15 +105,17 @@ class MiowApplication(QApplication):
         super(MiowApplication, self).__init__(args)
 
     def notify(self, receiver, event):
-        if event.type() == QEvent.KeyPress:
-            key_event = QKeyEvent(event)
-            ker = QKeyEvent(QEvent.KeyPress,
-                            key_event.key(),
-                            key_event.modifiers(),
-                            key_event.text(),
-                            key_event.isAutoRepeat(),
-                            key_event.count())
-            super(MiowApplication, self).notify(receiver, ker)
+#==============================================================================
+#         if event.type() == QEvent.KeyPress:
+#             key_event = QKeyEvent(event)
+#             ker = QKeyEvent(QEvent.KeyPress,
+#                             key_event.key(),
+#                             key_event.modifiers(),
+#                             key_event.text(),
+#                             key_event.isAutoRepeat(),
+#                             key_event.count())
+#             super(MiowApplication, self).notify(receiver, ker)
+#==============================================================================
         return super(MiowApplication, self).notify(receiver, event)
 
 
