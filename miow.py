@@ -5,12 +5,15 @@
 import os
 from string import Template
 
-from  PyQt4.QtGui import(QWidget,
+from  PyQt4.QtGui import(QApplication,
+                         QWidget,
                          QSplitter,
                          QVBoxLayout,
-                         QTabWidget)
+                         QTabWidget,
+                         QKeyEvent)
 
-from  PyQt4.QtCore import Qt
+from  PyQt4.QtCore import (Qt,
+                           QEvent)
 
 import core.CommandEditor
 from  core.CommandEditor import CommandEditor
@@ -96,19 +99,33 @@ self.new_widget_$widget = _new_widget(self)
             execfile(os.path.join(folder, fname))
 
 
-if __name__ == '__main__':
-    from PyQt4.QtGui import QApplication
+class MiowApplication(QApplication):
 
-    #register_components = "from widgets.SimpleEdit import SimpleEdit"
-    #exec(register_components)
+    def __init__(self, args):
+        super(MiowApplication, self).__init__(args)
+
+    def notify(self, receiver, event):
+        if event.type() == QEvent.KeyPress:
+            key_event = QKeyEvent(event)
+            ker = QKeyEvent(QEvent.KeyPress,
+                            key_event.key(),
+                            key_event.modifiers(),
+                            key_event.text(),
+                            key_event.isAutoRepeat(),
+                            key_event.count())
+            super(MiowApplication, self).notify(receiver, ker)
+        return super(MiowApplication, self).notify(receiver, event)
+
+
+if __name__ == '__main__':
 
     def main():
         """execute miow"""
-
-        app = QApplication([])
-        mainw = MainWindow()
-        core.CommandEditor.MAIN_WINDOW = mainw
-        mainw.showMaximized()
+        app = MiowApplication([])
+        global MAIN_WINDOW
+        MAIN_WINDOW = MainWindow()
+        core.CommandEditor.MAIN_WINDOW = MAIN_WINDOW
+        MAIN_WINDOW.showMaximized()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")
 
