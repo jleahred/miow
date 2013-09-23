@@ -12,6 +12,7 @@ from  PyQt4.QtGui import(QApplication,
                          QTabWidget,
                          QKeyEvent)
 
+import PyQt4.QtCore
 from  PyQt4.QtCore import (Qt,
                            QEvent)
 
@@ -23,7 +24,39 @@ from  core.CommandEditor import CommandEditor
 # if nothing defined, this is de default configuration
 INIT_FOLDERS = ['.']
 REGISTERED_WIDGETS = []
+KEY_START_RECORDING = {'count': 1,
+                       'text': PyQt4.QtCore.QString(u''),
+                       'autorepeat': False,
+                       'modifiers': 0,
+                       'key': 16777266}
+
+KEY_STOP_RECORDING = {'count': 1,
+                      'text': PyQt4.QtCore.QString(u''),
+                      'autorepeat': False,
+                      'modifiers': 0,
+                      'key': 16777267}
+
 #-----------------------------------------------------
+
+
+def get_key_event_from_dict(key_info):
+    return QKeyEvent(QEvent.KeyPress,
+        key_info["key"],
+        Qt.KeyboardModifiers(key_info["modifiers"]),
+        key_info["text"],
+        key_info["autorepeat"],
+        key_info["count"])
+
+
+def get_dict_from_key_event(key_event):
+    return {
+        "key": key_event.key(),
+        "modifiers": int(key_event.modifiers()),
+        "text": key_event.text(),
+        "autorepeat": key_event.isAutoRepeat(),
+        "autorepeat": key_event.isAutoRepeat(),
+        "count": key_event.count()
+    }
 
 
 class MainWindow(QWidget):
@@ -103,8 +136,42 @@ class MiowApplication(QApplication):
 
     def __init__(self, args):
         super(MiowApplication, self).__init__(args)
+        self.recording = False
+        self._keys_recorded = []
+
+    @property
+    def keys_recorded(self):
+        return self._keys_recorded
+
+    def reproduce_keys(self, keys):
+        for key_dict in self._keys_recorded:
+            super(MiowApplication, self).notify(QApplication.focusWidget(),
+                              get_key_event_from_dict(key_dict))
 
     def notify(self, receiver, event):
+        if event.type() == QEvent.KeyPress:
+            key_dict = get_dict_from_key_event(QKeyEvent(event))
+            if key_dict == KEY_START_RECORDING:
+                self.recording = True
+                self._keys_recorded = []
+            elif key_dict == KEY_STOP_RECORDING and self.recording:
+                self.recording = False
+            elif key_dict == KEY_STOP_RECORDING:
+                self.reproduce_keys(self._keys_recorded)
+
+            if self.recording:
+                self._keys_recorded.append(key_dict)
+#==============================================================================
+#             key = {
+#                 "key": key_event.key(),
+#                 "modifiers": int(key_event.modifiers()),
+#                 "text": key_event.text(),
+#                 "autorepeat": key_event.isAutoRepeat(),
+#                 "autorepeat": key_event.isAutoRepeat(),
+#                 "count": key_event.count()
+#             }
+#             print key
+#==============================================================================
 #==============================================================================
 #         if event.type() == QEvent.KeyPress:
 #             key_event = QKeyEvent(event)
@@ -124,12 +191,13 @@ if __name__ == '__main__':
     def main():
         """execute miow"""
         app = MiowApplication([])
-        global MAIN_WINDOW
-        MAIN_WINDOW = MainWindow()
-        core.CommandEditor.MAIN_WINDOW = MAIN_WINDOW
-        MAIN_WINDOW.showMaximized()
+        core.CommandEditor.APP = app
+        mw = MainWindow()
+        core.CommandEditor.MAIN_WINDOW = mw
+        mw.showMaximized()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")
 
         app.exec_()
+
     main()

@@ -44,8 +44,9 @@ def h(thing="__empty__"):
 
     Interesting help commands
         h()
-        h(cw())
-        h(mw())
+        h(cw)
+        h(mw)
+        h(app)
 
 
     NOTE: To get information with h(thing) you have to import the

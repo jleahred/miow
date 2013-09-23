@@ -44,6 +44,7 @@ sys.path.pop(0)
 
 MAIN_WINDOW = None
 CURRENT_WIDGET = None
+APP = None
 
 
 START_COMMANDS = """\
@@ -52,6 +53,7 @@ from pprint import pprint
 import core.CommandEditor
 cw = core.CommandEditor.get_current_widget()
 mw = core.CommandEditor.get_main_window()
+app = core.CommandEditor.get_app()
 
 from core.CommandEditorCommands import (h, clear, reset)
 h()
@@ -68,6 +70,7 @@ Wellcome to myow... CommandEditor
 
     cw  gets the working widget on miow
     mw  gets the miow window
+    app gets the QApplication
 
 
 """
@@ -79,6 +82,9 @@ def get_current_widget():
 
 def get_main_window():
     return MAIN_WINDOW
+
+def get_app():
+    return APP
 
 
 class CommandEditor(QWidget):
