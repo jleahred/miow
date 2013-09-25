@@ -68,9 +68,9 @@ Wellcome to myow... CommandEditor
     reset() to restart the interpreter
 
 
-    cw  gets the working widget on miow
-    mw  gets the miow window
-    app gets the QApplication
+    cw  is the working widget on miow
+    mw  is the miow window
+    app is the application
 
 
 """
