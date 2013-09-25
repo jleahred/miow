@@ -2,5 +2,7 @@ REGISTERED_WIDGETS += [
     {"module": "widgets.SimpleEdit",
      "widget": "SimpleEdit"},
     {"module": "widgets.SimpleEdit2",
-     "widget": "SimpleEdit2"}
+     "widget": "SimpleEdit2"},
+    {"module": "widgets.RestEditor",
+     "widget": "RestEditor"},
     ]
