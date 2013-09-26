@@ -1,0 +1,11 @@
+* log information
+* keys to move on main window
+* Exec commands multiline <ctrl+enter>
+* Fix going end of line when enter on beggining of line
+* rest text editor
+
+
+low
+---------
+
+* New completion windows with more information

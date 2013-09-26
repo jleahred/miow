@@ -1,0 +1,2 @@
+sphinx-build -b html . __build
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr'  -b html .  __build 
