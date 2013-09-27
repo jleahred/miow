@@ -1,2 +1,39 @@
 sphinx-build -b html . __build
-sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr'  -b html .  __build 
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=False -Dhtml_show_sphinx=False -Dhtml_show_copyright=False  -b html .  __build  pr.rst
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='sphinxdoc' -b htmlhelp .  __build  pr.rst
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='sphinxdoc'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -b htmlhelp .  __build  pr.rst
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='sphinxdoc'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0  -b htmlhelp .  __build  pr.rst
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='sphinxdoc'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0  -b singlehtml .  __build  pr.rst
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='sphinxdoc'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0 -Dhtml_sidebars={'**':[]}  -b singlehtml .  __build  pr.rst
+
+html_sidebars = {'**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+   'using/windows': ['windowssidebar.html', 'searchbox.html'],
+}
+
+
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='haiku'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0   -b singlehtml .  __build  pr.rst
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='haiku'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0  -Dhtml_theme_options={'nosidebar'=0}  -b singlehtml .  __build  pr.rst
+
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='haiku'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0 -Dextensions=['matplotlib.sphinxext.ipython_directive',]   -b singlehtml .  __build  pr.rst
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='haiku'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0 -Dextensions=['matplotlib.sphinxext.mathmpl','matplotlib.sphinxext.only_directives','matplotlib.sphinxext.plot_directive','matplotlib.sphinxext.ipython_directive','sphinx.ext.autodoc','sphinx.ext.doctest','ipython_console_highlighting','inheritance_diagram','numpydoc']   -b singlehtml .  __build  pr.rst
+
+
+extensions=['matplotlib.sphinxext.mathmpl','matplotlib.sphinxext.only_directives','matplotlib.sphinxext.plot_directive','matplotlib.sphinxext.ipython_directive','sphinx.ext.autodoc','sphinx.ext.doctest','ipython_console_highlighting','inheritance_diagram','numpydoc']
+
+
+sphinx-build -C  -Dsource_suffix='.rst' -Dmaster_doc='pr' -Dhtml_show_sourcelink=0 -Dhtml_show_sphinx=0 -Dhtml_show_copyright=0 -Dhtml_use_index=0  -Dhtml_theme='haiku'  -Dhtmlhelp_basename='pr' -Dproject='pr'  -Dhtml_domain_indices=0    -b singlehtml .  __build  pr.rst
