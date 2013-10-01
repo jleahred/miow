@@ -4,3 +4,5 @@ REGISTERED_WIDGETS += [
     {"module": "core.CommandEditor",
      "widget": "CommandEditor"}
     ]
+
+execfile("keys.miow")

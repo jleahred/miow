@@ -19,10 +19,12 @@ from  PyQt4.QtCore import (Qt,
 import core.CommandEditor
 from  core.CommandEditor import CommandEditor
 
+MAIN_WINDOW = None
 
 # These will be readed at starting
 # if nothing defined, this is de default configuration
 INIT_FOLDERS = ['.']
+APP_KEY_MAPS = []
 REGISTERED_WIDGETS = []
 KEY_START_RECORDING = {'count': 1,
                        'text': PyQt4.QtCore.QString(u''),
@@ -70,18 +72,26 @@ class MainWindow(QWidget):
         self.setMinimumHeight(400)
 
         # create widgets
-        self.main_tab = QTabWidget(self)
-        ce = CommandEditor(self)
+        self._main_tab = QTabWidget(self)
+        self._command_editor = CommandEditor(self)
         self.v_splitter = QSplitter(Qt.Vertical, self)
-        self.v_splitter.addWidget(self.main_tab)
-        self.v_splitter.addWidget(ce)
+        self.v_splitter.addWidget(self._main_tab)
+        self.v_splitter.addWidget(self._command_editor)
         layout = QVBoxLayout(self)
         layout.addWidget(self.v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
-        ce.setFocus()
+        self._command_editor.setFocus()
         self._run_init_miows()
         self._auto_register_widgets()
+
+    @property
+    def command_editor(self):
+        return self._command_editor
+
+    @property
+    def main_tab(self):
+        return self._main_tab
 
     def _auto_register_widgets(self):
         for reg_widget in REGISTERED_WIDGETS:
@@ -143,6 +153,10 @@ class MiowApplication(QApplication):
     def keys_recorded(self):
         return self._keys_recorded
 
+    @property
+    def keys_map(self):
+        return APP_KEY_MAPS
+
     def reproduce_keys(self, keys):
         for key_dict in self._keys_recorded:
             super(MiowApplication, self).notify(QApplication.focusWidget(),
@@ -183,6 +197,10 @@ class MiowApplication(QApplication):
 #                             key_event.count())
 #             super(MiowApplication, self).notify(receiver, ker)
 #==============================================================================
+            for method, key in self.keys_map:
+                if key == key_dict:
+                    method()
+                    return True
         return super(MiowApplication, self).notify(receiver, event)
 
 
@@ -192,9 +210,10 @@ if __name__ == '__main__':
         """execute miow"""
         app = MiowApplication([])
         core.CommandEditor.APP = app
-        mw = MainWindow()
-        core.CommandEditor.MAIN_WINDOW = mw
-        mw.showMaximized()
+        global MAIN_WINDOW
+        MAIN_WINDOW = MainWindow()
+        core.CommandEditor.MAIN_WINDOW = MAIN_WINDOW
+        MAIN_WINDOW.showMaximized()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")
 
