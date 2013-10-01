@@ -68,23 +68,12 @@ Wellcome to myow... CommandEditor
     reset() to restart the interpreter
 
 
-    cw  is the working widget on miow
-    mw  is the miow window
-    app is the application
+    CURRENT_WIDGET  is the working widget on miow
+    MAIN_WINDOW     is the miow window
+    APP             is the application
 
 
 """
-
-
-def get_current_widget():
-    return CURRENT_WIDGET
-
-
-def get_main_window():
-    return MAIN_WINDOW
-
-def get_app():
-    return APP
 
 
 class CommandEditor(QWidget):
@@ -174,14 +163,14 @@ Mixin to add interpreter word completion to WithCompletion
     def clear(self):
         """\
 It will delete the result console"""
-        self.command_result.clear()
+        self._result_widget.clear()
 
     def reset(self):
         self.interpreter = CommandEditor.Interpreter()
-        self.command_editor.event_wicompl_send_command_interpreter \
+        self._editor_widget.event_wicompl_send_command_interpreter \
                                 += self.interpreter._process_commands
         self.clear()
-        #self.command_result.appendPlainText(WELLCOME_MESSAGE)
+        #self._result_widget.appendPlainText(WELLCOME_MESSAGE)
         self.previous_partial = False
         self._process_lines(START_COMMANDS)
 
@@ -195,7 +184,7 @@ It will delete the result console"""
         self.setMinimumHeight(100)
 
         # create widgets
-        self.command_editor = mixin(
+        self._editor_widget = mixin(
                                CommandEditor.WithInterpreterCompletion,
                                WithCompletion,
                                WithBasicIdentationManager,
@@ -203,13 +192,13 @@ It will delete the result console"""
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
-        self.command_editor.on_lines_event += self._process_lines
-        self.command_result = mixin(WithFixedFont, QPlainTextEdit)(self)
+        self._editor_widget.on_lines_event += self._process_lines
+        self._result_widget = mixin(WithFixedFont, QPlainTextEdit)(self)
 
         # create a horizontal splitter
         v_splitter = QSplitter(Qt.Horizontal, self)
-        v_splitter.addWidget(self.command_editor)
-        v_splitter.addWidget(self.command_result)
+        v_splitter.addWidget(self._editor_widget)
+        v_splitter.addWidget(self._result_widget)
 
         layout = QVBoxLayout(self)
         layout.addWidget(v_splitter)
@@ -219,7 +208,7 @@ It will delete the result console"""
 
     def focusInEvent(self, focus_event):
         super(CommandEditor, self).focusInEvent(focus_event)
-        self.command_editor.setFocus()
+        self._editor_widget.setFocus()
 
     def _process_lines(self, lines):
         def process_line(line):
@@ -227,26 +216,33 @@ It will delete the result console"""
 
             if len(line) or self.previous_partial:
                 if not partials or not self.previous_partial:
-                    self.command_result.appendPlainText(
+                    self._result_widget.appendPlainText(
                                  "__________________________________________")
-                    self.command_result.appendPlainText(">>> " + line)
+                    self._result_widget.appendPlainText(">>> " + line)
                     for lines in results:
                         for line in lines.splitlines():
-                            self.command_result.appendPlainText(unicode(line))
+                            self._result_widget.appendPlainText(unicode(line))
                     if not partials:
-                        self.command_result.appendPlainText("")
+                        self._result_widget.appendPlainText("")
                 else:
-                    self.command_result.appendPlainText("... " + line)
+                    self._result_widget.appendPlainText("... " + line)
 #==============================================================================
 #         if(partials and not self.previous_partial
-#                         and self.command_editor.textCursor().atBlockStart()):
-#             self.command_editor.insert_tab()
+#                        and self._editor_widget.textCursor().atBlockStart()):
+#             self._editor_widget.insert_tab()
 #==============================================================================
             self.previous_partial = partials
 
         for line in lines.splitlines() or ['']:
             process_line(line)
 
+    @property
+    def editor_widget(self):
+        return self._editor_widget
+
+    @property
+    def result_widget(self):
+        return self._result_widget
 
 if(__name__ == '__main__'):
     def test_gui():
