@@ -21,7 +21,7 @@ from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
                           WithLineNumbers)
 
-from core.Completion import (WithWordCompletion)
+from core.Completion import (WithCompletion, WithWordCompletion)
 
 
 class SimpleEdit2(QWidget):
@@ -36,10 +36,11 @@ class SimpleEdit2(QWidget):
 
         # create widgets
         self.editor = mixin(
-                       WithHighlight,
                        WithFixedFont,
+                       WithHighlight,
                        WithLineNumbers,
                        WithWordCompletion,
+                       WithCompletion,
                        QPlainTextEdit)(self)
         layout = QVBoxLayout(self)
         layout.addWidget(self.editor)

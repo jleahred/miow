@@ -19,9 +19,6 @@ from  PyQt4.QtCore import (Qt,
 import core.CommandEditor
 from  core.CommandEditor import CommandEditor
 
-from core.keys import(get_key_event_from_dict_simpl,
-                      get_dict_from_key_event_simpl)
-
 
 MAIN_WINDOW = None
 
@@ -29,20 +26,23 @@ MAIN_WINDOW = None
 # if nothing defined, this is de default configuration
 INIT_FOLDERS = ['.']
 APP_KEY_MAPS = []
-REGISTERED_WIDGETS = []
-KEY_START_RECORDING = {#'count': 1,
-                       'text': PyQt4.QtCore.QString(u''),
-                       #'autorepeat': False,
-                       'modifiers': 0,
-                       'key': 16777266}
 
-KEY_STOP_RECORDING = {#'count': 1,
-                      'text': PyQt4.QtCore.QString(u''),
-                      #'autorepeat': False,
-                      'modifiers': 0,
-                      'key': 16777267}
+REGISTERED_WIDGETS = []
+
+KEY_START_RECORDING = ("F4", "")
+KEY_STOP_RECORDING = ("F5", "")
 
 #-----------------------------------------------------
+
+
+def get_keyevent__from_key_as_text(key_as_text, text):
+    return QKeyEvent(QEvent.KeyPress,
+        PyQt4.QtGui.QKeySequence(key_as_text)[0],
+        Qt.KeyboardModifiers(0),      # modifiers
+        text,     # text
+        False,  # autorepeat
+        1       # count
+    )
 
 
 class MainWindow(QWidget):
@@ -121,7 +121,7 @@ self.new_widget_$widget = _new_widget(self)
         miows_inits = [(base, f)
                         for folder in self.init_folders
                         for base, _, files in os.walk(folder)
-                        for f in files if (f == "init.miow")]
+                        for f in files if (f == "miow.init")]
         for folder, fname in miows_inits:
             execfile(os.path.join(folder, fname))
 
@@ -141,23 +141,27 @@ class MiowApplication(QApplication):
     def keys_map(self):
         return APP_KEY_MAPS
 
+
     def reproduce_keys(self, keys):
-        for key_dict in self._keys_recorded:
+        for key_text, text in self._keys_recorded:
             super(MiowApplication, self).notify(QApplication.focusWidget(),
-                              get_key_event_from_dict_simpl(key_dict))
+                      get_keyevent__from_key_as_text(key_text, text))
 
     def notify(self, receiver, event):
         if event.type() == QEvent.KeyPress:
-            key_dict = get_dict_from_key_event_simpl(QKeyEvent(event))
+            key_event = QKeyEvent(event)
+            key_text = PyQt4.QtGui.QKeySequence(key_event.key() |
+                        key_event.modifiers().__int__()).toString()
+            text = key_event.text()
 
-            if key_dict == KEY_STOP_RECORDING and not self.recording:
+            if (key_text, text) == KEY_STOP_RECORDING and not self.recording:
                 self.reproduce_keys(self._keys_recorded)
-            elif key_dict == KEY_STOP_RECORDING and self.recording:
+            elif (key_text, text) == KEY_STOP_RECORDING and self.recording:
                 self.recording = False
             elif self.recording:
-                self._keys_recorded.append(key_dict)
+                self._keys_recorded.append((str(key_text), str(text)))
 
-            if key_dict == KEY_START_RECORDING:
+            if (key_text, text) == KEY_START_RECORDING:
                 self.recording = True
                 self._keys_recorded = []
 
@@ -183,10 +187,16 @@ class MiowApplication(QApplication):
 #                             key_event.count())
 #             super(MiowApplication, self).notify(receiver, ker)
 #==============================================================================
-            for method, key in self.keys_map:
-                if key == key_dict:
-                    method()
-                    return True
+            for key_as_text, method in self.keys_map:
+                if key_as_text == (str(key_text), str(text)):
+                    replace = method(key_event, key_as_text)
+                    if replace == None:
+                        return True
+                    elif replace == False:
+                        return super(MiowApplication, self).notify(receiver, event)
+                    else:
+                        return super(MiowApplication, self).notify(receiver, replace)
+        
         return super(MiowApplication, self).notify(receiver, event)
 
 

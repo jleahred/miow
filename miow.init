@@ -5,4 +5,4 @@ REGISTERED_WIDGETS += [
      "widget": "CommandEditor"}
     ]
 
-execfile("keys.miow")
+execfile("miow.keys")

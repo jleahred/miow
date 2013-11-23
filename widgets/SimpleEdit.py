@@ -22,8 +22,9 @@ from core.Completion import (WithCompletion,
                              WithWordCompletion)
 
 
-class SimpleEdit(WithHighlight,
+class SimpleEdit(
                  WithFixedFont,
+                 WithHighlight,
                  WithLineNumbers,
                  WithWordCompletion,
                  WithCompletion,
@@ -36,8 +37,8 @@ class SimpleEdit(WithHighlight,
         super(WithCompletion, self).__init__(parent)
         super(WithWordCompletion, self).__init__(parent)
         super(WithLineNumbers, self).__init__(parent)
-        super(WithFixedFont, self).__init__(parent)
         super(WithHighlight, self).__init__(parent)
+        super(WithFixedFont, self).__init__(parent)
 
 
 if(__name__ == '__main__'):

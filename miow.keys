@@ -1,0 +1,57 @@
+def app_switch_command_widget_focus_key(key_event, key_as_text):
+    if(MAIN_WINDOW.command_editor.editor_widget and
+            not MAIN_WINDOW.command_editor.editor_widget.hasFocus()):
+        MAIN_WINDOW.command_editor.editor_widget.setFocus()
+    else:
+        if MAIN_WINDOW.main_tab.currentWidget():
+            MAIN_WINDOW.main_tab.currentWidget().setFocus()
+    return None
+
+            
+def command_switch_focus(key_event, key_as_text):
+    if(MAIN_WINDOW.command_editor.result_widget
+             and not MAIN_WINDOW.command_editor.result_widget.hasFocus()):
+        MAIN_WINDOW.command_editor.result_widget.setFocus()
+        MAIN_WINDOW.command_editor.result_widget.moveCursor(PyQt4.QtGui.QTextCursor.End)
+    elif(MAIN_WINDOW.command_editor.editor_widget
+             and not MAIN_WINDOW.command_editor.editor_widget.hasFocus()):
+        MAIN_WINDOW.command_editor.editor_widget.setFocus()
+    return None
+            
+
+def redefine_key(key_event, key_as_text):
+    if key_as_text == ('Ctrl+P', '\x10'):
+        return get_keyevent__from_key_as_text('Up', "")
+    elif key_as_text == ('Ctrl+N', '\x0e'):
+        return get_keyevent__from_key_as_text('Down', "")
+    else:
+        return False
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+
+            
+
+            
+APP_KEY_MAPS += [(('Ctrl+Alt+\xe1\x9f\x80\xed\xb0\xa3', ''),
+                  app_switch_command_widget_focus_key)]
+APP_KEY_MAPS += [(('Ctrl+Alt+\xe1\x9f\x80\xed\xb0\xa1', ''),
+                 app_switch_command_widget_focus_key)]
+
+APP_KEY_MAPS += [(('Ctrl+Tab', '\t'),
+                 command_switch_focus)]
+
+
+APP_KEY_MAPS += [
+                (('Ctrl+P', '\x10'),  redefine_key),
+                (('Ctrl+N', '\x0e'),  redefine_key),
+                ]
+

@@ -51,9 +51,9 @@ START_COMMANDS = """\
 from pprint import pprint
 
 import core.CommandEditor
-cw = core.CommandEditor.get_current_widget()
-mw = core.CommandEditor.get_main_window()
-app = core.CommandEditor.get_app()
+cw = CURRENT_WIDGET
+mw = MAIN_WINDOW
+app = APP
 
 from core.CommandEditorCommands import (h, clear, reset)
 h()
@@ -226,6 +226,7 @@ It will delete the result console"""
                         self._result_widget.appendPlainText("")
                 else:
                     self._result_widget.appendPlainText("... " + line)
+                self._result_widget.ensureCursorVisible()
 #==============================================================================
 #         if(partials and not self.previous_partial
 #                        and self._editor_widget.textCursor().atBlockStart()):
