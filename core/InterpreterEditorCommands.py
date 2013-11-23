@@ -17,7 +17,7 @@ if(__name__ == '__main__'):
     lib_path = os.path.abspath('..')
     sys.path.append(lib_path)
 
-import core.InterpreterCommands
+import core.InterpreterEditorCommands
 import core.InterpreterEditor
 
 
@@ -87,9 +87,9 @@ def h(thing="__empty__"):
 
     if thing == "__empty__":
         #print(__doc__)
-        print("\n\n\n\n" + core.CommandEditor.WELLCOME_MESSAGE)
+        print("\n\n\n\n" + core.InterpreterEditor.WELLCOME_MESSAGE)
         print(h.__doc__)
-        h(core.CommandEditorCommands)
+        h(core.InterpreterEditorCommands)
         #print("\n\nCURRENT_WIDGET..............................")
         #if core.CommandEditor.get_current_widget():
         #    h(core.CommandEditor.get_current_widget())
@@ -181,4 +181,4 @@ if(__name__ == '__main__'):
     print("\n\n***************************************")
     h()
     print("\n\n***************************************")
-    h(core.CommandEditorCommands)
+    h(core.InterpreterEditorCommands)

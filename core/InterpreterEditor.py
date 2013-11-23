@@ -55,7 +55,7 @@ cw = CURRENT_WIDGET
 mw = MAIN_WINDOW
 app = APP
 
-from core.InterpreterCommands import (h, clear, reset)
+from core.InterpreterEditorCommands import (h, clear, reset)
 h()
 
 """
@@ -176,9 +176,9 @@ It will delete the result console"""
 
     def __init__(self, parent=None):
         super(InterpreterEditor, self).__init__(parent)
-        import core.InterpreterCommands
-        core.InterpreterCommands.EVENT_COMMAND_CLEAR += self.clear
-        core.InterpreterCommands.EVENT_COMMAND_RESET += self.reset
+        import core.InterpreterEditorCommands
+        core.InterpreterEditorCommands.EVENT_COMMAND_CLEAR += self.clear
+        core.InterpreterEditorCommands.EVENT_COMMAND_RESET += self.reset
 
         self.setMinimumWidth(400)
         self.setMinimumHeight(100)

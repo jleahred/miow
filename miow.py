@@ -19,6 +19,7 @@ from  PyQt4.QtCore import (Qt,
 import core.InterpreterEditor
 from  core.InterpreterEditor import InterpreterEditor
 
+from core.CommandWindow import CommandWindow
 
 MAIN_WINDOW = None
 
@@ -57,21 +58,25 @@ class MainWindow(QWidget):
 
         # create widgets
         self._main_tab = QTabWidget(self)
-        self._command_editor = InterpreterEditor(self)
+        self._interpreter_editor = InterpreterEditor(self)
         self.v_splitter = QSplitter(Qt.Vertical, self)
         self.v_splitter.addWidget(self._main_tab)
-        self.v_splitter.addWidget(self._command_editor)
+        self.v_splitter.addWidget(self._interpreter_editor)
         layout = QVBoxLayout(self)
         layout.addWidget(self.v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
-        self._command_editor.setFocus()
+        self._interpreter_editor.setFocus()
         self._run_init_miows()
         self._auto_register_widgets()
+        
+        self.command_window = CommandWindow(self)
+        
+
 
     @property
-    def command_editor(self):
-        return self._command_editor
+    def interpreter_editor(self):
+        return self._interpreter_editor
 
     @property
     def main_tab(self):
@@ -102,7 +107,7 @@ self.new_widget_$widget = _new_widget(self)
             self.v_splitter.setSizes([total_size / 100 * 70,
                                       total_size / 100 * 30])
         widget.setFocus()
-        core.CommandEditor.CURRENT_WIDGET = widget
+        core.InterpreterEditor.CURRENT_WIDGET = widget
 
     @property
     def init_folders(self):
@@ -195,7 +200,7 @@ class MiowApplication(QApplication):
                     elif replace == False:
                         return super(MiowApplication, self).notify(receiver, event)
                     else:
-                        return super(MiowApplication, self).notify(receiver, replace)
+                        return self.notify(receiver, replace)
         
         return super(MiowApplication, self).notify(receiver, event)
 
