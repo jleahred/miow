@@ -16,8 +16,8 @@ import PyQt4.QtCore
 from  PyQt4.QtCore import (Qt,
                            QEvent)
 
-import core.CommandEditor
-from  core.CommandEditor import CommandEditor
+import core.InterpreterEditor
+from  core.InterpreterEditor import InterpreterEditor
 
 
 MAIN_WINDOW = None
@@ -57,7 +57,7 @@ class MainWindow(QWidget):
 
         # create widgets
         self._main_tab = QTabWidget(self)
-        self._command_editor = CommandEditor(self)
+        self._command_editor = InterpreterEditor(self)
         self.v_splitter = QSplitter(Qt.Vertical, self)
         self.v_splitter.addWidget(self._main_tab)
         self.v_splitter.addWidget(self._command_editor)
@@ -205,10 +205,10 @@ if __name__ == '__main__':
     def main():
         """execute miow"""
         app = MiowApplication([])
-        core.CommandEditor.APP = app
+        core.InterpreterEditor.APP = app
         global MAIN_WINDOW
         MAIN_WINDOW = MainWindow()
-        core.CommandEditor.MAIN_WINDOW = MAIN_WINDOW
+        core.InterpreterEditor.MAIN_WINDOW = MAIN_WINDOW
         MAIN_WINDOW.showMaximized()
         #mainw.add_widget(SimpleEdit, "test1")
         #mainw.add_widget(SimpleEdit, "test2")

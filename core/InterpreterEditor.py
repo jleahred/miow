@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Command editor component
+"""InterpreterEditor component
 
 TODO: control-enter to add new lines without sending command
 TODO: multiexecution with several selected lines
@@ -30,7 +30,7 @@ from Completion import WithCompletion
 #WidthLineEnterEvent
 from PyQt4.QtGui import (QTextCursor)
 
-# Interpreter
+# InterpreterEditor
 import code
 import sys
 from cStringIO import StringIO
@@ -50,18 +50,18 @@ APP = None
 START_COMMANDS = """\
 from pprint import pprint
 
-import core.CommandEditor
+import core.InterpreterEditor
 cw = CURRENT_WIDGET
 mw = MAIN_WINDOW
 app = APP
 
-from core.CommandEditorCommands import (h, clear, reset)
+from core.InterpreterCommands import (h, clear, reset)
 h()
 
 """
 
 WELLCOME_MESSAGE = """\
-Wellcome to myow... CommandEditor
+Wellcome to myow... InterpreterEditor
 =================================
 
     clear() to delete the result window
@@ -76,8 +76,8 @@ Wellcome to myow... CommandEditor
 """
 
 
-class CommandEditor(QWidget):
-    """Command editor component
+class InterpreterEditor(QWidget):
+    """InterpreterEditor component
     """
 
     class Interpreter():
@@ -129,11 +129,11 @@ class CommandEditor(QWidget):
                 tc.select(QTextCursor.BlockUnderCursor)
                 lines = ''.join(unicode(tc.selectedText()).splitlines())
                 if self.textCursor().atBlockEnd():
-                    super(CommandEditor.WidthLineEnterEvent,
+                    super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
                 self.on_lines_event(lines)
             else:
-                super(CommandEditor.WidthLineEnterEvent,
+                super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
 
     class WithInterpreterCompletion(QPlainTextEdit):
@@ -166,7 +166,7 @@ It will delete the result console"""
         self._result_widget.clear()
 
     def reset(self):
-        self.interpreter = CommandEditor.Interpreter()
+        self.interpreter = InterpreterEditor.Interpreter()
         self._editor_widget.event_wicompl_send_command_interpreter \
                                 += self.interpreter._process_commands
         self.clear()
@@ -175,20 +175,20 @@ It will delete the result console"""
         self._process_lines(START_COMMANDS)
 
     def __init__(self, parent=None):
-        super(CommandEditor, self).__init__(parent)
-        import core.CommandEditorCommands
-        core.CommandEditorCommands.EVENT_COMMAND_CLEAR += self.clear
-        core.CommandEditorCommands.EVENT_COMMAND_RESET += self.reset
+        super(InterpreterEditor, self).__init__(parent)
+        import core.InterpreterCommands
+        core.InterpreterCommands.EVENT_COMMAND_CLEAR += self.clear
+        core.InterpreterCommands.EVENT_COMMAND_RESET += self.reset
 
         self.setMinimumWidth(400)
         self.setMinimumHeight(100)
 
         # create widgets
         self._editor_widget = mixin(
-                               CommandEditor.WithInterpreterCompletion,
+                               InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
                                WithBasicIdentationManager,
-                               CommandEditor.WidthLineEnterEvent,
+                               InterpreterEditor.WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
@@ -207,7 +207,7 @@ It will delete the result console"""
         self.reset()
 
     def focusInEvent(self, focus_event):
-        super(CommandEditor, self).focusInEvent(focus_event)
+        super(InterpreterEditor, self).focusInEvent(focus_event)
         self._editor_widget.setFocus()
 
     def _process_lines(self, lines):
@@ -251,7 +251,7 @@ if(__name__ == '__main__'):
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = CommandEditor()
+        widget = InterpreterEditor()
         widget.show()
         app.exec_()
 

@@ -17,8 +17,8 @@ if(__name__ == '__main__'):
     lib_path = os.path.abspath('..')
     sys.path.append(lib_path)
 
-import core.CommandEditorCommands
-import core.CommandEditor
+import core.InterpreterCommands
+import core.InterpreterEditor
 
 
 from Event import Event
