@@ -1,3 +1,17 @@
+commandEditor
+  when enter, process all lines in a block
+  or working multiline with shift-enter
+
+
+
+
+
+
+
+
+
+
+
 repeat key F4 executing macro
 
 
