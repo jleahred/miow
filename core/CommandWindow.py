@@ -12,8 +12,10 @@ if(__name__ == '__main__'):
 
 
 from PyQt4 import QtCore
+from PyQt4.QtCore import (Qt,
+                          QEvent)
 from PyQt4.QtGui import (QWidget, QFrame, QVBoxLayout, QLineEdit, 
-                         QFont, QListWidget)
+                         QFont, QListWidget, QKeyEvent)
 
 
 
@@ -45,6 +47,10 @@ class CommandWindow(QFrame):
         layout.setMargin(0)
         self.setLayout(layout)
         self.line_edit.setFocus()
+        
+        self.line_edit.textChanged.connect(self.text_changed)
+        self.line_edit.editingFinished.connect(self.editing_finished)
+        
 
     def showEvent(self, event):
         geom = self.frameGeometry()
@@ -54,9 +60,23 @@ class CommandWindow(QFrame):
                                           self.parent.pos().y()+self.parent.height()/3))
             self.setGeometry(geom)
             self.command_list = self.parent.get_command_list()
-            for command, description in self.command_list:
-                self.list_widget.addItem(description)
+            for command, tags in self.command_list:
+                self.list_widget.addItem(command)
             super(QFrame, self).showEvent(event)
+
+    def keyPressEvent(self, event):
+        if event.type() == QEvent.KeyPress:
+            key_event = QKeyEvent(event)
+            if(key_event.key() == Qt.Key_Down
+              or key_event.key() == Qt.Key_Up):
+                return self.list_widget.keyPressEvent(event)
+        return super(CommandWindow, self).keyPressEvent(event)
+
+    def text_changed(self, text):
+        print text
+
+    def editing_finished(self):
+        print "edited"
 
 
 
@@ -76,7 +96,11 @@ if(__name__ == '__main__'):
             self.cw.show()
         
         def get_command_list(self):
-            return [("command", "description")]
+            return [("command", ""),
+                    ("do something", "great"),
+                    ("boring", ""),
+                    ("just", "an example"),
+                    ]
 
     def test_gui():
         """Isolated execution for testing"""
