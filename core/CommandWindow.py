@@ -52,7 +52,7 @@ class CommandWindow(QFrame):
         self.line_edit.textChanged.connect(self.on_text_changed)
         self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
 
-        self.on_selected_command = Event()
+        self.event_selected_command = Event()
 
 
     def showEvent(self, event):
@@ -75,19 +75,20 @@ class CommandWindow(QFrame):
               or key_event.key() == Qt.Key_Up):
                 return self.list_widget.keyPressEvent(event)
             elif event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return:
-                self.on_selected_command(str(self.list_widget.currentItem().text()))
+                self.event_selected_command(str(self.list_widget.currentItem().text()))
                 self.hide()
         return super(CommandWindow, self).keyPressEvent(event)
 
     def on_item_double_clicked(self, item):
         #return super(CommandWindow, self).itemDoubleClicked(item)
-        self.on_selected_command(str(self.list_widget.currentItem().text()))
+        self.event_selected_command(str(self.list_widget.currentItem().text()))
         self.hide()
 
 
 
     def filter_commands(self, text):
         self.list_widget.clear()
+        text = str(text).upper()
 
         def get_item_map_def0(_map, key):
             if(_map.has_key(key)):
@@ -97,23 +98,23 @@ class CommandWindow(QFrame):
 
         def get_command_matches(command_list, words):
             result_map = {}
-            for command, tags, _ in command_list:
+            for command, tags, _, _ in command_list:
                 for word in words:
-                    located_command_weight = -1
-                    located_tag_weight = -0.3
+                    located_command_weight = 1
+                    located_tag_weight = 0.3
                     if word == '':
                         located_command_weight = 0.
-                        located_tag_weight = -0.
-                    if command.find(word) != -1:
+                        located_tag_weight = 0.
+                    if command.upper().find(word) != -1:
                         result_map[command] = (get_item_map_def0(result_map,
                                                     command)
                                                     - located_command_weight)
                     for tag in tags:
-                        if tag.find(word) != -1:
+                        if tag.upper().find(word) != -1:
                             result_map[command] = (get_item_map_def0(result_map,
                                                     command)
                                                     - located_tag_weight)
-            for command, _, current_weight in command_list:
+            for command, _, current_weight, _ in command_list:
                 if result_map.has_key(command):
                     result_map[command] -= current_weight
             return sorted(result_map, key=result_map.get)
@@ -143,19 +144,20 @@ if(__name__ == '__main__'):
             self.setMinimumHeight(300)
             self.setGeometry(100, 100, 600, 300)
             self.cw = CommandWindow(self)
-            self.cw.on_selected_command += self.on_selected_command
+            self.cw.event_selected_command += self.on_selected_command
             self.button.clicked.connect(self.on_click)
         def on_click(self):
             self.cw.show()
 
-        def on_selected_command(self, text):
-            print text
+        def on_selected_command(self, command):
+            print command
 
         def get_command_list(self):
-            return [("command", "", 0.0),
-                    ("do something", "great", 0.01),
-                    ("boring", "", 0.0),
-                    ("just", "an example", 0.0),
+            return [("command", "", 0.0, ""),
+                    ("COMMAND", "", 0.0, ""),
+                    ("do something", "great", 0.01, ""),
+                    ("boring", "", 0.0, ""),
+                    ("just", "an example", 0.0, ""),
                     ]
 
     def test_gui():

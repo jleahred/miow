@@ -1,8 +1,16 @@
 INIT_FOLDERS += ['./widgets']
 
 REGISTERED_WIDGETS += [
-    {"module": "core.CommandEditor",
-     "widget": "CommandEditor"}
+    {"module": "core.InterpreterEditor",
+     "widget": "InterpreterEditor"}
     ]
 
 execfile("miow.keys")
+
+
+
+
+COMMAND_LIST += [
+        #("new interpreter editor", "", 0.0, 'self.new_widget_InterpreterEditor("")'),
+        ("close", "", 0.0, "MAIN_WINDOW.close()"),
+               ]

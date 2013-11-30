@@ -17,7 +17,6 @@ from  PyQt4.QtCore import (Qt,
                            QEvent)
 
 import core.InterpreterEditor
-from  core.InterpreterEditor import InterpreterEditor
 
 from core.CommandWindow import CommandWindow
 
@@ -29,6 +28,8 @@ INIT_FOLDERS = ['.']
 APP_KEY_MAPS = []
 
 REGISTERED_WIDGETS = []
+
+COMMAND_LIST = []
 
 KEY_START_RECORDING = ("F4", "")
 KEY_STOP_RECORDING = ("F5", "")
@@ -58,25 +59,28 @@ class MainWindow(QWidget):
 
         # create widgets
         self._main_tab = QTabWidget(self)
-        self._interpreter_editor = InterpreterEditor(self)
         self.v_splitter = QSplitter(Qt.Vertical, self)
         self.v_splitter.addWidget(self._main_tab)
-        self.v_splitter.addWidget(self._interpreter_editor)
         layout = QVBoxLayout(self)
         layout.addWidget(self.v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
-        self._interpreter_editor.setFocus()
         self._run_init_miows()
         self._auto_register_widgets()
         
         self.command_window = CommandWindow(self)
+        self.command_window.event_selected_command += self.cw_selected_command
         
 
+    def cw_selected_command(self, text):
+        for command_text, tags, weight, command in self.get_command_list():
+            if command_text == text:
+                exec(command)
+                return
 
-    @property
-    def interpreter_editor(self):
-        return self._interpreter_editor
+    def get_command_list(self):
+        return COMMAND_LIST
+
 
     @property
     def main_tab(self):
@@ -96,6 +100,14 @@ self.new_widget_$widget = _new_widget(self)
 """).substitute(module=reg_widget["module"], widget=reg_widget["widget"])
             exec(reg)
 
+            reg = Template("""\
+COMMAND_LIST += [
+        ("new $widget", "", 0.0, 'self.new_widget_$widget(" _ ")'),
+               ]
+""").substitute(module=reg_widget["module"], widget=reg_widget["widget"])
+            exec(reg)
+
+            
     def _add_widget(self, widget_class, label="???"):
         """Add any kind of widget"""
         widget = widget_class(self.main_tab)

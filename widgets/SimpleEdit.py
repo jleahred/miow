@@ -39,6 +39,7 @@ class SimpleEdit(
         super(WithLineNumbers, self).__init__(parent)
         super(WithHighlight, self).__init__(parent)
         super(WithFixedFont, self).__init__(parent)
+        super(SimpleEdit, self).__init__(parent)
 
 
 if(__name__ == '__main__'):
