@@ -59,6 +59,8 @@ class MainWindow(QWidget):
 
         # create widgets
         self._main_tab = QTabWidget(self)
+        #self._main_tab.setTabsClosable(True)
+        self._main_tab.setMovable(True)
         self.v_splitter = QSplitter(Qt.Vertical, self)
         self.v_splitter.addWidget(self._main_tab)
         layout = QVBoxLayout(self)

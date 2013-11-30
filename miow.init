@@ -12,5 +12,6 @@ execfile("miow.keys")
 
 COMMAND_LIST += [
         #("new interpreter editor", "", 0.0, 'self.new_widget_InterpreterEditor("")'),
-        ("close", "", 0.0, "MAIN_WINDOW.close()"),
+        ("close application", "", 0.0, "MAIN_WINDOW.close()"),
+        ("close current widget", "", 0.0, "MAIN_WINDOW._main_tab.removeTab(MAIN_WINDOW._main_tab.currentIndex())"),
                ]

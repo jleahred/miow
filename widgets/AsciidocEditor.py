@@ -30,12 +30,12 @@ from  core.MqEdit import (WithHighlight,
 from core.Completion import (WithWordCompletion)
 
 
-class RestEditor(QWidget):
-    """RestructedText Editor
+class AsciidocEditor(QWidget):
+    """Asciidoc editor
     """
 
     def __init__(self, parent=None):
-        super(RestEditor, self).__init__(parent)
+        super(AsciidocEditor, self).__init__(parent)
 
         self.setMinimumWidth(300)
         self.setMinimumHeight(300)
@@ -60,7 +60,7 @@ class RestEditor(QWidget):
         self.setLayout(layout)
 
     def focusInEvent(self, focus_event):
-        super(RestEditor, self).focusInEvent(focus_event)
+        super(AsciidocEditor, self).focusInEvent(focus_event)
         self.editor.setFocus()
 
 
@@ -70,7 +70,7 @@ if(__name__ == '__main__'):
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = RestEditor()
+        widget = AsciidocEditor()
         widget.show()
         app.exec_()
     test()
