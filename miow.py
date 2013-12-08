@@ -5,6 +5,8 @@
 import os
 from string import Template
 
+from copy  import copy
+
 from  PyQt4.QtGui import(QApplication,
                          QWidget,
                          QSplitter,
@@ -19,6 +21,8 @@ from  PyQt4.QtCore import (Qt,
 import core.InterpreterEditor
 
 from core.CommandWindow import CommandWindow
+
+
 
 MAIN_WINDOW = None
 
@@ -69,10 +73,10 @@ class MainWindow(QWidget):
         self.setLayout(layout)
         self._run_init_miows()
         self._auto_register_widgets()
-        
+
         self.command_window = CommandWindow(self)
         self.command_window.event_selected_command += self.cw_selected_command
-        
+
 
     def cw_selected_command(self, text):
         for command_text, tags, weight, command in self.get_command_list():
@@ -80,8 +84,14 @@ class MainWindow(QWidget):
                 exec(command)
                 return
 
+    def get_current_widget(self):
+        return self.main_tab.currentWidget()
+
     def get_command_list(self):
-        return COMMAND_LIST
+        command_list = copy(COMMAND_LIST)
+        if self.get_current_widget():
+            self.get_current_widget().add_command_list(command_list)
+        return command_list
 
 
     @property
@@ -109,11 +119,12 @@ COMMAND_LIST += [
 """).substitute(module=reg_widget["module"], widget=reg_widget["widget"])
             exec(reg)
 
-            
+
     def _add_widget(self, widget_class, label="???"):
         """Add any kind of widget"""
         widget = widget_class(self.main_tab)
         self.main_tab.addTab(widget, label)
+        self.main_tab.setCurrentIndex(self.main_tab.count()-1)
         if self.main_tab.count() == 1:
             #self.v_splitter.setStretchFactor(0, 10)
             #self.v_splitter.setStretchFactor(1, 3)
@@ -215,7 +226,7 @@ class MiowApplication(QApplication):
                         return super(MiowApplication, self).notify(receiver, event)
                     else:
                         return self.notify(receiver, replace)
-        
+
         return super(MiowApplication, self).notify(receiver, event)
 
 
