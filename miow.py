@@ -218,7 +218,7 @@ class MiowApplication(QApplication):
 #             super(MiowApplication, self).notify(receiver, ker)
 #==============================================================================
             for key_as_text, method in self.keys_map:
-                if key_as_text == (str(key_text), str(text)):
+                if key_as_text == (unicode(key_text), str(text)):
                     replace = method(key_event, key_as_text)
                     if replace == None:
                         return True

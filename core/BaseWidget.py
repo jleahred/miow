@@ -6,7 +6,7 @@ Created on Sun Dec  8 22:27:50 2013
 """
 
 class BaseWidget():
-    def add_command_list(self):
+    def add_command_list(self, command_list):
         pass
     
     # property file_name
