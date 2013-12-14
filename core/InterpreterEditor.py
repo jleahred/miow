@@ -24,7 +24,7 @@ from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
 
-from Completion import WithCompletion
+from Completion import WithCompletion, WithWordCompletion
 
 
 #WidthLineEnterEvent
@@ -158,7 +158,9 @@ Mixin to add interpreter word completion to WithCompletion
             for completion in script.completions():
                 completion_list.append(completion.name)
 
-            return completion_list
+            return (super(InterpreterEditor.WithInterpreterCompletion, self)
+                        .get_text_completion_list()
+                     + completion_list)
 
     def clear(self):
         """\
@@ -186,6 +188,7 @@ It will delete the result console"""
         # create widgets
         self._editor_widget = mixin(
                                InterpreterEditor.WithInterpreterCompletion,
+                               WithWordCompletion,
                                WithCompletion,
                                WithBasicIdentationManager,
                                InterpreterEditor.WidthLineEnterEvent,
