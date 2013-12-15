@@ -1,8 +1,16 @@
 INIT_FOLDERS += ['./widgets']
 
 REGISTERED_WIDGETS += [
-    {"module": "core.InterpreterEditor",
-     "widget": "InterpreterEditor"}
+    {   "module":  "core.InterpreterEditor",
+        "widget":  "InterpreterEditor",
+        "command": "new python local interpreter",
+        "params":  {"global": False}
+    },
+    {   "module":  "core.InterpreterEditor",
+        "widget":  "InterpreterEditor",
+        "command": "new python global interpreter",
+        "params":  {"global": True}
+    },
     ]
 
 execfile("miow.keys")

@@ -20,9 +20,10 @@ from  core.MqEdit import (WithHighlight,
 
 from core.Completion import (WithCompletion,
                              WithWordCompletion)
+from core.BaseWidget import BaseWidget
 
 
-class SimpleEdit(
+class SimpleEdit(BaseWidget,
                  WithFixedFont,
                  WithHighlight,
                  WithLineNumbers,
@@ -32,7 +33,7 @@ class SimpleEdit(
     """SimpleEdit to test
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, params, parent=None):
         super(QPlainTextEdit, self).__init__(parent)
         super(WithCompletion, self).__init__(parent)
         super(WithWordCompletion, self).__init__(parent)
@@ -48,7 +49,7 @@ if(__name__ == '__main__'):
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = SimpleEdit()
+        widget = SimpleEdit(None)
 
         widget.show()
         app.exec_()

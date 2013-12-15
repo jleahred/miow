@@ -22,13 +22,14 @@ from  core.MqEdit import (WithHighlight,
                           WithLineNumbers)
 
 from core.Completion import (WithCompletion, WithWordCompletion)
+from core.BaseWidget import BaseWidget
 
 
-class SimpleEdit2(QWidget):
+class SimpleEdit2(BaseWidget, QWidget):
     """SimpleEdit2 to test
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, params, parent=None):
         super(SimpleEdit2, self).__init__(parent)
 
         self.setMinimumWidth(100)
@@ -58,7 +59,7 @@ if(__name__ == '__main__'):
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = SimpleEdit2()
+        widget = SimpleEdit2(None)
         widget.show()
         app.exec_()
     test()

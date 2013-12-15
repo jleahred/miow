@@ -1,8 +1,20 @@
 REGISTERED_WIDGETS += [
-    {"module": "widgets.SimpleEdit",
-     "widget": "SimpleEdit"},
-    {"module": "widgets.SimpleEdit2",
-     "widget": "SimpleEdit2"},
-    {"module": "widgets.AsciidocEditor",
-     "widget": "AsciidocEditor"},
-    ]
+    {
+        "module": "widgets.SimpleEdit",
+        "widget": "SimpleEdit",
+        "command": "new simple edit widget",
+        "params":  None
+    },
+    {
+        "module": "widgets.SimpleEdit2",
+        "widget": "SimpleEdit2",
+        "command": "new simple edit widget test 2",
+        "params":  None
+    },
+    {
+        "module": "widgets.AsciidocEditor",
+        "widget": "AsciidocEditor",
+        "command": "new asciidoc editor",
+        "params":  None
+    },
+]

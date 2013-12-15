@@ -44,7 +44,7 @@ class AsciidocEditor(BaseWidget, QWidget):
     """Asciidoc editor
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, params, parent=None):
         super(AsciidocEditor, self).__init__(parent)
 
         self.setMinimumWidth(300)
@@ -138,7 +138,7 @@ if(__name__ == '__main__'):
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = AsciidocEditor()
+        widget = AsciidocEditor(None)
         widget.editor.setPlainText("""\
 = Header
  * Testing

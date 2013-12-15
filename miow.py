@@ -101,29 +101,34 @@ class MainWindow(QWidget):
     def _auto_register_widgets(self):
         for reg_widget in REGISTERED_WIDGETS:
             reg = Template("""\
-def _new_widget(self):
+def _new_widget(self, params):
     _self = self
-    def __new_widget(caption):
+    def __new_widget(params):
         from $module import $widget
-        _self._add_widget($widget, caption)
+        _self._add_widget($widget, params)
     return __new_widget
 
-self.new_widget_$widget = _new_widget(self)
-""").substitute(module=reg_widget["module"], widget=reg_widget["widget"])
+self.new_widget_$widget = _new_widget(self, $params)
+""").substitute(module=reg_widget["module"],
+                widget=reg_widget["widget"],
+                params=reg_widget ["params"])
             exec(reg)
 
             reg = Template("""\
 COMMAND_LIST += [
-        ("new $widget", "", 0.0, 'self.new_widget_$widget(" _ ")'),
+        ("$command", "", 0.0, "self.new_widget_$widget($params)"),
                ]
-""").substitute(module=reg_widget["module"], widget=reg_widget["widget"])
+""").substitute(module=reg_widget ["module"],
+                widget=reg_widget ["widget"],
+                command=reg_widget["command"],
+                params=reg_widget ["params"])
             exec(reg)
 
 
-    def _add_widget(self, widget_class, label="???"):
+    def _add_widget(self, widget_class, params):
         """Add any kind of widget"""
-        widget = widget_class(self.main_tab)
-        self.main_tab.addTab(widget, label)
+        widget = widget_class(params, self.main_tab)
+        self.main_tab.addTab(widget, "?")
         self.main_tab.setCurrentIndex(self.main_tab.count()-1)
         if self.main_tab.count() == 1:
             #self.v_splitter.setStretchFactor(0, 10)

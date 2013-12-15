@@ -44,9 +44,11 @@ def h(thing="__empty__"):
 
     Interesting help commands
         h()
-        h(CURRENT_WIDGET)
-        h(MAIN_WINDOW)
-        h(APP)
+        h(CURRENT_WIDGET)*
+        h(MAIN_WINDOW)*
+        h(APP)*
+
+    * Only on global mode
 
 
     NOTE: To get information with h(thing) you have to import the

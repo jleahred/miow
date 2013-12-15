@@ -49,7 +49,7 @@ CURRENT_WIDGET = None
 APP = None
 
 
-START_COMMANDS = """\
+START_COMMANDS_GLOBAL = """\
 from pprint import pprint
 
 import core.InterpreterEditor
@@ -62,6 +62,32 @@ h()
 
 """
 
+START_COMMANDS_LOCAL = """\
+from pprint import pprint
+
+import core.InterpreterEditor
+
+from core.InterpreterEditorCommands import (h, clear, reset)
+h()
+
+"""
+
+
+START_COMMANDS_GLOBAL = """\
+from pprint import pprint
+
+import core.InterpreterEditor
+cw = CURRENT_WIDGET
+mw = MAIN_WINDOW
+app = APP
+
+from core.InterpreterEditorCommands import (h, clear, reset)
+h()
+
+"""
+
+
+
 WELLCOME_MESSAGE = """\
 Wellcome to myow... InterpreterEditor
 =================================
@@ -70,15 +96,24 @@ Wellcome to myow... InterpreterEditor
     reset() to restart the interpreter
 
 
-    CURRENT_WIDGET  is the working widget on miow
-    MAIN_WINDOW     is the miow window
-    APP             is the application
-
-
     [enter]         to send a command (current "block")
     [ctrl+enter]    to create a new block
     [shift+enter]   to insert new line in same block
+
+
+
+    only on global configuration
+    --------------------------------
+    CURRENT_WIDGET  is the working widget on miow
+    MAIN_WINDOW     is the miow window
+    APP             is the application
+    --------------------------------
+
+
 """
+
+
+
 
 
 class InterpreterEditor(BaseWidget, QWidget):
@@ -86,8 +121,11 @@ class InterpreterEditor(BaseWidget, QWidget):
     """
 
     class Interpreter():
-        def __init__(self):
-            self.ii = code.InteractiveConsole(globals())
+        def __init__(self, is_gobal):
+            if is_gobal:
+                self.ii = code.InteractiveConsole(globals())
+            else:
+                self.ii = code.InteractiveConsole(locals())
 
         def _process_commands(self, commands):
             def process_command(self, command):
@@ -180,16 +218,23 @@ It will delete the result console"""
         self._result_widget.clear()
 
     def reset(self):
-        self.interpreter = InterpreterEditor.Interpreter()
+        self.interpreter = InterpreterEditor.Interpreter(self.is_global)
         self._editor_widget.event_wicompl_send_command_interpreter \
                                 += self.interpreter._process_commands
         self.clear()
         #self._result_widget.appendPlainText(WELLCOME_MESSAGE)
         self.previous_partial = False
-        self._process_lines(START_COMMANDS)
+        if self.is_global:
+            self._process_lines(START_COMMANDS_GLOBAL)
+        else:
+            self._process_lines(START_COMMANDS_LOCAL)
 
-    def __init__(self, parent=None):
+    def __init__(self, params, parent=None):
         super(InterpreterEditor, self).__init__(parent)
+
+        self.is_global = False
+        if not params is None:
+            self.is_global = params["global"]
         import core.InterpreterEditorCommands
         core.InterpreterEditorCommands.EVENT_COMMAND_CLEAR += self.clear
         core.InterpreterEditorCommands.EVENT_COMMAND_RESET += self.reset
@@ -199,10 +244,10 @@ It will delete the result console"""
 
         # create widgets
         self._editor_widget = mixin(
-                               InterpreterEditor.WidthLineEnterEvent,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithWordCompletion,
                                WithCompletion,
+                               InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,
                                WithHighlight,
                                WithFixedFont,
@@ -261,13 +306,14 @@ It will delete the result console"""
         return self._result_widget
 
 if(__name__ == '__main__'):
-    def test_gui():
+    def test_gui(params):
         """Isolated execution for testing"""
         from PyQt4.QtGui import QApplication
 
         app = QApplication([])
-        widget = InterpreterEditor()
+        widget = InterpreterEditor(params)
         widget.show()
         app.exec_()
 
-    test_gui()
+    test_gui({"global": True})
+    test_gui({"global": False})
