@@ -75,6 +75,9 @@ Wellcome to myow... InterpreterEditor
     APP             is the application
 
 
+    [enter]         to send a command (current "block")
+    [ctrl+enter]    to create a new block
+    [shift+enter]   to insert new line in same block
 """
 
 
@@ -138,6 +141,9 @@ class InterpreterEditor(BaseWidget, QWidget):
                     super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
                 self.on_lines_event(lines)
+            elif((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
+                    and (event.modifiers() == Qt.ControlModifier)):
+                self.textCursor().insertBlock()
             else:
                 super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
