@@ -133,7 +133,7 @@ class InterpreterEditor(BaseWidget, QWidget):
                                 or event.modifiers() == Qt.KeypadModifier)):
                 tc = self.textCursor()
                 tc.select(QTextCursor.BlockUnderCursor)
-                lines = ''.join(unicode(tc.selectedText()).splitlines())
+                lines = ''.join(unicode(tc.selectedText()).splitlines(True))
                 if self.textCursor().atBlockEnd():
                     super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
