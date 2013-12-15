@@ -24,6 +24,8 @@ from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
 
+from BaseWidget import BaseWidget
+
 from Completion import WithCompletion, WithWordCompletion
 
 
@@ -76,7 +78,7 @@ Wellcome to myow... InterpreterEditor
 """
 
 
-class InterpreterEditor(QWidget):
+class InterpreterEditor(BaseWidget, QWidget):
     """InterpreterEditor component
     """
 
@@ -116,7 +118,11 @@ class InterpreterEditor(QWidget):
             return results, partial
 
     class WidthLineEnterEvent(QPlainTextEdit):
-        """Mixin to add LineEnterEvent to QPlainTextEdit"""
+        """Mixin to add LineEnterEvent to QPlainTextEdit
+           This method can cancel event propagation.
+           Therefore, would be interesting have it at first position on
+           mixing string
+        """
 
         def __init__(self, *args):
             self.on_lines_event = Event()
@@ -187,11 +193,11 @@ It will delete the result console"""
 
         # create widgets
         self._editor_widget = mixin(
+                               InterpreterEditor.WidthLineEnterEvent,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithWordCompletion,
                                WithCompletion,
                                WithBasicIdentationManager,
-                               InterpreterEditor.WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
