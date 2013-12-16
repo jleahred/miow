@@ -174,13 +174,19 @@ class InterpreterEditor(BaseWidget, QWidget):
                     and (not event.modifiers()
                                 or event.modifiers() == Qt.KeypadModifier)):
                 tc = self.textCursor()
-                tc.select(QTextCursor.BlockUnderCursor)
-                if (len(tc.selectedText())>1 and  
+                cancel_key = False
+                if len(tc.selectedText())==0:
+                    tc.select(QTextCursor.BlockUnderCursor)
+                else:
+                    cancel_key = True
+
+                if (len(tc.selectedText())>1 and
                             ord(unicode(tc.selectedText()[0])) == 8233):
                     lines = ''.join(unicode(tc.selectedText()[1:]).splitlines(True))
                 else:
                     lines = ''.join(unicode(tc.selectedText()).splitlines(True))
-                if(self.textCursor().atBlockEnd()  and  len(lines)>1):
+                if(not cancel_key and self.textCursor().atBlockEnd()
+                                                and  len(lines)>1):
                     super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
                 self.on_lines_event(lines)

@@ -1,6 +1,6 @@
 python interpreter
-* Extra line in console output
-* On enter, process selected text
+** Extra line in console output
+** On enter, process selected text
 * On enter, go to next block
 * Configure path to add files on command window
 * Save status
