@@ -269,7 +269,7 @@ Adding new lines with RETURN key, will keep previous line identation
 
     def delete_back(self, event):
         #  if spaces till previous tab point, remove all of them
-        if self.textCursor().selectedText() != "":
+        if unicode(self.textCursor().selectedText()) != "":
             self.textCursor().removeSelectedText()
         elif self.textCursor().atBlockStart():
             super(WithBasicIdentationManager, self).keyPressEvent(event)
@@ -280,7 +280,7 @@ Adding new lines with RETURN key, will keep previous line identation
                 dist_prev_tab = 4
             cursor.setPosition(cursor.position() - dist_prev_tab,
                                        QTextCursor.KeepAnchor)
-            if str(cursor.selectedText()).strip() == "":
+            if unicode(cursor.selectedText()).strip() == "":
                 cursor.removeSelectedText()
             else:
                 super(WithBasicIdentationManager, self).keyPressEvent(event)

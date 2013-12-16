@@ -24,9 +24,10 @@ from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
 
+from Completion import WithCompletion, WithWordCompletion
+
 from BaseWidget import BaseWidget
 
-from Completion import WithCompletion, WithWordCompletion
 
 
 #WidthLineEnterEvent
@@ -174,8 +175,12 @@ class InterpreterEditor(BaseWidget, QWidget):
                                 or event.modifiers() == Qt.KeypadModifier)):
                 tc = self.textCursor()
                 tc.select(QTextCursor.BlockUnderCursor)
-                lines = ''.join(unicode(tc.selectedText()).splitlines(True))
-                if self.textCursor().atBlockEnd():
+                if (len(tc.selectedText())>1 and  
+                            ord(unicode(tc.selectedText()[0])) == 8233):
+                    lines = ''.join(unicode(tc.selectedText()[1:]).splitlines(True))
+                else:
+                    lines = ''.join(unicode(tc.selectedText()).splitlines(True))
+                if(self.textCursor().atBlockEnd()  and  len(lines)>1):
                     super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
                 self.on_lines_event(lines)
@@ -278,14 +283,14 @@ It will delete the result console"""
                 if not partials or not self.previous_partial:
                     self._result_widget.appendPlainText(
                                  "__________________________________________")
-                    self._result_widget.appendPlainText(">>> " + line)
+                    self._result_widget.appendPlainText(">>> " + unicode(line))
                     for lines in results:
                         for line in lines.splitlines():
                             self._result_widget.appendPlainText(unicode(line))
                     if not partials:
                         self._result_widget.appendPlainText("")
                 else:
-                    self._result_widget.appendPlainText("... " + line)
+                    self._result_widget.appendPlainText("... " + unicode(line))
                 self._result_widget.ensureCursorVisible()
 #==============================================================================
 #         if(partials and not self.previous_partial

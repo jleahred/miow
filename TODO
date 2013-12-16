@@ -1,3 +1,31 @@
+python interpreter
+* Extra line in console output
+* On enter, process selected text
+* On enter, go to next block
+* Configure path to add files on command window
+* Save status
+* Avoid duplicates in code completion
+* syntax highlight
+* if code completion is visible, esc will hide it and nothing else
+
+
+miow.widget
+* Save status file
+* 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 commandEditor
   when enter, process all lines in a block
   or working multiline with shift-enter
