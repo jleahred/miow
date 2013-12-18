@@ -14,11 +14,12 @@ from PyQt4.QtCore import Qt, QString, QRegExp
 from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
                          QCompleter, QStringListModel,
                          QKeySequence,
-                         QApplication, QCursor)
+                         QApplication, QCursor,
+                         QFont)
 import re
 
 
-WORD_SYMBOLS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_'
+WORD_SYMBOLS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
 
 class WithCompletion(QPlainTextEdit):
     """\
@@ -34,12 +35,14 @@ If you press Ctrl-Space, the proposal will choose the first one as default
 Specific mixings will have to implement the get_text_completion_list method
 """
 
+
     def get_text_completion_list(self):
         pass
 
     def __init__(self, *args):
         self.model_completer = QStringListModel()
         self.completer = QCompleter(self)
+        self.completer.popup().setFont(QFont("Monospace", 11))
         #self.completer.setModelSorting(QCompleter.CaseInsensitivelySortedModel
         self.completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.completer.setWrapAround(False)
@@ -96,6 +99,7 @@ Specific mixings will have to implement the get_text_completion_list method
         QApplication.restoreOverrideCursor()
 
         if not completion_words or len(completion_words) < 1:
+            self.completer.popup().hide()
             return
 
         self.model_completer.setStringList(completion_words)

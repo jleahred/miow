@@ -1,13 +1,13 @@
 python interpreter
 * global and local with codecompletion (missing in local)
-** Extra line in console output
-** On enter, process selected text
-** On enter, go to next block
 * Configure path to add files on command window
 * Save status
 * Avoid duplicates in code completion
 * syntax highlight
-* if code completion is visible, esc will hide it and nothing else
+** if code completion is visible, esc will hide it and nothing else
+** Extra line in console output
+** On enter, process selected text
+** On enter, go to next block
 
 
 miow.widget
