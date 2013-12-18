@@ -18,6 +18,8 @@ from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
 import re
 
 
+WORD_SYMBOLS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_'
+
 class WithCompletion(QPlainTextEdit):
     """\
 Mixin to add base completion funtionallity to QPlainTextEdit
@@ -108,17 +110,37 @@ Specific mixings will have to implement the get_text_completion_list method
                             self.completer.completionModel().index(0, 0))
 
     def text_under_cursor(self):
-        tc = self.textCursor()
-        tc.select(QTextCursor.WordUnderCursor)
-        return tc.selectedText()
+        result = ""
+        for i in range(self.current_pos_init_of_word(), self.current_pos_end_of_word()):
+            result = result + unicode(self.document().characterAt(i))
+        return QString(result)
+
+    def current_pos_init_of_word(self):
+        pos = self.textCursor().position()-1
+        while True:
+            char = self.document().characterAt(pos)
+            if not unicode(char)[0] in WORD_SYMBOLS:
+            #if char=='\n' or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None  or pos==0:
+                break
+            pos = pos - 1
+        return pos+1
+
+    def current_pos_end_of_word(self):
+        pos = self.textCursor().position()
+        while True:
+            char = self.document().characterAt(pos)
+            if not unicode(char)[0] in WORD_SYMBOLS:
+            #if char.isSpace() or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None:
+                break
+            pos = pos + 1
+        return pos
 
     def insert_completion(self, completion_text):
         if (self.completer.widget() != self):
             return
         tc = self.textCursor()
-        tc.movePosition(QTextCursor.EndOfWord)
-        tc.movePosition(QTextCursor.Left, QTextCursor.KeepAnchor,
-                        self.text_under_cursor().length())
+        tc.movePosition(QTextCursor.Left, QTextCursor.MoveAnchor, self.textCursor().position()-self.current_pos_init_of_word())
+        tc.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, self.current_pos_end_of_word()-self.current_pos_init_of_word())
         tc.removeSelectedText()
         tc.insertText(completion_text)
         self.setTextCursor(tc)
