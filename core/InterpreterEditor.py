@@ -289,6 +289,9 @@ It will delete the result console"""
         self.setLayout(layout)
         self.reset()
 
+    def lock_command_window(self):
+        return self.editor_widget.completer.popup().isVisible()
+
     def focusInEvent(self, focus_event):
         super(InterpreterEditor, self).focusInEvent(focus_event)
         self._editor_widget.setFocus()

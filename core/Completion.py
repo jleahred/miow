@@ -19,7 +19,7 @@ from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
 import re
 
 
-WORD_SYMBOLS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
+WORD_SYMBOLS = u'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
 
 class WithCompletion(QPlainTextEdit):
     """\

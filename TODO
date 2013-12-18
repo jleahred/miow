@@ -1,5 +1,6 @@
 python interpreter
 * global and local with codecompletion (missing in local)
+
 * Configure path to add files on command window
 * Save status
 * Avoid duplicates in code completion

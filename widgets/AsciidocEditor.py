@@ -104,6 +104,9 @@ class AsciidocEditor(BaseWidget, QWidget):
         self.proc_compile.start(command)
 
 
+    def lock_command_window(self):
+        return self.editor.completer.popup().isVisible()
+
     def focusInEvent(self, focus_event):
         super(AsciidocEditor, self).focusInEvent(focus_event)
         self.editor.setFocus()
