@@ -272,8 +272,8 @@ It will delete the result console"""
 
         # create widgets
         self._editor_widget = mixin(
-                               InterpreterEditor.WithInterpreterCompletion,
                                WithWordCompletion,
+                               InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
                                InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,

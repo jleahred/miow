@@ -37,7 +37,7 @@ Specific mixings will have to implement the get_text_completion_list method
 
 
     def get_text_completion_list(self):
-        pass
+        return []
 
     def __init__(self, *args):
         self.model_completer = QStringListModel()
@@ -185,7 +185,9 @@ It will propose completion with words from current file
             elif(word != word_till_cursor  and
                     word.toUpper().indexOf(word_till_cursor.toUpper()) > 0):
                 completion_list_not_start_with.append(word)
-        return completion_list + completion_list_not_start_with
+        return (super(WithWordCompletion, self).get_text_completion_list()
+                     + completion_list + completion_list_not_start_with)
+
 
 
 if(__name__ == '__main__'):

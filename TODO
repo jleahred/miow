@@ -4,6 +4,8 @@ python interpreter
 * Configure path to add files on command window
 * Avoid duplicates in code completion
 * syntax highlight
+* find
+* replace
 
 ** if code completion is visible, esc will hide it and nothing else
 ** Extra line in console output
