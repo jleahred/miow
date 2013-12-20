@@ -259,6 +259,7 @@ It will delete the result console"""
     def __init__(self, params, parent=None):
         super(InterpreterEditor, self).__init__(parent)
 
+        self.file_name=None
         self.is_global = False
         if not params is None:
             self.is_global = params["global"]
@@ -338,10 +339,11 @@ It will delete the result console"""
             process_line(line)
 
     def bw_add_command_list(self, command_list):
-        command_list += [
-                ("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
-                ("save file",    "", 0.5, "self.get_current_widget().command_save_file()"),
-               ]
+        if self.file_name:
+            command_list += [
+                    #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
+                    ("save file",    "", 0.5, "self.get_current_widget().command_save_file()"),
+                   ]
 
 
     def command_load_file(self, file_name):

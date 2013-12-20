@@ -1,0 +1,8 @@
+
+COMMAND_LIST += [
+        ("load examples/pyinterpreter.ipy",    "", 0.0, 
+        """
+from core.InterpreterEditor import InterpreterEditor
+widget = MAIN_WINDOW._add_widget(InterpreterEditor, {"global":False, "file":'examples/pyinterpreter.ipy'})
+"""),
+        ]
