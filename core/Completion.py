@@ -78,8 +78,8 @@ Specific mixings will have to implement the get_text_completion_list method
             pass
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
-            text_under_cursor = self.text_under_cursor()
-            if((text_under_cursor.size() > 2) and
+            word_till_cursor = self.word_till_cursor()
+            if((word_till_cursor.size() > 2) and
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
                     or  self.completer.popup().isVisible())):
@@ -113,9 +113,15 @@ Specific mixings will have to implement the get_text_completion_list method
             self.completer.popup().setCurrentIndex(
                             self.completer.completionModel().index(0, 0))
 
-    def text_under_cursor(self):
+    def word_under_cursor(self):
         result = ""
         for i in range(self.current_pos_init_of_word(), self.current_pos_end_of_word()):
+            result = result + unichr(self.document().characterAt(i).unicode())
+        return QString(result)
+
+    def word_till_cursor(self):
+        result = ""
+        for i in range(self.current_pos_init_of_word(), self.textCursor().position()):
             result = result + unichr(self.document().characterAt(i).unicode())
         return QString(result)
 
@@ -143,8 +149,10 @@ Specific mixings will have to implement the get_text_completion_list method
         if (self.completer.widget() != self):
             return
         tc = self.textCursor()
+        till_pos = tc.position()
         tc.movePosition(QTextCursor.Left, QTextCursor.MoveAnchor, self.textCursor().position()-self.current_pos_init_of_word())
-        tc.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, self.current_pos_end_of_word()-self.current_pos_init_of_word())
+        #tc.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, self.current_pos_end_of_word()-self.current_pos_init_of_word())
+        tc.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, till_pos - self.current_pos_init_of_word())
         tc.removeSelectedText()
         tc.insertText(completion_text)
         self.setTextCursor(tc)
@@ -162,18 +170,19 @@ It will propose completion with words from current file
     def get_text_completion_list(self):
         words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
                                  QString.SkipEmptyParts)
-        text_under_cursor = self.text_under_cursor()
+        word_till_cursor = self.word_till_cursor()
+        word_under_cursor = self.word_under_cursor()
         words.removeDuplicates()
         words.sort()
         completion_list = []
         completion_list_not_start_with = []
-        for str in words:
-            if(str != text_under_cursor  and
-                    str.toUpper().indexOf(text_under_cursor.toUpper()) == 0):
-                completion_list.append(str)
-            elif(str != text_under_cursor  and
-                    str.toUpper().indexOf(text_under_cursor.toUpper()) > 0):
-                completion_list_not_start_with.append(str)
+        for word in words:
+            if(word != word_till_cursor  and  word != word_under_cursor  and
+                    word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
+                completion_list.append(word)
+            elif(word != word_till_cursor  and
+                    word.toUpper().indexOf(word_till_cursor.toUpper()) > 0):
+                completion_list_not_start_with.append(word)
         return completion_list + completion_list_not_start_with
 
 
