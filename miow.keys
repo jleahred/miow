@@ -31,7 +31,7 @@ def redefine_key(key_event, key_as_text):
             
 def  show_command_window(key_event, key_as_text):
     if MAIN_WINDOW.get_current_widget():
-        if not MAIN_WINDOW.get_current_widget().lock_command_window():
+        if not MAIN_WINDOW.get_current_widget().bw_lock_command_window():
             MAIN_WINDOW.command_window.setVisible(not MAIN_WINDOW.command_window.isVisible())
     else:
             MAIN_WINDOW.command_window.setVisible(not MAIN_WINDOW.command_window.isVisible())

@@ -303,7 +303,7 @@ It will delete the result console"""
     def get_namespace(self):
         return self.namespace
 
-    def lock_command_window(self):
+    def bw_lock_command_window(self):
         return self.editor_widget.completer.popup().isVisible()
 
     def focusInEvent(self, focus_event):

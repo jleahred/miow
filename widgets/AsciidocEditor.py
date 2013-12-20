@@ -84,7 +84,7 @@ class AsciidocEditor(BaseWidget, QWidget):
         self.proc_compile.readyReadStandardError.connect(self.proc_compile_readyReadStandardError)
 
 
-    def add_command_list(self, command_list):
+    def bw_add_command_list(self, command_list):
         command_list += [
                 ("generate preview asciidoc",    "", 0.0, "self.get_current_widget().command_generate_preview('asciidoc')"),
                 ("generate preview asciidoctor", "", 0.0, "self.get_current_widget().command_generate_preview('asciidoctor')"),
@@ -104,7 +104,7 @@ class AsciidocEditor(BaseWidget, QWidget):
         self.proc_compile.start(command)
 
 
-    def lock_command_window(self):
+    def bw_lock_command_window(self):
         return self.editor.completer.popup().isVisible()
 
     def focusInEvent(self, focus_event):

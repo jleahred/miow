@@ -42,7 +42,7 @@ class SimpleEdit(BaseWidget,
         super(WithFixedFont, self).__init__(parent)
         super(SimpleEdit, self).__init__(parent)
 
-    def lock_command_window(self):
+    def bw_lock_command_window(self):
         return self.completer.popup().isVisible()
 
 

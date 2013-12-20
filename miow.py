@@ -90,7 +90,7 @@ class MainWindow(QWidget):
     def get_command_list(self):
         command_list = copy(COMMAND_LIST)
         if self.get_current_widget():
-            self.get_current_widget().add_command_list(command_list)
+            self.get_current_widget().bw_add_command_list(command_list)
         return command_list
 
 

@@ -48,7 +48,7 @@ class SimpleEdit2(BaseWidget, QWidget):
         layout.setMargin(0)
         self.setLayout(layout)
 
-    def lock_command_window(self):
+    def bw_lock_command_window(self):
         return self.editor.completer.popup().isVisible()
 
     def focusInEvent(self, focus_event):
