@@ -273,11 +273,11 @@ It will delete the result console"""
 
         # create widgets
         self._editor_widget = mixin(
+                               WithBasicIdentationManager,
                                WithWordCompletion,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
                                InterpreterEditor.WidthLineEnterEvent,
-                               WithBasicIdentationManager,
                                WithHighlight,
                                WithFixedFont,
                                QPlainTextEdit)(self)
