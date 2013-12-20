@@ -116,14 +116,14 @@ Specific mixings will have to implement the get_text_completion_list method
     def text_under_cursor(self):
         result = ""
         for i in range(self.current_pos_init_of_word(), self.current_pos_end_of_word()):
-            result = result + unicode(self.document().characterAt(i))
+            result = result + unichr(self.document().characterAt(i).unicode())
         return QString(result)
 
     def current_pos_init_of_word(self):
         pos = self.textCursor().position()-1
         while True:
-            char = self.document().characterAt(pos)
-            if not unicode(char)[0] in WORD_SYMBOLS:
+            char = unichr(self.document().characterAt(pos).unicode())
+            if not char in WORD_SYMBOLS  or  pos<0:
             #if char=='\n' or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None  or pos==0:
                 break
             pos = pos - 1
@@ -132,8 +132,8 @@ Specific mixings will have to implement the get_text_completion_list method
     def current_pos_end_of_word(self):
         pos = self.textCursor().position()
         while True:
-            char = self.document().characterAt(pos)
-            if not unicode(char)[0] in WORD_SYMBOLS:
+            char = unichr(self.document().characterAt(pos).unicode())
+            if not char in WORD_SYMBOLS  or pos==self.document().characterCount():
             #if char.isSpace() or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None:
                 break
             pos = pos + 1
