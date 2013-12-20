@@ -1,11 +1,13 @@
 python interpreter
 
+* parmas on command window
 * Save status
 * Configure path to add files on command window
 * Avoid duplicates in code completion
 * syntax highlight
 * find
 * replace
+* log (activation and deactivation, clear, rotation)
 
 ** if code completion is visible, esc will hide it and nothing else
 ** Extra line in console output

@@ -337,6 +337,23 @@ It will delete the result console"""
         for line in lines.splitlines() or ['']:
             process_line(line)
 
+    def bw_add_command_list(self, command_list):
+        command_list += [
+                ("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
+                ("save file",    "", 0.5, "self.get_current_widget().command_save_file()"),
+               ]
+
+
+    def command_load_file(self, file_name):
+        self.file_name = file_name
+        f = open(self.file_name, 'r')
+        self.editor_widget.setPlainText(unicode(f.read()))
+
+    def command_save_file(self):
+        f = open(self.file_name, 'w')
+        f.write(self.editor_widget.toPlainText())
+
+
     @property
     def editor_widget(self):
         return self._editor_widget
@@ -352,6 +369,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = InterpreterEditor(params)
+        widget.command_load_file("../examples/pyinterpreter.ipy")
         widget.show()
         app.exec_()
 
