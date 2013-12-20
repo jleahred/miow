@@ -60,10 +60,12 @@ Specific mixings will have to implement the get_text_completion_list method
                              Qt.Key_Return,
                              Qt.Key_Escape,
                              Qt.Key_Tab,
-                             Qt.Key_Backtab]
-                         and self.completer.popup().currentIndex().row() >= 0):
-                event.ignore()
-                return  # let the completer do default behavior
+                             Qt.Key_Backtab]):
+                if self.completer.popup().currentIndex().row() >= 0:
+                    event.ignore()
+                    return  # let the completer do default behavior
+                else:
+                    self.completer.popup().hide()
 
         super(WithCompletion, self).keyPressEvent(event)
 
