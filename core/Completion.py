@@ -81,7 +81,7 @@ Specific mixings will have to implement the get_text_completion_list method
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
             word_till_cursor = self.word_till_cursor()
-            if((word_till_cursor.size() > 2) and
+            if((word_till_cursor.size() > 2  or  self.completer.popup().isVisible()) and
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
                     or  self.completer.popup().isVisible())):
