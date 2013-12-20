@@ -122,11 +122,9 @@ class InterpreterEditor(BaseWidget, QWidget):
     """
 
     class Interpreter():
-        def __init__(self, is_gobal):
-            if is_gobal:
-                self.ii = code.InteractiveConsole(globals())
-            else:
-                self.ii = code.InteractiveConsole(locals())
+        def __init__(self, namespace):
+            self.namespace = namespace
+            self.ii = code.InteractiveConsole(self.namespace)
 
         def _process_commands(self, commands):
             def process_command(self, command):
@@ -214,15 +212,17 @@ class InterpreterEditor(BaseWidget, QWidget):
 Mixin to add interpreter word completion to WithCompletion
 """
         def __init__(self, *args):
-            pass
+            self.namespace = None
 
         event_wicompl_send_command_interpreter = Event()
 
+
         def get_text_completion_list(self):
-            namespace = globals()
+            namespace = self.namespace
             QTextCursor.beginEditBlock
             cursor = self.textCursor()
             cursor.movePosition(cursor.StartOfBlock, QTextCursor.KeepAnchor)
+            #cursor.movePosition(cursor.Start, QTextCursor.KeepAnchor)
             line_till_cursor = str(cursor.selectedText())
 
             script = core.jedi.api.Interpreter(line_till_cursor, [namespace])
@@ -241,7 +241,11 @@ It will delete the result console"""
         self._result_widget.clear()
 
     def reset(self):
-        self.interpreter = InterpreterEditor.Interpreter(self.is_global)
+        if self.is_global:
+            self.interpreter = InterpreterEditor.Interpreter(globals())
+        else:
+            self._editor_widget.namespace = locals()
+            self.interpreter = InterpreterEditor.Interpreter(self._editor_widget.namespace)
         self._editor_widget.event_wicompl_send_command_interpreter \
                                 += self.interpreter._process_commands
         self.clear()
@@ -258,6 +262,7 @@ It will delete the result console"""
         self.is_global = False
         if not params is None:
             self.is_global = params["global"]
+
         import core.InterpreterEditorCommands
         core.InterpreterEditorCommands.EVENT_COMMAND_CLEAR += self.clear
         core.InterpreterEditorCommands.EVENT_COMMAND_RESET += self.reset
@@ -276,6 +281,12 @@ It will delete the result console"""
                                WithFixedFont,
                                QPlainTextEdit)(self)
         self._editor_widget.on_lines_event += self._process_lines
+        if self.is_global:
+            self._editor_widget.namespace = globals()
+        else:
+            self._editor_widget.namespace = locals()
+
+
         self._result_widget = mixin(WithFixedFont, QPlainTextEdit)(self)
 
         # create a horizontal splitter
@@ -288,6 +299,9 @@ It will delete the result console"""
         layout.setMargin(0)
         self.setLayout(layout)
         self.reset()
+
+    def get_namespace(self):
+        return self.namespace
 
     def lock_command_window(self):
         return self.editor_widget.completer.popup().isVisible()

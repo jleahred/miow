@@ -74,7 +74,8 @@ class CommandWindow(QFrame):
             if(key_event.key() == Qt.Key_Down
               or key_event.key() == Qt.Key_Up):
                 return self.list_widget.keyPressEvent(event)
-            elif event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return:
+            elif((event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return)
+                    and self.list_widget.currentItem().text()):
                 self.event_selected_command(str(self.list_widget.currentItem().text()))
                 self.hide()
         return super(CommandWindow, self).keyPressEvent(event)
