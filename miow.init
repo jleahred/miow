@@ -15,3 +15,7 @@ COMMAND_LIST += [
         ("close application", "", 0.0, "MAIN_WINDOW.close()"),
         ("close current widget", "", 0.0, "MAIN_WINDOW._main_tab.removeTab(MAIN_WINDOW._main_tab.currentIndex())"),
                ]
+
+# For specific and local configuration, you have to extend this file on locals/miow.init
+# This file will not be tracked by git
+execfile("locals/miow.init")
