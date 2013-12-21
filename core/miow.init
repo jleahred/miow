@@ -1,14 +1,42 @@
+REGISTERED_WIDGETS = []
+COMMAND_LIST = []
 
 
-def register_ipy_files():
-    global COMMAND_LIST
-    COMMAND_LIST += [
-            ("load examples/pyinterpreter.ipy",    "", 0.0, 
-            """
-from core.InterpreterEditor import InterpreterEditor
-widget = MAIN_WINDOW._add_widget(InterpreterEditor, {"global":False, "file":'examples/pyinterpreter.ipy'})
-    """),
-            ]
+def register_ipy_files(ipy_path, extension):
+    print ipy_path
+    ipy_files = [(base, f)
+                    for folder in ipy_path
+                    for base, _, files in os.walk(folder)
+                    for f in files if (f.endswith(extension)
+                                        and not f.startswith("_"))]
+    for path, file in ipy_files:
+        global REGISTERED_WIDGETS
+        full_path = path + "/" + file
+        print full_path
+        REGISTERED_WIDGETS += [
+            {
+                "module": "core.InterpreterEditor",
+                "widget": "InterpreterEditor",
+                "command": file + " interpreter " + full_path,
+                "params":  {"global":False, "file":full_path},
+                "tags": "load config",
+            },
+        ]
 
 
-register_ipy_files()
+
+REGISTERED_WIDGETS += [
+    {   "module":  "core.InterpreterEditor",
+        "widget":  "InterpreterEditor",
+        "command": "new python local interpreter",
+        "params":  {"global": False},
+        "tags": "",
+    },
+    {   "module":  "core.InterpreterEditor",
+        "widget":  "InterpreterEditor",
+        "command": "new python global interpreter",
+        "params":  {"global": True},
+        "tags": "",
+    },
+    ]
+

@@ -261,7 +261,7 @@ It will delete the result console"""
 
         self.file_name=None
         self.is_global = False
-        if not params is None:
+        if params is not None:
             self.is_global = params["global"]
 
         import core.InterpreterEditorCommands
@@ -300,6 +300,8 @@ It will delete the result console"""
         layout.setMargin(0)
         self.setLayout(layout)
         self.reset()
+        if params is not None  and  params.has_key("file"):
+            self.command_load_file(params["file"])
 
     def get_namespace(self):
         return self.namespace

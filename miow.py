@@ -26,18 +26,17 @@ from core.CommandWindow import CommandWindow
 
 MAIN_WINDOW = None
 
+
+
+#-----------------------------------------------------
 # These will be readed at starting
 # if nothing defined, this is de default configuration
-INIT_FOLDERS = ['.']
 APP_KEY_MAPS = []
-
-REGISTERED_WIDGETS = []
-
-COMMAND_LIST = []
-
+REGISTERED_WIDGETS = []        #defined in miow.init
+COMMAND_LIST = []              #defined in miow.init
 KEY_START_RECORDING = ("F4", "")
 KEY_STOP_RECORDING = ("F5", "")
-
+execfile('miow.init')
 #-----------------------------------------------------
 
 
@@ -116,12 +115,13 @@ self.new_widget_$widget = _new_widget(self, $params)
 
             reg = Template("""\
 COMMAND_LIST += [
-        ("$command", "", 0.0, "self.new_widget_$widget($params)"),
+        ("$command", "$tags", 0.0, "self.new_widget_$widget($params)"),
                ]
 """).substitute(module=reg_widget ["module"],
                 widget=reg_widget ["widget"],
                 command=reg_widget["command"],
-                params=reg_widget ["params"])
+                params=reg_widget ["params"],
+                tags=reg_widget["tags"])
             exec(reg)
 
 
@@ -140,10 +140,6 @@ COMMAND_LIST += [
         core.InterpreterEditor.CURRENT_WIDGET = widget
 
     @property
-    def init_folders(self):
-        return INIT_FOLDERS
-
-    @property
     def available_widgets(self):
         return REGISTERED_WIDGETS
         #return [(base, f)
@@ -153,6 +149,7 @@ COMMAND_LIST += [
         #                                    and not f.startswith("_"))]
 
     def _run_init_miows(self):
+        return
         miows_inits = [(base, f)
                         for folder in self.init_folders
                         for base, _, files in os.walk(folder)

@@ -3,18 +3,21 @@ REGISTERED_WIDGETS += [
         "module": "widgets.SimpleEdit",
         "widget": "SimpleEdit",
         "command": "new simple edit widget",
-        "params":  None
+        "params":  None,
+        "tags": "",
     },
     {
         "module": "widgets.SimpleEdit2",
         "widget": "SimpleEdit2",
         "command": "new simple edit widget test 2",
-        "params":  None
+        "params":  None,
+        "tags": "",
     },
     {
         "module": "widgets.AsciidocEditor",
         "widget": "AsciidocEditor",
         "command": "new asciidoc editor",
-        "params":  None
+        "params":  None,
+        "tags": "",
     },
 ]

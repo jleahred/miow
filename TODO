@@ -1,8 +1,10 @@
 python interpreter
 
-* parmas on command window
+* description tab (used in go automatic command)
+* go automatic command
+* multi command selection
+* params on command window
 * Save status
-* Configure path to add files on command window
 * Avoid duplicates in code completion
 * syntax highlight
 * find
@@ -15,6 +17,7 @@ python interpreter
 ** On enter, go to next block
 ** global and local with codecompletion (missing in local)
 ** base widget bw_
+** Configure path to add files on command window
 
 
 miow.widget
