@@ -1,4 +1,5 @@
 #locals/miow.init
 # This file is just an initial example and changes on it, will not be tracked by git
+#git update-index --assume-unchanged locals/miow.init
 
 #register_ipy_files('locals', '.ipy')

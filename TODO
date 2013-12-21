@@ -1,10 +1,13 @@
 python interpreter
 
+* move save and load to BaseWidget
+* tag for save ss
+* description tab (used in go automatic command)
+* go automatic command
+* move tabs with keys
 * commands to open just text like this TODO
 * fix error editor some times keeps completion with empty selected word (it happened writting this line)
   Also closing parenthesis like
-* description tab (used in go automatic command)
-* go automatic command
 * multi command selection
 * params on command window
 * Save status
