@@ -124,7 +124,6 @@ COMMAND_LIST += [
                 tags=reg_widget["tags"])
             exec(reg)
 
-
     def _add_widget(self, widget_class, params):
         """Add any kind of widget"""
         widget = widget_class(params, self.main_tab)

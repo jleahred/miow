@@ -110,7 +110,7 @@ class CommandWindow(QFrame):
                         result_map[command] = (get_item_map_def0(result_map,
                                                     command)
                                                     - located_command_weight)
-                    for tag in tags:
+                    for tag in tags.split(" "):
                         if tag.upper().find(word) != -1:
                             result_map[command] = (get_item_map_def0(result_map,
                                                     command)

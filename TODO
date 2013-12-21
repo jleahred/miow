@@ -1,5 +1,8 @@
 python interpreter
 
+* commands to open just text like this TODO
+* fix error editor some times keeps completion with empty selected word (it happened writting this line)
+  Also closing parenthesis like
 * description tab (used in go automatic command)
 * go automatic command
 * multi command selection
@@ -10,6 +13,8 @@ python interpreter
 * find
 * replace
 * log (activation and deactivation, clear, rotation)
+* tabs movement
+* keys to save
 
 ** if code completion is visible, esc will hide it and nothing else
 ** Extra line in console output
@@ -18,6 +23,7 @@ python interpreter
 ** global and local with codecompletion (missing in local)
 ** base widget bw_
 ** Configure path to add files on command window
+** fix error findind with tags
 
 
 miow.widget

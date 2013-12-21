@@ -2,8 +2,7 @@ REGISTERED_WIDGETS = []
 COMMAND_LIST = []
 
 
-def register_ipy_files(ipy_path, extension):
-    print ipy_path
+def register_ipy_files(ipy_path, extension, tags=""):
     ipy_files = [(base, f)
                     for folder in ipy_path
                     for base, _, files in os.walk(folder)
@@ -12,14 +11,13 @@ def register_ipy_files(ipy_path, extension):
     for path, file in ipy_files:
         global REGISTERED_WIDGETS
         full_path = path + "/" + file
-        print full_path
         REGISTERED_WIDGETS += [
             {
                 "module": "core.InterpreterEditor",
                 "widget": "InterpreterEditor",
                 "command": file + " interpreter " + full_path,
                 "params":  {"global":False, "file":full_path},
-                "tags": "load config",
+                "tags": tags,
             },
         ]
 
