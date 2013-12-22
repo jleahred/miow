@@ -32,26 +32,29 @@ from  core.MqEdit import (WithHighlight,
 
 from core.Completion import (WithCompletion,
                              WithWordCompletion)
+from core.MqEditIO import WithMqEditIO
 
-from core.BaseWidget  import  BaseWidget
+from core.SingleIO import WithSingleIO
+
 
 import os
 
 TEMP_DIR= '/tmp/miow/'
 
 
-class AsciidocEditor(BaseWidget, QWidget):
+class AsciidocEditor(WithSingleIO, QWidget):
     """Asciidoc editor
     """
 
     def __init__(self, params, parent=None):
-        super(AsciidocEditor, self).__init__(parent)
+        QWidget.__init__(self, parent)
 
         self.setMinimumWidth(300)
         self.setMinimumHeight(300)
 
         # create widgets
-        self.editor = mixin(
+        self._editor_widget = mixin(
+                        WithMqEditIO,
                         WithBasicIdentationManager,
                         WithHighlight,
                         WithFixedFont,
@@ -62,7 +65,7 @@ class AsciidocEditor(BaseWidget, QWidget):
         self.webview = QWebView(self)
         self.webview.load(QUrl("/home/maiquel/develop/developing/main/qt/qadoc/bin/__builds/documents.html"))
         self.splitter = QSplitter(Qt.Horizontal)
-        self.splitter.addWidget(self.editor)
+        self.splitter.addWidget(self._editor_widget)
         self.splitter.addWidget(self.webview)
         self.splitter.setSizes([self.size().width(), self.size().width()])
 
@@ -83,19 +86,22 @@ class AsciidocEditor(BaseWidget, QWidget):
         self.proc_compile.readyReadStandardOutput.connect(self.proc_compile_readyReadStandardOutput)
         self.proc_compile.readyReadStandardError.connect(self.proc_compile_readyReadStandardError)
 
+        WithSingleIO.__init__(self, params)
+
 
     def bw_add_command_list(self, command_list):
         command_list += [
                 ("generate preview asciidoc",    "", 0.0, "self.get_current_widget().command_generate_preview('asciidoc')"),
                 ("generate preview asciidoctor", "", 0.0, "self.get_current_widget().command_generate_preview('asciidoctor')"),
                ]
+        super(AsciidocEditor, self).bw_add_command_list(command_list)
 
 
     def command_generate_preview(self, backend):
         if not os.path.exists(TEMP_DIR):
             os.mkdir(TEMP_DIR)
         temp_source_file = open(TEMP_DIR + 'pr.adoc','wt')
-        temp_source_file.write(str(self.editor.toPlainText()))
+        temp_source_file.write(str(self._editor_widget.toPlainText()))
         temp_source_file.close()
         self.compile(backend + "  -o " + self.get_html_output() + "  " + TEMP_DIR + "pr.adoc")
 
@@ -105,11 +111,11 @@ class AsciidocEditor(BaseWidget, QWidget):
 
 
     def bw_lock_command_window(self):
-        return self.editor.completer.popup().isVisible()
+        return self._editor_widget.completer.popup().isVisible()
 
     def focusInEvent(self, focus_event):
         super(AsciidocEditor, self).focusInEvent(focus_event)
-        self.editor.setFocus()
+        self._editor_widget.setFocus()
 
     def get_html_output(self):
         return TEMP_DIR + "pr.html"
@@ -142,7 +148,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = AsciidocEditor(None)
-        widget.editor.setPlainText("""\
+        widget._editor_widget.setPlainText("""\
 = Header
  * Testing
         """)

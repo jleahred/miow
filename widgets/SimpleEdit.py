@@ -18,29 +18,35 @@ from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
                           WithLineNumbers)
 
+from core.MqEditIO import WithMqEditIO
 from core.Completion import (WithCompletion,
                              WithWordCompletion)
-from core.BaseWidget import BaseWidget
+
+from core.SingleIO import WithSingleIO
 
 
-class SimpleEdit(BaseWidget,
+class SimpleEdit(WithSingleIO,
+                 WithMqEditIO,
                  WithFixedFont,
                  WithHighlight,
                  WithLineNumbers,
                  WithWordCompletion,
                  WithCompletion,
-                 QPlainTextEdit):
+                 QPlainTextEdit,
+                 ):
     """SimpleEdit to test
     """
 
     def __init__(self, params, parent=None):
-        super(QPlainTextEdit, self).__init__(parent)
-        super(WithCompletion, self).__init__(parent)
-        super(WithWordCompletion, self).__init__(parent)
-        super(WithLineNumbers, self).__init__(parent)
-        super(WithHighlight, self).__init__(parent)
-        super(WithFixedFont, self).__init__(parent)
-        super(SimpleEdit, self).__init__(parent)
+        self._editor_widget = self
+        QPlainTextEdit.__init__(self, parent)
+        WithSingleIO.__init__(self, params)
+        WithCompletion.__init__(self, parent)
+        WithWordCompletion.__init__(self, parent)
+        WithFixedFont.__init__(self, parent)
+        WithLineNumbers.__init__(self, parent)
+        WithHighlight.__init__(self, parent)
+        WithMqEditIO.__init__(self, params)
 
     def bw_lock_command_window(self):
         return self.completer.popup().isVisible()

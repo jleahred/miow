@@ -1,16 +1,15 @@
 python interpreter
 
-* move save and load to BaseWidget
-* tag for save ss
+* command window with params
+  * Depending on param, it will show and execute diferent things
+  * first command  open adoc | this will open a new command window with files adoc
 * description tab (used in go automatic command)
 * go automatic command
 * move tabs with keys
-* commands to open just text like this TODO
 * fix error editor some times keeps completion with empty selected word (it happened writting this line)
   Also closing parenthesis like
 * multi command selection
 * params on command window
-* Save status
 * Avoid duplicates in code completion
 * syntax highlight
 * find
@@ -18,6 +17,7 @@ python interpreter
 * log (activation and deactivation, clear, rotation)
 * tabs movement
 * keys to save
+* status bar with component type and...
 
 ** if code completion is visible, esc will hide it and nothing else
 ** Extra line in console output
@@ -27,6 +27,10 @@ python interpreter
 ** base widget bw_
 ** Configure path to add files on command window
 ** fix error findind with tags
+** move save and load to BaseWidget
+** tag for save ss
+** commands to open just text like this TODO
+** Save status
 
 
 miow.widget

@@ -85,7 +85,7 @@ class WithLineNumbers(QPlainTextEdit):
             QWidget.paintEvent(self, event)
 
         def adjustWidth(self, count):
-            width = self.fontMetrics().width(unicode(count)) + 3
+            width = self.fontMetrics().width(unicode(count)) + 5
             if self.width() != width:
                 self.setFixedWidth(width)
 
@@ -102,6 +102,7 @@ class WithLineNumbers(QPlainTextEdit):
         self.setFrameStyle(QFrame.NoFrame)
         self.blockCountChanged.connect(self.number_bar.adjustWidth)
         self.updateRequest.connect(self.number_bar.updateContents)
+        self.number_bar.adjustWidth(self.blockCount())
 
     def number_bar_paint(self, number_bar, event):
         font_metrics = self.fontMetrics()

@@ -23,10 +23,11 @@ from Event import Event
 from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
+from MqEditIO import WithMqEditIO
 
 from Completion import WithCompletion, WithWordCompletion
 
-from BaseWidget import BaseWidget
+from SingleIO import WithSingleIO
 
 
 
@@ -117,9 +118,58 @@ Wellcome to myow... InterpreterEditor
 
 
 
-class InterpreterEditor(BaseWidget, QWidget):
+class InterpreterEditor(QWidget, WithSingleIO):
     """InterpreterEditor component
     """
+
+    def __init__(self, params, parent=None):
+        QWidget.__init__(self, parent)
+
+        self.file_name=None
+        self.is_global = False
+        if params is not None:
+            self.is_global = params["global"]
+
+        import core.InterpreterEditorCommands
+        core.InterpreterEditorCommands.EVENT_COMMAND_CLEAR += self.clear
+        core.InterpreterEditorCommands.EVENT_COMMAND_RESET += self.reset
+
+        self.setMinimumWidth(400)
+        self.setMinimumHeight(100)
+
+        # create widgets
+        self._editor_widget = mixin(
+                               WithBasicIdentationManager,
+                               WithWordCompletion,
+                               InterpreterEditor.WithInterpreterCompletion,
+                               WithCompletion,
+                               InterpreterEditor.WidthLineEnterEvent,
+                               WithHighlight,
+                               WithFixedFont,
+                               WithMqEditIO,
+                               QPlainTextEdit)(self)
+        self._editor_widget.on_lines_event += self._process_lines
+        if self.is_global:
+            self._editor_widget.namespace = globals()
+        else:
+            self._editor_widget.namespace = locals()
+
+
+        self._result_widget = mixin(WithFixedFont, QPlainTextEdit)(self)
+
+        # create a horizontal splitter
+        v_splitter = QSplitter(Qt.Horizontal, self)
+        v_splitter.addWidget(self._editor_widget)
+        v_splitter.addWidget(self._result_widget)
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(v_splitter)
+        layout.setMargin(0)
+        self.setLayout(layout)
+        self.reset()
+        WithSingleIO.__init__(self, params)
+
+
 
     class Interpreter():
         def __init__(self, namespace):
@@ -256,52 +306,6 @@ It will delete the result console"""
         else:
             self._process_lines(START_COMMANDS_LOCAL)
 
-    def __init__(self, params, parent=None):
-        super(InterpreterEditor, self).__init__(parent)
-
-        self.file_name=None
-        self.is_global = False
-        if params is not None:
-            self.is_global = params["global"]
-
-        import core.InterpreterEditorCommands
-        core.InterpreterEditorCommands.EVENT_COMMAND_CLEAR += self.clear
-        core.InterpreterEditorCommands.EVENT_COMMAND_RESET += self.reset
-
-        self.setMinimumWidth(400)
-        self.setMinimumHeight(100)
-
-        # create widgets
-        self._editor_widget = mixin(
-                               WithBasicIdentationManager,
-                               WithWordCompletion,
-                               InterpreterEditor.WithInterpreterCompletion,
-                               WithCompletion,
-                               InterpreterEditor.WidthLineEnterEvent,
-                               WithHighlight,
-                               WithFixedFont,
-                               QPlainTextEdit)(self)
-        self._editor_widget.on_lines_event += self._process_lines
-        if self.is_global:
-            self._editor_widget.namespace = globals()
-        else:
-            self._editor_widget.namespace = locals()
-
-
-        self._result_widget = mixin(WithFixedFont, QPlainTextEdit)(self)
-
-        # create a horizontal splitter
-        v_splitter = QSplitter(Qt.Horizontal, self)
-        v_splitter.addWidget(self._editor_widget)
-        v_splitter.addWidget(self._result_widget)
-
-        layout = QVBoxLayout(self)
-        layout.addWidget(v_splitter)
-        layout.setMargin(0)
-        self.setLayout(layout)
-        self.reset()
-        if params is not None  and  params.has_key("file"):
-            self.command_load_file(params["file"])
 
     def get_namespace(self):
         return self.namespace
@@ -340,24 +344,6 @@ It will delete the result console"""
         for line in lines.splitlines() or ['']:
             process_line(line)
 
-    def bw_add_command_list(self, command_list):
-        if self.file_name:
-            command_list += [
-                    #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
-                    ("save file",    "", 0.5, "self.get_current_widget().command_save_file()"),
-                   ]
-
-
-    def command_load_file(self, file_name):
-        self.file_name = file_name
-        f = open(self.file_name, 'r')
-        self.editor_widget.setPlainText(unicode(f.read()))
-
-    def command_save_file(self):
-        f = open(self.file_name, 'w')
-        f.write(self.editor_widget.toPlainText())
-
-
     @property
     def editor_widget(self):
         return self._editor_widget
@@ -373,7 +359,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = InterpreterEditor(params)
-        widget.command_load_file("../examples/pyinterpreter.ipy")
+        widget.command_load_file("../examples/example.ipy")
         widget.show()
         app.exec_()
 

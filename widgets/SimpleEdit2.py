@@ -20,23 +20,25 @@ from  core.Mixin import mixin
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
                           WithLineNumbers)
+from core.MqEditIO import WithMqEditIO
 
 from core.Completion import (WithCompletion, WithWordCompletion)
-from core.BaseWidget import BaseWidget
+from core.SingleIO import WithSingleIO
 
 
-class SimpleEdit2(BaseWidget, QWidget):
+class SimpleEdit2(WithSingleIO, QWidget):
     """SimpleEdit2 to test
     """
 
     def __init__(self, params, parent=None):
-        super(SimpleEdit2, self).__init__(parent)
+        super(QWidget, self).__init__(parent)
 
         self.setMinimumWidth(100)
         self.setMinimumHeight(100)
 
         # create widgets
-        self.editor = mixin(
+        self._editor_widget = mixin(
+                       WithMqEditIO,
                        WithFixedFont,
                        WithHighlight,
                        WithLineNumbers,
@@ -44,16 +46,18 @@ class SimpleEdit2(BaseWidget, QWidget):
                        WithCompletion,
                        QPlainTextEdit)(self)
         layout = QVBoxLayout(self)
-        layout.addWidget(self.editor)
+        layout.addWidget(self._editor_widget)
         layout.setMargin(0)
         self.setLayout(layout)
 
+        WithSingleIO.__init__(self, params)
+
     def bw_lock_command_window(self):
-        return self.editor.completer.popup().isVisible()
+        return self._editor_widget.completer.popup().isVisible()
 
     def focusInEvent(self, focus_event):
         super(SimpleEdit2, self).focusInEvent(focus_event)
-        self.editor.setFocus()
+        self._editor_widget.setFocus()
 
 
 if(__name__ == '__main__'):
