@@ -7,7 +7,7 @@ register_ipy_files(['.'], 'miow.init', "config")
 execfile("widgets/miow.init")
 
 #execfile("examples/miow.init")
-
+execfile("locals/miow.init")
 
 
 COMMAND_LIST += [

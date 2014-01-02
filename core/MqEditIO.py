@@ -14,12 +14,12 @@ class WithMqEditIO(QPlainTextEdit):
     def load_file(self, file_name):
         self.file_name = file_name
         f = open(self.file_name, 'r')
-        self.setPlainText(unicode(f.read()))
+        self.setPlainText(unicode(f.read().decode('utf-8')))
         self.update()
 
     def save_file(self, file_name):
         f = open(self.file_name, 'w')
-        f.write(self.toPlainText())
+        f.write(unicode(self.toPlainText()).encode('utf-8'))
 
 
 

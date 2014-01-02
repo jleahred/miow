@@ -1,11 +1,13 @@
 python interpreter
 
+* On enter or control-enter on pyinterpreter, the cursor goes to the end of line and enter on end of line modifies the identation on next line
+* Go tabs with keys
+* Change tabs with commands
 * command window with params
   * Depending on param, it will show and execute diferent things
   * first command  open adoc | this will open a new command window with files adoc
 * description tab (used in go automatic command)
 * go automatic command
-* move tabs with keys
 * fix error editor some times keeps completion with empty selected word (it happened writting this line)
   Also closing parenthesis like
 * multi command selection
