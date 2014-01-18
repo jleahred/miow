@@ -190,6 +190,44 @@ It will propose completion with words from current file
         return (super(WithWordCompletion, self).get_text_completion_list()
                      + completion_list + completion_list_not_start_with)
 
+class WithWordCompletionMulty_(QPlainTextEdit):
+    """\
+Mixin to add simple word completion multyword separated by _ to WithCompletion
+
+It will propose completion with words from current document
+"""
+    def __init__(self, *args):
+        pass
+
+    def get_text_completion_list(self):
+        words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
+                                 QString.SkipEmptyParts)
+        word_till_cursor = self.word_till_cursor()
+        word_under_cursor = self.word_under_cursor()
+        words.removeDuplicates()
+        words.sort()
+        completion_list = []
+        completion_list_not_start_with = []
+        for word in words:
+            if(word != word_till_cursor  and  word != word_under_cursor  and
+                    word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
+                completion_list.append(word)
+            elif(word != word_till_cursor  and
+                    word.toUpper().indexOf(word_till_cursor.toUpper()) > 0):
+                completion_list_not_start_with.append(word)
+            elif (word != word_till_cursor  and
+                        len(unicode(word)) > len(word_till_cursor)):
+                words_till_cursor = unicode(word_till_cursor).split("_")
+                matches = 0
+                for word_tc in words_till_cursor:
+                    if unicode(word.toUpper()).find(word_tc.upper())>=0:
+                        matches += 1
+                if matches > 1:
+                    completion_list_not_start_with.append(word)
+
+        return (super(WithWordCompletionMulty_, self).get_text_completion_list()
+                     + completion_list + completion_list_not_start_with)
+
 
 
 if(__name__ == '__main__'):
@@ -206,4 +244,18 @@ if(__name__ == '__main__'):
         widget.show()
         app.exec_()
 
-    test_word_completion()
+    def test_word_completion_multy():
+        """simple test"""
+        from PyQt4.QtGui import QApplication
+        from Mixin import mixin
+
+        app = QApplication([])
+        widget = mixin(
+                       WithWordCompletionMulty_,
+                       WithCompletion,
+                       QPlainTextEdit)()
+        widget.show()
+        app.exec_()
+
+    #test_word_completion()
+    test_word_completion_multy()

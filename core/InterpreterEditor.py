@@ -25,7 +25,7 @@ from MqEdit import(WithHighlight,
                    WithBasicIdentationManager)
 from MqEditIO import WithMqEditIO
 
-from Completion import WithCompletion, WithWordCompletion
+from Completion import WithCompletion, WithWordCompletionMulty_
 
 from SingleIO import WithSingleIO
 
@@ -141,7 +141,7 @@ class InterpreterEditor(QWidget, WithSingleIO):
         self._editor_widget = mixin(
                                InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,
-                               WithWordCompletion,
+                               WithWordCompletionMulty_,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
                                WithHighlight,

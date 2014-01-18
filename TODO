@@ -1,6 +1,5 @@
 python interpreter
 
-* On enter or control-enter on pyinterpreter, the cursor goes to the end of line and enter on end of line modifies the identation on next line
 * Go tabs with keys
 * Change tabs with commands
 * command window with params
@@ -21,6 +20,10 @@ python interpreter
 * keys to save
 * status bar with component type and...
 
+
+DONE
+** Multi word completion
+** On enter or control-enter on pyinterpreter, the cursor goes to the end of line and enter on end of line modifies the identation on next line
 ** if code completion is visible, esc will hide it and nothing else
 ** Extra line in console output
 ** On enter, process selected text
