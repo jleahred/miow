@@ -308,7 +308,7 @@ Adding new lines with RETURN key, will keep previous line identation
         if tc.atBlockStart():
             tc.insertText(' ' * get_previous_line_spaces(self))
             tc2 = self.textCursor()
-            tc2.movePosition(QTextCursor.EndOfBlock)
+            #tc2.movePosition(QTextCursor.EndOfBlock)
             self.setTextCursor(tc2)
 
 

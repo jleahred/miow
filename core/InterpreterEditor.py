@@ -139,11 +139,11 @@ class InterpreterEditor(QWidget, WithSingleIO):
 
         # create widgets
         self._editor_widget = mixin(
+                               InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,
                                WithWordCompletion,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
-                               InterpreterEditor.WidthLineEnterEvent,
                                WithHighlight,
                                WithFixedFont,
                                WithMqEditIO,
@@ -244,15 +244,16 @@ class InterpreterEditor(QWidget, WithSingleIO):
                     if((end_line and len(lines)>0)
                             or (end_line and tc.position() ==QTextCursor.End)
                             or tc.atEnd()):
-                        tc.insertBlock()
+                        super(InterpreterEditor.WidthLineEnterEvent,
+                                              self).keyPressEvent(event)
                     else:
                         tc.movePosition(QTextCursor.NextBlock, QTextCursor.MoveAnchor)
-
-                self.setTextCursor(tc)
-
+                        self.setTextCursor(tc)
             elif((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
                     and (event.modifiers() == Qt.ControlModifier)):
                 self.textCursor().insertBlock()
+                super(InterpreterEditor.WidthLineEnterEvent,
+                                              self).keyPressEvent(event)
             else:
                 super(InterpreterEditor.WidthLineEnterEvent,
                                               self).keyPressEvent(event)
