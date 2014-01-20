@@ -139,11 +139,11 @@ class InterpreterEditor(QWidget, WithSingleIO):
 
         # create widgets
         self._editor_widget = mixin(
-                               InterpreterEditor.WidthLineEnterEvent,
-                               WithBasicIdentationManager,
                                WithWordCompletionMulty_,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
+                               InterpreterEditor.WidthLineEnterEvent,
+                               WithBasicIdentationManager,
                                WithHighlight,
                                WithFixedFont,
                                WithMqEditIO,
@@ -224,6 +224,7 @@ class InterpreterEditor(QWidget, WithSingleIO):
                 tc = self.textCursor()
                 multi_select = False
                 end_line = False
+                start_line = False
 
                 if len(tc.selectedText())==0:
                     tc.select(QTextCursor.BlockUnderCursor)
@@ -231,6 +232,8 @@ class InterpreterEditor(QWidget, WithSingleIO):
                     multi_select = True
                 if self.textCursor().atBlockEnd():
                     end_line = True
+                if self.textCursor().atBlockStart():
+                    start_line = True
 
                 if (len(tc.selectedText())>1 and
                             ord(unicode(tc.selectedText()[0])) == 8233):
@@ -240,6 +243,7 @@ class InterpreterEditor(QWidget, WithSingleIO):
                 self.on_lines_event(lines)
 
                 tc.clearSelection()
+                print multi_select
                 if not multi_select:
                     if((end_line and len(lines)>0)
                             or (end_line and tc.position() ==QTextCursor.End)
@@ -249,6 +253,10 @@ class InterpreterEditor(QWidget, WithSingleIO):
                     else:
                         tc.movePosition(QTextCursor.NextBlock, QTextCursor.MoveAnchor)
                         self.setTextCursor(tc)
+                else:
+                    if not start_line:
+                        tc.movePosition(QTextCursor.NextBlock, QTextCursor.MoveAnchor)
+                    self.setTextCursor(tc)
             elif((event.key() == Qt.Key_Enter or event.key() == Qt.Key_Return)
                     and (event.modifiers() == Qt.ControlModifier)):
                 self.textCursor().insertBlock()
