@@ -212,9 +212,6 @@ It will propose completion with words from current document
             if(word != word_till_cursor  and  word != word_under_cursor  and
                     word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
                 completion_list.append(word)
-            elif(word != word_till_cursor  and
-                    word.toUpper().indexOf(word_till_cursor.toUpper()) > 0):
-                completion_list_not_start_with.append(word)
             elif (word != word_till_cursor  and
                         len(unicode(word)) > len(word_till_cursor)):
                 words_till_cursor = unicode(word_till_cursor).split("_")
@@ -223,6 +220,8 @@ It will propose completion with words from current document
                     if unicode(word.toUpper()).find(word_tc.upper())>=0:
                         matches += 1
                 if matches == len(words_till_cursor):
+                    completion_list.append(word)
+                elif matches*1.6 >= len(words_till_cursor):
                     completion_list_not_start_with.append(word)
 
         return (super(WithWordCompletionMulty_, self).get_text_completion_list()
