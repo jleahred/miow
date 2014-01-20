@@ -222,7 +222,7 @@ It will propose completion with words from current document
                 for word_tc in words_till_cursor:
                     if unicode(word.toUpper()).find(word_tc.upper())>=0:
                         matches += 1
-                if matches > 1:
+                if matches == len(words_till_cursor):
                     completion_list_not_start_with.append(word)
 
         return (super(WithWordCompletionMulty_, self).get_text_completion_list()
