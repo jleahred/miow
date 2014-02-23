@@ -4,8 +4,6 @@
 
 from PyQt4.QtGui import (QWidget, QPlainTextEdit,)
 
-from BaseWidget import BaseWidget
-
 from Mixin import mixin
 
 from MqEdit import(WithHighlight,
@@ -16,11 +14,10 @@ from Completion import WithCompletion, WithWordCompletion
 
 
 
-class WithSingleIO(BaseWidget):
+class WithSingleIO:
     """"""
 
     def __init__(self, params):
-        BaseWidget.__init__(self)
         if params is not None  and  params.has_key("file"):
             self.command_load_file(params["file"])
 
@@ -42,7 +39,7 @@ class WithSingleIO(BaseWidget):
 
 if(__name__ == '__main__'):
     from MqEditIO import WithMqEditIO
-    class TestClass(BaseWidget, QWidget):
+    class TestClass(QWidget):
         def __init__(self, params, parent=None):
             super(TestClass, self).__init__(parent)
     

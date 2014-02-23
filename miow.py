@@ -3,8 +3,6 @@
 """
 
 import os
-from string import Template
-
 from copy  import copy
 
 from  PyQt4.QtGui import(QApplication,
@@ -73,8 +71,6 @@ class MainWindow(QWidget):
         layout.addWidget(self.v_splitter)
         layout.setMargin(0)
         self.setLayout(layout)
-        self._run_init_miows()
-        self._auto_register_widgets()
 
         self.command_window = CommandWindow(self)
         self.command_window.event_selected_command += self.cw_selected_command
@@ -106,33 +102,6 @@ class MainWindow(QWidget):
     def main_tab(self):
         return self._main_tab
 
-    def _auto_register_widgets(self):
-        for reg_widget in REGISTERED_WIDGETS:
-            reg = Template("""\
-def _new_widget(self, params):
-    _self = self
-    def __new_widget(params):
-        from $module import $widget
-        _self._add_widget($widget, params)
-    return __new_widget
-
-self.new_widget_$widget = _new_widget(self, $params)
-""").substitute(module=reg_widget["module"],
-                widget=reg_widget["widget"],
-                params=reg_widget ["params"])
-            exec(reg)
-
-            reg = Template("""\
-COMMAND_LIST += [
-        ("$command", "$tags", 0.0, "self.new_widget_$widget($params)"),
-               ]
-""").substitute(module=reg_widget ["module"],
-                widget=reg_widget ["widget"],
-                command=reg_widget["command"],
-                params=reg_widget ["params"],
-                tags=reg_widget["tags"])
-            exec(reg)
-
     def _add_widget(self, widget_class, params):
         """Add any kind of widget"""
         widget = widget_class(params, self.main_tab)
@@ -147,23 +116,6 @@ COMMAND_LIST += [
         widget.setFocus()
         core.InterpreterEditor.CURRENT_WIDGET = widget
 
-    @property
-    def available_widgets(self):
-        return REGISTERED_WIDGETS
-        #return [(base, f)
-        #                for folder in self.init_folders
-        #                for base, _, files in os.walk(folder)
-        #                for f in files if (f.endswith(".py")
-        #                                    and not f.startswith("_"))]
-
-    def _run_init_miows(self):
-        return
-        miows_inits = [(base, f)
-                        for folder in self.init_folders
-                        for base, _, files in os.walk(folder)
-                        for f in files if (f == "miow.init")]
-        for folder, fname in miows_inits:
-            execfile(os.path.join(folder, fname))
 
 
 class MiowApplication(QApplication):
