@@ -55,6 +55,14 @@ class CommandWindow(QFrame):
         self.event_selected_command = Event()
 
 
+    def show_hide(self, context):
+        if self.isVisible() == False or context is not None:        
+            self.command_list = self.parent.get_command_list(context)
+            self.filter_commands("")
+            self.show()
+        else:
+            self.hide()
+
     def showEvent(self, event):
         geom = self.frameGeometry()
         self.line_edit.setFocus()
@@ -64,10 +72,14 @@ class CommandWindow(QFrame):
             geom.moveCenter(QtCore.QPoint(self.parent.pos().x()+self.parent.width()/2,
                                           self.parent.pos().y()+self.parent.height()/3))
             self.setGeometry(geom)
-            self.command_list = self.parent.get_command_list()
-            self.filter_commands("")
             super(QFrame, self).showEvent(event)
 
+    def _get_command_from_text(self, text):
+        for command_text, tags, weight, command in self.command_list:
+            if command_text == text:
+                return command
+        return None
+        
     def keyPressEvent(self, event):
         if event.type() == QEvent.KeyPress:
             key_event = QKeyEvent(event)
@@ -76,14 +88,15 @@ class CommandWindow(QFrame):
                 return self.list_widget.keyPressEvent(event)
             elif((event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return)
                     and self.list_widget.currentItem().text()):
-                self.event_selected_command(str(self.list_widget.currentItem().text()))
                 self.hide()
+                #self.event_selected_command(str(self.list_widget.currentItem().text()))
+                self.event_selected_command(self._get_command_from_text(
+                            str(self.list_widget.currentItem().text())))
         return super(CommandWindow, self).keyPressEvent(event)
 
     def on_item_double_clicked(self, item):
-        #return super(CommandWindow, self).itemDoubleClicked(item)
-        self.event_selected_command(str(self.list_widget.currentItem().text()))
         self.hide()
+        self.event_selected_command(str(self.list_widget.currentItem().text()))
 
 
 

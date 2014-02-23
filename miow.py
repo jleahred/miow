@@ -22,6 +22,8 @@ import core.InterpreterEditor
 
 from core.CommandWindow import CommandWindow
 
+from core.Event  import Event
+
 
 
 MAIN_WINDOW = None
@@ -36,6 +38,7 @@ REGISTERED_WIDGETS = []        #defined in miow.init
 COMMAND_LIST = []              #defined in miow.init
 KEY_START_RECORDING = ("F4", "")
 KEY_STOP_RECORDING = ("F5", "")
+EVENT_REQUEST_COMMAND_CONTEXT = Event()
 execfile('miow.init')
 #-----------------------------------------------------
 
@@ -77,20 +80,26 @@ class MainWindow(QWidget):
         self.command_window.event_selected_command += self.cw_selected_command
 
 
-    def cw_selected_command(self, text):
-        for command_text, tags, weight, command in self.get_command_list():
-            if command_text == text:
-                exec(command)
-                return
+
+    def cw_selected_command(self, command):
+        exec(command)
 
     def get_current_widget(self):
         return self.main_tab.currentWidget()
 
-    def get_command_list(self):
-        command_list = copy(COMMAND_LIST)
-        if self.get_current_widget():
-            self.get_current_widget().bw_add_command_list(command_list)
+    def show_command_window(self, context=None):
+        self.command_window.show_hide(context)
+
+    def get_command_list(self, context=None):
+        if(context==None):
+            command_list = copy(COMMAND_LIST)
+            if self.get_current_widget():
+                self.get_current_widget().bw_add_command_list(command_list)
+        else:
+            command_list = []
+            EVENT_REQUEST_COMMAND_CONTEXT(context, command_list)
         return command_list
+
 
 
     @property

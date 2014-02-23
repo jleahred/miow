@@ -1,40 +1,17 @@
-REGISTERED_WIDGETS = []
-COMMAND_LIST = []
+# core miow.init
 
-
-def register_ipy_files(ipy_path, extension, tags=""):
-    ipy_files = [(base, f)
-                    for folder in ipy_path
+def find_files_by_name(path, extension, command_list, module_name, widget_name, aditional_params="", tags=""):
+    from string import Template
+    files = [(base, f)
+                    for folder in path
                     for base, _, files in os.walk(folder)
                     for f in files if (f.endswith(extension)
                                         and not f.startswith("_"))]
-    for path, file in ipy_files:
-        global REGISTERED_WIDGETS
-        full_path = path + "/" + file
-        REGISTERED_WIDGETS += [
-            {
-                "module": "core.InterpreterEditor",
-                "widget": "InterpreterEditor",
-                "command": file + " interpreter " + full_path,
-                "params":  {"global":False, "file":full_path},
-                "tags": tags,
-            },
-        ]
+    for _path, file in files:
+        full_path = _path + "/" + file
+        command_list  += [
+                (file + "  open", "", 0.0, Template('from $module_name.$widget_name import $widget_name; MAIN_WINDOW._add_widget($widget_name, { "file":  "$full_path", $aditional_params })').substitute(full_path=full_path, module_name=module_name,widget_name=widget_name, aditional_params=aditional_params)),
+                ]
 
 
-
-REGISTERED_WIDGETS += [
-    {   "module":  "core.InterpreterEditor",
-        "widget":  "InterpreterEditor",
-        "command": "new python local interpreter",
-        "params":  {"global": False},
-        "tags": "",
-    },
-    {   "module":  "core.InterpreterEditor",
-        "widget":  "InterpreterEditor",
-        "command": "new python global interpreter",
-        "params":  {"global": True},
-        "tags": "",
-    },
-    ]
-
+                

@@ -1,26 +1,18 @@
 execfile("miow.keys")
 
 execfile("core/miow.init")
-register_ipy_files(['examples'], '.ipy')
-register_ipy_files(['.'], 'miow.init', "config")
-
 execfile("widgets/miow.init")
+execfile("examples/miow.init")
+execfile("locals/miow.init")
 
-#execfile("examples/miow.init")
 
 
 COMMAND_LIST += [
         #("new interpreter editor", "", 0.0, 'self.new_widget_InterpreterEditor("")'),
         ("close application", "", 0.0, "MAIN_WINDOW.close()"),
         ("close current widget", "", 0.0, "MAIN_WINDOW._main_tab.removeTab(MAIN_WINDOW._main_tab.currentIndex())"),
-               ]
-
-register_simple_edit_files('.', 'TODO')
-
-
-# For specific and local configuration, you have to extend this file on locals/miow.init
-# This file will not be tracked by git
-execfile("locals/miow.init")
+        ("open TODO", "", 0.0, 'from widgets.SimpleEdit import SimpleEdit; MAIN_WINDOW._add_widget(SimpleEdit, { "file":  "./TODO" })')
+        ]
 
 
-register_adoc_files(['examples'], '.adoc')
+

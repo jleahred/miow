@@ -1,5 +1,17 @@
-#locals/miow.init
-# This file is just an initial example and changes on it, will not be tracked by git
-#git update-index --assume-unchanged locals/example.miow.init
+# locals/example.miow.init
+# This file is just an initial example
+# changes on locals/miow.initand will not be tracked by git
+# git update-index --assume-unchanged locals/miow.init
 
-#register_ipy_files('locals', '.ipy')
+
+def locals_register_find_files_context(context, command_list):
+    if context == 'local_open_ipy':
+        find_files_by_name(['locals'], '.ipy', command_list, "widgets", "")
+
+EVENT_REQUEST_COMMAND_CONTEXT += locals_register_find_files_context
+
+
+COMMAND_LIST += [
+        ("open locals interpreter files ipy", "", 0.0, "MAIN_WINDOW.show_command_window('local_open_ipy')"),
+        ]
+
