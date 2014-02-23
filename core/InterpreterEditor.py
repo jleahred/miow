@@ -243,7 +243,6 @@ class InterpreterEditor(QWidget, WithSingleIO):
                 self.on_lines_event(lines)
 
                 tc.clearSelection()
-                print multi_select
                 if not multi_select:
                     if((end_line and len(lines)>0)
                             or (end_line and tc.position() ==QTextCursor.End)

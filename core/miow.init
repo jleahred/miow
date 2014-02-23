@@ -10,7 +10,7 @@ def find_files_by_name(path, extension, command_list, module_name, widget_name, 
     for _path, file in files:
         full_path = _path + "/" + file
         command_list  += [
-                (file + "  open", "", 0.0, Template('from $module_name.$widget_name import $widget_name; MAIN_WINDOW._add_widget($widget_name, { "file":  "$full_path", $aditional_params })').substitute(full_path=full_path, module_name=module_name,widget_name=widget_name, aditional_params=aditional_params)),
+                ("open " + file + "  " + str(_path), "", 0.0, Template('from $module_name.$widget_name import $widget_name; MAIN_WINDOW._add_widget($widget_name, { "file":  "$full_path", $aditional_params })').substitute(full_path=full_path, module_name=module_name,widget_name=widget_name, aditional_params=aditional_params)),
                 ]
 
 

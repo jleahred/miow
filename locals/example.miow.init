@@ -1,7 +1,7 @@
 # locals/example.miow.init
 # This file is just an initial example
-# changes on locals/miow.initand will not be tracked by git
-# git update-index --assume-unchanged locals/miow.init
+# changes on locals/ will not be tracked by git
+# git update-index --assume-unchanged locals/
 
 
 def locals_register_find_files_context(context, command_list):
