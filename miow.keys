@@ -30,7 +30,12 @@ def redefine_key(key_event, key_as_text):
         return False
             
 def  show_command_window(key_event, key_as_text):
-    MAIN_WINDOW.show_command_window()
+    if MAIN_WINDOW.get_current_widget():
+        if not MAIN_WINDOW.get_current_widget().bw_lock_command_window():
+            MAIN_WINDOW.show_command_window()
+    else:
+        MAIN_WINDOW.show_command_window()
+    return False
             
             
             
