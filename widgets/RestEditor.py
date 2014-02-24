@@ -103,7 +103,10 @@ class RestEditor(WithSingleIO, QWidget):
         temp_source_file.write(str(self._editor_widget.toPlainText()))
         temp_source_file.close()
         self.compile(backend + " " + TEMP_DIR + "pr.rst" + "   " + self.get_html_output())
-        self.webview.load(QUrl(self.get_html_output()))
+        print self.webview.url()
+        print QUrl(self.get_html_output())
+        if self.webview.url() != QUrl("file://" + self.get_html_output()):
+            self.webview.load(QUrl(self.get_html_output()))
 
     def compile(self, command):
         self.log(command)

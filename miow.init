@@ -25,5 +25,5 @@ def find_files_miow_init(context, command_list):
 EVENT_REQUEST_COMMAND_CONTEXT += find_files_miow_init
 
 COMMAND_LIST += [
-        ("open miow init", "find rst restructuredtext", 0.0, "MAIN_WINDOW.show_command_window('find_files_miow_init')"),
+        ("open miow init", "find", 0.0, "MAIN_WINDOW.show_command_window('find_files_miow_init')"),
         ]
