@@ -15,7 +15,8 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import (Qt,
                           QEvent)
 from PyQt4.QtGui import (QWidget, QFrame, QVBoxLayout, QLineEdit,
-                         QFont, QListWidget, QKeyEvent)
+                         QFont, QListWidget, QKeyEvent, QPlainTextEdit,
+                         QSizePolicy, QLabel)
 
 from Event import Event
 
@@ -43,16 +44,37 @@ class CommandWindow(QFrame):
         layout.addWidget(self.line_edit)
 
         self.list_widget = QListWidget(self)
+        self.list_widget.currentItemChanged.connect(self.on_current_item_changed)
         layout.addWidget(self.list_widget)
+        layout.setStretchFactor(self.list_widget, 5)
 
         layout.setMargin(0)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0,0,0,0)
         self.setLayout(layout)
         self.line_edit.setFocus()
+
+        self.full_command = QPlainTextEdit(self)
+        self.full_command.setFont(QFont("Monospace", 8))
+        size_policy = self.full_command.sizePolicy()
+        size_policy.setVerticalPolicy(QSizePolicy.Ignored)
+        self.full_command.setSizePolicy(size_policy)
+        layout.addWidget(self.full_command)
+        layout.setStretchFactor(self.full_command, 1)
+
+        self.labels = QLabel(self)
+        self.labels.setFont(QFont("Monospace", 8))
+        size_policy = self.labels.sizePolicy()
+        size_policy.setVerticalPolicy(QSizePolicy.Ignored)
+        self.labels.setSizePolicy(size_policy)
+        layout.addWidget(self.full_command)
+        layout.setStretchFactor(self.full_command, 1)
 
         self.line_edit.textChanged.connect(self.on_text_changed)
         self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
 
         self.event_selected_command = Event()
+        
 
 
     def show_hide(self, context):
@@ -79,6 +101,12 @@ class CommandWindow(QFrame):
             if command_text == text:
                 return command
         return None
+
+    def _get_full_command_from_text(self, text):
+        for command_text, tags, weight, command in self.command_list:
+            if command_text == text:
+                return (command_text, tags, weight, command)
+        return None
         
     def keyPressEvent(self, event):
         if event.type() == QEvent.KeyPress:
@@ -90,14 +118,21 @@ class CommandWindow(QFrame):
                     and self.list_widget.currentItem().text()):
                 self.hide()
                 #self.event_selected_command(str(self.list_widget.currentItem().text()))
-                self.event_selected_command(self._get_command_from_text(
-                            str(self.list_widget.currentItem().text())))
+                self.event_selected_command(str(self.full_command.toPlainText()))
         return super(CommandWindow, self).keyPressEvent(event)
 
     def on_item_double_clicked(self, item):
         self.hide()
-        self.event_selected_command(str(self.list_widget.currentItem().text()))
+        self.event_selected_command(str(self.full_command.toPlainText()))
 
+
+    def on_current_item_changed(self, prev, current):
+        if(self.list_widget.currentItem()):
+            command_text, tags, weight, command = self._get_full_command_from_text(
+                                        self.list_widget.currentItem().text())
+            self.full_command.setPlainText(command)
+        else:
+            self.full_command.setPlainText("")
 
 
     def filter_commands(self, text):
@@ -161,17 +196,17 @@ if(__name__ == '__main__'):
             self.cw.event_selected_command += self.on_selected_command
             self.button.clicked.connect(self.on_click)
         def on_click(self):
-            self.cw.show()
+            self.cw.show_hide(None)
 
         def on_selected_command(self, command):
             print command
 
-        def get_command_list(self):
-            return [("command", "", 0.0, ""),
-                    ("COMMAND", "", 0.0, ""),
-                    ("do something", "great", 0.01, ""),
-                    ("boring", "", 0.0, ""),
-                    ("just", "an example", 0.0, ""),
+        def get_command_list(self, context):
+            return [("command", "", 0.0, "lala"),
+                    ("COMMAND", "", 0.0, "lalalala"),
+                    ("do something", "great", 0.01, "do_kk"),
+                    ("boring", "", 0.0, "rearea"),
+                    ("just", "an example", 0.0, "fafasdf"),
                     ]
 
     def test_gui():
