@@ -10,7 +10,7 @@ execfile("locals/miow.init")
 COMMAND_LIST += [
         #("new interpreter editor", "", 0.0, 'self.new_widget_InterpreterEditor("")'),
         ("close application", "", 0.0, "MAIN_WINDOW.close()"),
-        ("close current widget", "", 0.0, "MAIN_WINDOW._main_tab.removeTab(MAIN_WINDOW._main_tab.currentIndex())"),
+        ("close current widget", "cw", 0.0, "MAIN_WINDOW._main_tab.removeTab(MAIN_WINDOW._main_tab.currentIndex())"),
         ("open TODO", "", 0.0, 'from widgets.SimpleEdit import SimpleEdit; MAIN_WINDOW._add_widget(SimpleEdit, { "file":  "./TODO" })')
         ]
 
