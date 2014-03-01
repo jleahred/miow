@@ -16,7 +16,7 @@ from PyQt4.QtCore import (Qt,
                           QEvent)
 from PyQt4.QtGui import (QWidget, QFrame, QVBoxLayout, QLineEdit,
                          QFont, QListWidget, QKeyEvent, QPlainTextEdit,
-                         QSizePolicy, QLabel)
+                         QSizePolicy, QLabel, QHBoxLayout)
 
 from Event import Event
 
@@ -40,13 +40,14 @@ class CommandWindow(QFrame):
 
         # create widgets
         layout = QVBoxLayout(self)
+        
         self.line_edit = QLineEdit(self)
         layout.addWidget(self.line_edit)
 
         self.list_widget = QListWidget(self)
         self.list_widget.currentItemChanged.connect(self.on_current_item_changed)
         layout.addWidget(self.list_widget)
-        layout.setStretchFactor(self.list_widget, 5)
+        layout.setStretchFactor(self.list_widget, 15)
 
         layout.setMargin(0)
         layout.setSpacing(0)
@@ -60,16 +61,30 @@ class CommandWindow(QFrame):
         size_policy.setVerticalPolicy(QSizePolicy.Ignored)
         self.full_command.setSizePolicy(size_policy)
         layout.addWidget(self.full_command)
-        layout.setStretchFactor(self.full_command, 1)
+        layout.setStretchFactor(self.full_command, 3)
+
+
+        layout2 = QHBoxLayout(self)
+        
+        self.weight = QLabel(self)
+        self.weight.setFont(QFont("Monospace", 8))
+        size_policy = self.weight.sizePolicy()
+        size_policy.setVerticalPolicy(QSizePolicy.Ignored)
+        self.weight.setSizePolicy(size_policy)
+        layout2.addWidget(self.weight)
+        layout2.setStretchFactor(self.weight, 1)
 
         self.labels = QLabel(self)
         self.labels.setFont(QFont("Monospace", 8))
         size_policy = self.labels.sizePolicy()
         size_policy.setVerticalPolicy(QSizePolicy.Ignored)
         self.labels.setSizePolicy(size_policy)
-        layout.addWidget(self.full_command)
-        layout.setStretchFactor(self.full_command, 1)
+        layout2.addWidget(self.labels)
+        layout2.setStretchFactor(self.labels, 8)
 
+        layout.addLayout(layout2)
+        layout.setStretchFactor(layout2, 1)
+        
         self.line_edit.textChanged.connect(self.on_text_changed)
         self.list_widget.itemDoubleClicked.connect(self.on_item_double_clicked)
 
@@ -117,7 +132,6 @@ class CommandWindow(QFrame):
             elif((event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return)
                     and self.list_widget.currentItem().text()):
                 self.hide()
-                #self.event_selected_command(str(self.list_widget.currentItem().text()))
                 self.event_selected_command(str(self.full_command.toPlainText()))
         return super(CommandWindow, self).keyPressEvent(event)
 
@@ -131,8 +145,12 @@ class CommandWindow(QFrame):
             command_text, tags, weight, command = self._get_full_command_from_text(
                                         self.list_widget.currentItem().text())
             self.full_command.setPlainText(command)
+            self.labels.setText(tags)
+            self.weight.setText(str(weight))
         else:
             self.full_command.setPlainText("")
+            self.labels.setText("")
+            self.weight.setText("")
 
 
     def filter_commands(self, text):
