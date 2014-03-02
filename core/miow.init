@@ -4,7 +4,7 @@ def find_files_by_name(path, extension, command_list, module_name, widget_name, 
     from string import Template
     files = [(base, f)
                     for folder in path
-                    for base, _, files in os.walk(folder)
+                    for base, _, files in os.walk(folder, followlinks=True)
                     for f in files if (f.endswith(extension)
                                         and not f.startswith("_"))]
     for _path, file in files:
