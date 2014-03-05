@@ -4,16 +4,22 @@
 # git update-index --assume-unchanged locals/
 
 
-
-
-def locals_register_find_files_context(context, command_list):
-    if context == 'local_open_ipy':
+def examples_register_find_files_context(context, command_list):
+    if context == 'locals_open_rst':
+        find_files_by_name(['locals'], '.rst', command_list, "widgets", "RestEditor")
+    if context == 'locals_open_ipy':
         find_files_by_name(['locals'], '.ipy', command_list, "core", "InterpreterEditor", '"global": False')
+        
 
-EVENT_REQUEST_COMMAND_CONTEXT += locals_register_find_files_context
-
+EVENT_REQUEST_COMMAND_CONTEXT += examples_register_find_files_context
 
 COMMAND_LIST += [
-        ("open locals interpreter files ipy", "", 0.0, "MAIN_WINDOW.show_command_window('local_open_ipy')"),
+        ("open local rest file", "find rst restructuredtext", 0.0, "MAIN_WINDOW.show_command_window('locals_open_rst')"),
+        ("open local interpreter file", "find interpreter ipy", 0.0, "MAIN_WINDOW.show_command_window('locals_open_ipy')"),
+        ("open redmine", "", 0.0, """
+from core.InterpreterEditor import InterpreterEditor
+MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_addtime.ipy", "global": True })
+MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_support.ipy", "global": True })
+	"""),
         ]
 
