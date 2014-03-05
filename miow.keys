@@ -1,23 +1,3 @@
-def app_switch_interpreter_widget_focus_key(key_event, key_as_text):
-    if(MAIN_WINDOW.interpreter_editor.editor_widget and
-            not MAIN_WINDOW.interpreter_editor.editor_widget.hasFocus()):
-        MAIN_WINDOW.interpreter_editor.editor_widget.setFocus()
-    else:
-        if MAIN_WINDOW.main_tab.currentWidget():
-            MAIN_WINDOW.main_tab.currentWidget().setFocus()
-    return None
-
-            
-def interpreter_switch_focus(key_event, key_as_text):
-    if(MAIN_WINDOW.interpreter_editor.result_widget
-             and not MAIN_WINDOW.interpreter_editor.result_widget.hasFocus()):
-        MAIN_WINDOW.interpreter_editor.result_widget.setFocus()
-        MAIN_WINDOW.interpreter_editor.result_widget.moveCursor(PyQt4.QtGui.QTextCursor.End)
-    elif(MAIN_WINDOW.interpreter_editor.editor_widget
-             and not MAIN_WINDOW.interpreter_editor.editor_widget.hasFocus()):
-        MAIN_WINDOW.interpreter_editor.editor_widget.setFocus()
-    return None
-            
 
 def redefine_key(key_event, key_as_text):
     if key_as_text == ('Ctrl+P', '\x10'):
@@ -47,20 +27,6 @@ def  show_command_window(key_event, key_as_text):
             
 
             
-#############################
-# ctrl+alt switch interpreter<->widget
-#############################
-APP_KEY_MAPS += [(('Ctrl+Alt+\xe1\x9f\x80\xed\xb0\xa3', ''),
-                  app_switch_interpreter_widget_focus_key)]
-APP_KEY_MAPS += [(('Ctrl+Alt+\xe1\x9f\x80\xed\xb0\xa1', ''),
-                 app_switch_interpreter_widget_focus_key)]
-
-
-#############################
-# ctrl+tab  to switch interpreter_editor and interpreter_result
-#############################
-APP_KEY_MAPS += [(('Ctrl+Tab', '\t'),
-                 interpreter_switch_focus)]
 
 #############################
 # show command window
