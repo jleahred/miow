@@ -69,26 +69,39 @@ class WithFind(QPlainTextEdit):
         self.layout.addWidget(self.find_line)
         self.setFrameStyle(QFrame.NoFrame)
         self.updateRequest.connect(self.find_line.updateContents)
+        self.updateRequest.connect(self.updateContents)
         self.__adjust_height()
 
     def __adjust_height(self):
-        height = self.find_line.adjustHeight()
+        #height = self.find_line.adjustHeight()
         super(WithFind, self).set_viewport_margins("WithFind", 
                                 (0, 0, 0, self.find_line.find1.height()))
 
 
+    def __adjust_geometry(self):
+        geometry = QRect(0, 
+                                       self.viewport().height(), 
+                                       self.viewport().width(), 
+                                       self.find_line.find1.height())
+        if geometry != self.find_line.geometry():
+            self.find_line.setGeometry(geometry)
+
+    def updateContents(self, rect, scroll):
+        self.__adjust_geometry()
+        
     def resizeEvent(self, resize_event):
-        pass
         super(WithFind, self).resizeEvent(resize_event)
-        super(WithFind, self).get_viewport_margins()
+        self.__adjust_geometry()
+        return
+        self.find_line.setGeometry(QRect(0, 
+                                       self.viewport().height(), 
+                                       self.viewport().width(), 
+                                       self.find_line.find1.height()))
+        #super(WithFind, self).get_viewport_margins()
         #self.find_line.setGeometry(QRect(self.viewport().width()/3, 
         #                               0, #self.viewport().height(), 
         #                               self.viewport().width()*2/3, 
         #                               self.find_line.find1.height()-4))
-        self.find_line.setGeometry(QRect(0, 
-                                       self.viewport().height(), 
-                                       self.viewport().width(), 
-                                       self.find_line.find1.height()-8))
 
 
 
