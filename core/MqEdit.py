@@ -85,11 +85,14 @@ class WithViewPortMargins(QPlainTextEdit):
         left, top, right, bottom = 0,0,0,0
         for _n, margins in self.dict_margins.items():
             left += margins[0]
-            top += margins[0]
-            right += margins[0]
-            bottom += margins[0]
+            top += margins[1]
+            right += margins[2]
+            bottom += margins[3]
+        
         self.catched_margins = left, top, right, bottom
-            
+        self.setViewportMargins(left, top, right, bottom)
+
+           
 
     def set_viewport_margins(self, name, margins):
         
@@ -181,10 +184,10 @@ class WithLineNumbers(QPlainTextEdit):
                 painter.setPen(QColor(160, 160, 160))
 
             # Draw the line number right justified at the position of the line.
-            left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
+            #left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
             left = number_bar.width()
             super(WithLineNumbers, self).set_viewport_margins("line_number", 
-                                                (left, top, right, bottom))
+                                                (left, 0, 0, 0))
             paint_rect = QRect(0, block_top, number_bar.width(),
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
