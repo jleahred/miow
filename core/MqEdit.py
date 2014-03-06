@@ -130,7 +130,7 @@ class WithLineNumbers(QPlainTextEdit):
             QWidget.paintEvent(self, event)
 
         def adjustWidth(self, count):
-            width = self.fontMetrics().width(unicode(count)) + 5
+            width = self.fontMetrics().width(unicode(count)) + 8
             if self.width() != width:
                 self.setFixedWidth(width)
 
@@ -188,7 +188,7 @@ class WithLineNumbers(QPlainTextEdit):
             left = number_bar.width()
             super(WithLineNumbers, self).set_viewport_margins("line_number", 
                                                 (left, 0, 0, 0))
-            paint_rect = QRect(0, block_top, number_bar.width(),
+            paint_rect = QRect(0, block_top, number_bar.width()-2,
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
 
