@@ -74,16 +74,40 @@ class WithViewPortMargins(QPlainTextEdit):
 
     def __init__(self, *args):
         """tupple left, top, right. bottom"""
-        self.margins = (0, 0, 0, 0)
+        self.dict_margins = {}
+        self.catched_margins = (0, 0, 0, 0)
 
     def get_viewport_margins(self):
-        return self.margins
+        return self.catched_margins
 
-    def set_viewport_margins(self, margins):
-        if((self.margins) != margins):
-            self.margins = margins
-            left, top, right, bottom = self.margins
-            self.setViewportMargins(left, top, right, bottom)
+    
+    def __update_viewport_margins(self):
+        left, top, right, bottom = 0,0,0,0
+        for _n, margins in self.dict_margins.items():
+            left += margins[0]
+            top += margins[0]
+            right += margins[0]
+            bottom += margins[0]
+        self.catched_margins = left, top, right, bottom
+            
+
+    def set_viewport_margins(self, name, margins):
+        
+        if self.dict_margins.has_key(name):
+            if margins == (0, 0) :
+                del self.dict_margins[name]
+                self.__update_viewport_margins()
+            elif self.dict_margins[name] != margins:
+                self.dict_margins[name] = margins
+                self.__update_viewport_margins()
+            else:  # no change
+                pass
+        else:
+            if margins != (0,0):
+                self.dict_margins[name] = margins
+                self.__update_viewport_margins()
+            else:
+                pass                
 
 
 class WithLineNumbers(QPlainTextEdit):
@@ -159,7 +183,8 @@ class WithLineNumbers(QPlainTextEdit):
             # Draw the line number right justified at the position of the line.
             left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
             left = number_bar.width()
-            super(WithLineNumbers, self).set_viewport_margins((left, top, right, bottom))
+            super(WithLineNumbers, self).set_viewport_margins("line_number", 
+                                                (left, top, right, bottom))
             paint_rect = QRect(0, block_top, number_bar.width(),
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
