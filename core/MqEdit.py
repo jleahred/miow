@@ -69,8 +69,26 @@ class WithFixedFont(QPlainTextEdit):
         self.setFont(QFont("Monospace", 11))
 
 
+class WithViewPortMargins(QPlainTextEdit):
+    """Mixin to add ViewPortMargins to QPlainTextEdit"""
+
+    def __init__(self, *args):
+        """tupple left, top, right. bottom"""
+        self.margins = (0, 0, 0, 0)
+
+    def get_viewport_margins(self):
+        return self.margins
+
+    def set_viewport_margins(self, margins):
+        if((self.margins) != margins):
+            self.margins = margins
+            left, top, right, bottom = self.margins
+            self.setViewportMargins(left, top, right, bottom)
+
+
 class WithLineNumbers(QPlainTextEdit):
-    """Mixin to add line numbers to QPlainTextEdit"""
+    """Mixin to add line numbers to QPlainTextEdit
+    It requieres WithViewPortMargins"""
 
     class LineNumber(QWidget):
 
@@ -97,7 +115,7 @@ class WithLineNumbers(QPlainTextEdit):
 
     def __init__(self, *args):
         self.number_bar = self.LineNumber(self)
-        self.contentOffset()
+        #self.contentOffset()
         #self.setViewportMargins(15,0,0,0)
         self.setFrameStyle(QFrame.NoFrame)
         self.blockCountChanged.connect(self.number_bar.adjustWidth)
@@ -139,7 +157,9 @@ class WithLineNumbers(QPlainTextEdit):
                 painter.setPen(QColor(160, 160, 160))
 
             # Draw the line number right justified at the position of the line.
-            self.setViewportMargins(number_bar.width(), 0, 0, 0)
+            left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
+            left = number_bar.width()
+            super(WithLineNumbers, self).set_viewport_margins((left, top, right, bottom))
             paint_rect = QRect(0, block_top, number_bar.width(),
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
@@ -335,6 +355,7 @@ if(__name__ == '__main__'):
         widget = mixin(
                        WithBasicIdentationManager,
                        WithLineNumbers,
+                       WithViewPortMargins,
                        WithHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()

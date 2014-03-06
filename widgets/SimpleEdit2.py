@@ -19,6 +19,7 @@ if(__name__ == '__main__'):
 from  core.Mixin import mixin
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
+                          WithViewPortMargins,
                           WithLineNumbers)
 from core.MqEditIO import WithMqEditIO
 
@@ -42,6 +43,7 @@ class SimpleEdit2(WithSingleIO, QWidget):
                        WithFixedFont,
                        WithHighlight,
                        WithLineNumbers,
+                       WithViewPortMargins,
                        WithWordCompletion,
                        WithCompletion,
                        QPlainTextEdit)(self)

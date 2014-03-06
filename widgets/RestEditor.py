@@ -28,6 +28,7 @@ from  core.Mixin import mixin
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
                           WithLineNumbers,
+                          WithViewPortMargins,
                           WithBasicIdentationManager)
 
 from core.Completion import (WithCompletion,
@@ -59,6 +60,7 @@ class RestEditor(WithSingleIO, QWidget):
                         WithHighlight,
                         WithFixedFont,
                         WithLineNumbers,
+                        WithViewPortMargins,
                         WithWordCompletion,
                         WithCompletion,
                         QPlainTextEdit)(self)

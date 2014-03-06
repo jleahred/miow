@@ -16,6 +16,7 @@ if(__name__ == '__main__'):
 
 from  core.MqEdit import (WithHighlight,
                           WithFixedFont,
+                          WithViewPortMargins,
                           WithLineNumbers)
 
 from core.MqEditIO import WithMqEditIO
@@ -30,6 +31,7 @@ class SimpleEdit(WithSingleIO,
                  WithFixedFont,
                  WithHighlight,
                  WithLineNumbers,
+                 WithViewPortMargins,
                  WithWordCompletion,
                  WithCompletion,
                  QPlainTextEdit,
@@ -44,6 +46,7 @@ class SimpleEdit(WithSingleIO,
         WithCompletion.__init__(self, parent)
         WithWordCompletion.__init__(self, parent)
         WithFixedFont.__init__(self, parent)
+        WithViewPortMargins.__init__(self, parent)
         WithLineNumbers.__init__(self, parent)
         WithHighlight.__init__(self, parent)
         WithMqEditIO.__init__(self, params)
