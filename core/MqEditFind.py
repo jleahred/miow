@@ -31,6 +31,8 @@ class WithFind(QPlainTextEdit):
             layout.addWidget(self.find1)
             self.find2 = QLineEdit(self)
             layout.addWidget(self.find2)
+            self.find3 = QLineEdit(self)
+            layout.addWidget(self.find3)
             
             layout.setMargin(0)
             layout.setSpacing(0)
@@ -75,11 +77,12 @@ class WithFind(QPlainTextEdit):
     def __adjust_height(self):
         #height = self.find_line.adjustHeight()
         super(WithFind, self).set_viewport_margins("WithFind", 
-                                (0, 0, 0, self.find_line.find1.height()))
+                                (0, 0, 0, self.find_line.find1.height()-4))
 
 
     def __adjust_geometry(self):
-        geometry = QRect(0, 
+        margins = self.get_viewport_margins()
+        geometry = QRect(margins[0], 
                                        self.viewport().height(), 
                                        self.viewport().width(), 
                                        self.find_line.find1.height())

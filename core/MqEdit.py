@@ -5,7 +5,7 @@ from PyQt4.QtCore import Qt, QRect
 
 from PyQt4.QtGui import (QWidget, QPainter, QFrame,
                          QTextEdit, QPlainTextEdit, QColor,
-                         QTextFormat, QTextCursor, QFont)
+                         QTextFormat, QTextCursor, QFont, QPen)
 
 import re
 
@@ -159,7 +159,10 @@ class WithLineNumbers(QPlainTextEdit):
         painter = QPainter(number_bar)
         #painter.fillRect(event.rect(), Qt.lightGray)#self.palette().base())
         painter.fillRect(event.rect(), QColor(230, 230, 230))
-
+        painter.setPen(QPen(QColor(180, 180, 180)))
+        painter.drawLine(event.rect().width()-1, 0, event.rect().width()-1, 
+                                         event.rect().height()-1)
+        
         # Iterate over all visible text blocks in the document.
         while block.isValid():
             line_count += 1
@@ -188,7 +191,7 @@ class WithLineNumbers(QPlainTextEdit):
             left = number_bar.width()
             super(WithLineNumbers, self).set_viewport_margins("line_number", 
                                                 (left, 0, 0, 0))
-            paint_rect = QRect(0, block_top, number_bar.width()-2,
+            paint_rect = QRect(0, block_top, number_bar.width()-3,
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
 
