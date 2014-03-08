@@ -22,8 +22,12 @@ from Mixin import mixin
 from Event import Event
 from MqEdit import(WithHighlight,
                    WithFixedFont,
-                   WithBasicIdentationManager)
+                   WithBasicIdentationManager,
+                   WithViewPortMargins,
+                   WithLineNumbers)
+
 from MqEditIO import WithMqEditIO
+from MqEditFind import WithFind
 
 from Completion import WithCompletion, WithWordCompletionMulty_
 
@@ -139,6 +143,9 @@ class InterpreterEditor(QWidget, WithSingleIO):
 
         # create widgets
         self._editor_widget = mixin(
+                               WithFind,
+                               WithLineNumbers,
+                               WithViewPortMargins,
                                WithWordCompletionMulty_,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
@@ -147,7 +154,8 @@ class InterpreterEditor(QWidget, WithSingleIO):
                                WithHighlight,
                                WithFixedFont,
                                WithMqEditIO,
-                               QPlainTextEdit)(self)
+                               QPlainTextEdit,
+                               object)(self)
         self._editor_widget.on_lines_event += self._process_lines
         if self.is_global:
             self._editor_widget.namespace = globals()
@@ -321,6 +329,9 @@ It will delete the result console"""
     def bw_lock_command_window(self):
         return self.editor_widget.completer.popup().isVisible()
 
+    def bw_add_command_list(self, command_list):
+        super(InterpreterEditor, self).bw_add_command_list(command_list)
+            
     def focusInEvent(self, focus_event):
         super(InterpreterEditor, self).focusInEvent(focus_event)
         self._editor_widget.setFocus()

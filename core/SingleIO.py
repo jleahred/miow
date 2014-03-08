@@ -14,7 +14,7 @@ from Completion import WithCompletion, WithWordCompletion
 
 
 
-class WithSingleIO:
+class WithSingleIO(object):
     """"""
 
     def __init__(self, params):
@@ -22,6 +22,7 @@ class WithSingleIO:
             self.command_load_file(params["file"])
 
     def bw_add_command_list(self, command_list):
+        #super(WithSingleIO, self).bw_add_command_list(command_list)
         if self.file_name:
             command_list += [
                     #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),

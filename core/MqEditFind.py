@@ -106,6 +106,13 @@ class WithFind(QPlainTextEdit):
         #                               self.viewport().width()*2/3, 
         #                               self.find_line.find1.height()-4))
 
+    def bw_add_command_list(self, command_list):
+        print "hhhhhhhhhhhhhhhhhhhhhhhHH"
+        if self.file_name:
+            command_list += [
+                    #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
+                    ("find text",    "ff", 0.5, "self.get_current_widget().show_find()"),
+                   ]
 
 
 
