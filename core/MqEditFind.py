@@ -6,7 +6,9 @@ from PyQt4.QtCore import Qt, QRect
 from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QTextFormat, QTextCursor, QFont,
                          QPainter, QFrame, QLineEdit, QHBoxLayout)
-                         
+
+from  BaseWidget import BaseWidget
+
 from MqEdit import  (WithHighlight, WithFixedFont, 
                     WithViewPortMargins, WithLineNumbers)
 
@@ -14,7 +16,7 @@ from MqEdit import  (WithHighlight, WithFixedFont,
 import re
 
 
-class WithFind(QPlainTextEdit):
+class WithFind(BaseWidget):
     """Mixin to add find command
     It requieres WithViewPortMargins"""
 
@@ -73,6 +75,7 @@ class WithFind(QPlainTextEdit):
         self.updateRequest.connect(self.find_line.updateContents)
         self.updateRequest.connect(self.updateContents)
         self.__adjust_height()
+        #BaseWidget.__init__(self, args)
 
     def __adjust_height(self):
         #height = self.find_line.adjustHeight()
@@ -107,13 +110,14 @@ class WithFind(QPlainTextEdit):
         #                               self.find_line.find1.height()-4))
 
     def bw_add_command_list(self, command_list):
-        print "hhhhhhhhhhhhhhhhhhhhhhhHH"
-        if self.file_name:
-            command_list += [
+        super(WithFind, self).bw_add_command_list(command_list)
+        command_list += [
                     #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
-                    ("find text",    "ff", 0.5, "self.get_current_widget().show_find()"),
+                    ("find text",    "ff", 0.5, "self.get_current_widget().focusWidget().show_find()"),
                    ]
 
+    def show_find(self):
+        print "show find"
 
 
 if(__name__ == '__main__'):

@@ -6,6 +6,8 @@ from PyQt4.QtGui import (QWidget, QPlainTextEdit,)
 
 from Mixin import mixin
 
+from BaseWidget import BaseWidget
+
 from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
@@ -14,7 +16,7 @@ from Completion import WithCompletion, WithWordCompletion
 
 
 
-class WithSingleIO(object):
+class WithSingleIO(BaseWidget):
     """"""
 
     def __init__(self, params):
@@ -22,7 +24,7 @@ class WithSingleIO(object):
             self.command_load_file(params["file"])
 
     def bw_add_command_list(self, command_list):
-        #super(WithSingleIO, self).bw_add_command_list(command_list)
+        super(WithSingleIO, self).bw_add_command_list(command_list)
         if self.file_name:
             command_list += [
                     #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),

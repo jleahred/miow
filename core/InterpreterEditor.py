@@ -20,6 +20,8 @@ from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
 from Mixin import mixin
 from Event import Event
+
+from BaseWidget import BaseWidget
 from MqEdit import(WithHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager,
@@ -122,7 +124,7 @@ Wellcome to myow... InterpreterEditor
 
 
 
-class InterpreterEditor(QWidget, WithSingleIO):
+class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
     """InterpreterEditor component
     """
 
@@ -154,8 +156,8 @@ class InterpreterEditor(QWidget, WithSingleIO):
                                WithHighlight,
                                WithFixedFont,
                                WithMqEditIO,
-                               QPlainTextEdit,
-                               object)(self)
+                               BaseWidget,
+                               QPlainTextEdit)(self)
         self._editor_widget.on_lines_event += self._process_lines
         if self.is_global:
             self._editor_widget.namespace = globals()
@@ -176,6 +178,8 @@ class InterpreterEditor(QWidget, WithSingleIO):
         self.setLayout(layout)
         self.reset()
         WithSingleIO.__init__(self, params)
+        BaseWidget.__init__(self, params)
+        #QWidget.__init__(self, parent)
 
 
 
@@ -331,6 +335,7 @@ It will delete the result console"""
 
     def bw_add_command_list(self, command_list):
         super(InterpreterEditor, self).bw_add_command_list(command_list)
+        self._editor_widget.bw_add_command_list(command_list)
             
     def focusInEvent(self, focus_event):
         super(InterpreterEditor, self).focusInEvent(focus_event)
