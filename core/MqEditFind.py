@@ -70,6 +70,7 @@ class WithFind(BaseWidget):
     def __init__(self, *args):
         self.layout = QHBoxLayout(self)
         self.find_line = self.FindLine(self)
+        self.find_line.setVisible(False)
         self.layout.addWidget(self.find_line)
         self.setFrameStyle(QFrame.NoFrame)
         self.updateRequest.connect(self.find_line.updateContents)
@@ -79,8 +80,12 @@ class WithFind(BaseWidget):
 
     def __adjust_height(self):
         #height = self.find_line.adjustHeight()
-        super(WithFind, self).set_viewport_margins("WithFind", 
-                                (0, 0, 0, self.find_line.find1.height()-4))
+        if self.find_line.isVisible():
+            super(WithFind, self).set_viewport_margins("WithFind", 
+                                    (0, 0, 0, self.find_line.find1.height()))
+        else:
+            super(WithFind, self).set_viewport_margins("WithFind", 
+                                    (0, 0, 0, 0))
 
 
     def __adjust_geometry(self):
@@ -111,13 +116,26 @@ class WithFind(BaseWidget):
 
     def bw_add_command_list(self, command_list):
         super(WithFind, self).bw_add_command_list(command_list)
-        command_list += [
-                    #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
-                    ("find text",    "ff", 0.5, "self.get_current_widget().focusWidget().show_find()"),
-                   ]
+        if self.hasFocus():
+            command_list += [
+                        ("find text",    "ff", 0.5, 
+                         "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                         "_self.show_find(True);"),
+                       ]
+        if self.find_line.isVisible():
+            command_list += [
+                        ("hide find text",    "hf", 0.5, 
+                         "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                         "_self.show_find(False);"),
+                       ]
 
-    def show_find(self):
-        print "show find"
+    def show_find(self, show):
+        self.find_line.setVisible(show)
+        if self.find_line.isVisible():
+            self.find_line.find1.setFocus()
+        else:
+            self.setFocus()
+        self.__adjust_height()
 
 
 if(__name__ == '__main__'):
@@ -135,6 +153,9 @@ if(__name__ == '__main__'):
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()
+        widget.setFocus()
+        widget.show_find(True)
+        #widget.show_find(False)
         app.exec_()
 
 
