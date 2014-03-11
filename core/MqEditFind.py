@@ -1,12 +1,12 @@
 """Support to line highlight, line numbering...
 """
 
-from PyQt4.QtCore import Qt, QRect
+from PyQt4.QtCore import Qt, QRect, QRegExp
 
 from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QTextFormat, QTextCursor, QFont,
                          QPainter, QFrame, QLineEdit, QHBoxLayout,
-                         QKeyEvent)
+                         QKeyEvent, QSyntaxHighlighter, QTextCharFormat)
 
 from  BaseWidget import BaseWidget
 
@@ -15,6 +15,28 @@ from MqEdit import  (WithHighlight, WithFixedFont,
 
 
 import re
+
+
+
+class Highlighter_find(QSyntaxHighlighter):
+    
+    def __init__(self, parent):
+        super(Highlighter_find, self).__init__(parent)
+        self.words = dict() # word, format
+
+    def update_word(self, index, word, _format):
+        self.words[index] = (word, _format)
+
+    def highlightBlock(self, text):
+        for index_words, pattern_format in self.words.items():
+            pattern, _format = pattern_format
+            expression = QRegExp(pattern)
+            index = expression.indexIn(text);
+            while index >= 0:
+                length = expression.matchedLength()
+                self.setFormat(index, length, _format)
+                index = expression.indexIn(text, index + length)
+        return        
 
 
 class WithFind(BaseWidget):
@@ -28,6 +50,14 @@ class WithFind(BaseWidget):
                 super(WithFind.FindLine.QFind_line_edit, self).__init__(parent)
                 self.next_widget = self
                 self.prev_widget = self
+                self.highlighter = parent.highlighter
+
+            def update_highlight(self):
+                _format = QTextCharFormat()
+                _format.setFontWeight(QFont.Bold)
+                #self.highlighter.update_word(0, """(^|\W+)aaa($|\W+)""", _format)
+                self.highlighter.update_word(0, """\\baaa\\b""", _format)
+                self.highlighter.rehighlight()
 
             def keyPressEvent (self, event):  # QKeyEvent
                 if event.key() == Qt.Key_Tab:
@@ -40,13 +70,20 @@ class WithFind(BaseWidget):
                     self.prev_widget.setFocus()
                     self.prev_widget.selectAll()
                     return
+
                 super(WithFind.FindLine.QFind_line_edit, 
                                           self).keyPressEvent(event)
+                self.update_highlight()
+                if not event.isAccepted():
+                    event.setAccepted(True)
+                    return
+                    
 
         def __init__(self, edit):
             QWidget.__init__(self, edit)
 
             self.edit = edit
+            self.highlighter = Highlighter_find(edit.document())
             
             layout = QHBoxLayout(self)
 
@@ -105,6 +142,7 @@ class WithFind(BaseWidget):
         self.updateRequest.connect(self.find_line.updateContents)
         self.updateRequest.connect(self.updateContents)
         self.__adjust_height()
+
         #BaseWidget.__init__(self, args)
 
     def __adjust_height(self):
@@ -184,6 +222,13 @@ if(__name__ == '__main__'):
         widget.show()
         widget.setFocus()
         widget.show_find(True)
+        widget.setPlainText("""\
+aaa bbb ccc ddd
+bbb ccc ddd aaa
+aaa.aaa
+aaa aaa
+aaaaaaaa""")
+        widget.find_line.find1.setText("aaa")
         #widget.show_find(False)
         app.exec_()
 

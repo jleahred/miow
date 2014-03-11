@@ -336,6 +336,14 @@ It will delete the result console"""
     def bw_add_command_list(self, command_list):
         super(InterpreterEditor, self).bw_add_command_list(command_list)
         self._editor_widget.bw_add_command_list(command_list)
+        command_list += [
+                    ("focus commands",    "fc", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self._editor_widget.setFocus();"),
+                    ("focus result",    "fr", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self._result_widget.setFocus();"),
+            ]
             
     def focusInEvent(self, focus_event):
         super(InterpreterEditor, self).focusInEvent(focus_event)
