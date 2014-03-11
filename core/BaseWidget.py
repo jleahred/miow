@@ -14,9 +14,8 @@ class BaseWidget(object):
 
     def __init__(self, *args):
         #super(BaseWidget, self).__init__()
-        self.file_name = None
-        self.uuid = None
-
+        pass
+    
     # property file_name
     # close_requested
     # save

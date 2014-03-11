@@ -5,7 +5,8 @@ from PyQt4.QtCore import Qt, QRect
 
 from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QTextFormat, QTextCursor, QFont,
-                         QPainter, QFrame, QLineEdit, QHBoxLayout)
+                         QPainter, QFrame, QLineEdit, QHBoxLayout,
+                         QKeyEvent)
 
 from  BaseWidget import BaseWidget
 
@@ -21,6 +22,26 @@ class WithFind(BaseWidget):
     It requieres WithViewPortMargins"""
 
     class FindLine(QFrame):
+        
+        class QFind_line_edit(QLineEdit):
+            def __init__(self, parent):
+                super(WithFind.FindLine.QFind_line_edit, self).__init__(parent)
+                self.next_widget = self
+                self.prev_widget = self
+
+            def keyPressEvent (self, event):  # QKeyEvent
+                if event.key() == Qt.Key_Tab:
+                    event.setAccepted(True)
+                    self.next_widget.setFocus()
+                    self.next_widget.selectAll()
+                    return
+                elif event.key() == Qt.Key_Backtab:
+                    event.setAccepted(True)
+                    self.prev_widget.setFocus()
+                    self.prev_widget.selectAll()
+                    return
+                super(WithFind.FindLine.QFind_line_edit, 
+                                          self).keyPressEvent(event)
 
         def __init__(self, edit):
             QWidget.__init__(self, edit)
@@ -29,12 +50,20 @@ class WithFind(BaseWidget):
             
             layout = QHBoxLayout(self)
 
-            self.find1 = QLineEdit(self)
+            self.find1 = WithFind.FindLine.QFind_line_edit(self)
             layout.addWidget(self.find1)
-            self.find2 = QLineEdit(self)
+            self.find2 = WithFind.FindLine.QFind_line_edit(self)
             layout.addWidget(self.find2)
-            self.find3 = QLineEdit(self)
+            self.find3 = WithFind.FindLine.QFind_line_edit(self)
             layout.addWidget(self.find3)
+            
+            self.find1.next_widget = self.find2
+            self.find2.next_widget = self.find3
+            self.find3.next_widget = self.find1
+
+            self.find1.prev_widget = self.find3
+            self.find2.prev_widget = self.find1
+            self.find3.prev_widget = self.find2
             
             layout.setMargin(0)
             layout.setSpacing(0)
