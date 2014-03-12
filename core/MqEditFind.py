@@ -10,7 +10,7 @@ from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
 
 from  BaseWidget import BaseWidget
 
-from MqEdit import  (WithHighlight, WithFixedFont, 
+from MqEdit import  (WithLineHighlight, WithFixedFont, 
                     WithViewPortMargins, WithLineNumbers)
 
 
@@ -30,16 +30,17 @@ class Highlighter_find(QSyntaxHighlighter):
     def highlightBlock(self, text):
         for index_words, pattern_format in self.words.items():
             pattern, _format = pattern_format
-            expression = QRegExp(pattern)
-            index = expression.indexIn(text);
-            while index >= 0:
-                length = expression.matchedLength()
-                self.setFormat(index, length, _format)
-                index = expression.indexIn(text, index + length)
+            if len(pattern)>0:
+                expression = QRegExp(pattern)
+                index = expression.indexIn(text);
+                while index >= 0:
+                    length = expression.matchedLength()
+                    self.setFormat(index, length, _format)
+                    index = expression.indexIn(text, index + length)
         return        
 
 
-class WithFind(BaseWidget):
+class WithFind(WithViewPortMargins):
     """Mixin to add find command
     It requieres WithViewPortMargins"""
 
@@ -50,14 +51,6 @@ class WithFind(BaseWidget):
                 super(WithFind.FindLine.QFind_line_edit, self).__init__(parent)
                 self.next_widget = self
                 self.prev_widget = self
-                self.highlighter = parent.highlighter
-
-            def update_highlight(self):
-                _format = QTextCharFormat()
-                _format.setFontWeight(QFont.Bold)
-                #self.highlighter.update_word(0, """(^|\W+)aaa($|\W+)""", _format)
-                self.highlighter.update_word(0, """\\baaa\\b""", _format)
-                self.highlighter.rehighlight()
 
             def keyPressEvent (self, event):  # QKeyEvent
                 if event.key() == Qt.Key_Tab:
@@ -73,7 +66,6 @@ class WithFind(BaseWidget):
 
                 super(WithFind.FindLine.QFind_line_edit, 
                                           self).keyPressEvent(event)
-                self.update_highlight()
                 if not event.isAccepted():
                     event.setAccepted(True)
                     return
@@ -102,17 +94,40 @@ class WithFind(BaseWidget):
             self.find2.prev_widget = self.find1
             self.find3.prev_widget = self.find2
             
+            self.find1.textChanged.connect(self.__text_changed)
+            self.find2.textChanged.connect(self.__text_changed)
+            self.find3.textChanged.connect(self.__text_changed)
+            
+            self.find1.setStyleSheet("background-color: rgb(255, 255, 230);")
+            self.format1 = QTextCharFormat()
+            self.format1.setBackground(QColor(255, 255, 200))
+            
+            self.find2.setStyleSheet("background-color: rgb(230, 255, 255);")
+            self.format2 = QTextCharFormat()
+            self.format2.setBackground(QColor(200, 255, 255))
+            
+            self.find3.setStyleSheet("background-color: rgb(230, 255, 230);")
+            self.format3 = QTextCharFormat()
+            self.format3.setBackground(QColor(200, 255, 200))
+            
             layout.setMargin(0)
             layout.setSpacing(0)
             layout.setContentsMargins(0,0,0,0)
             self.setLayout(layout)
             self.find1.setFocus()
-            self.setBackgroundRole
+
+
+        def __text_changed(self, text):
+            self.highlighter.update_word(0, self.find1.text(), self.format1)
+            self.highlighter.update_word(1, self.find2.text(), self.format2)
+            self.highlighter.update_word(2, self.find3.text(), self.format3)
+            self.highlighter.rehighlight()
+            #self.update_highlight()
 
 
         def paintEvent(self, event):
             painter = QPainter(self)
-            painter.fillRect(event.rect(), QColor(230, 230, 255))
+            painter.fillRect(event.rect(), QColor(230, 230, 230))
             painter.end()
             QFrame.paintEvent(self, event)
             
@@ -216,7 +231,7 @@ if(__name__ == '__main__'):
                        WithFind,
                        WithLineNumbers,
                        WithViewPortMargins,
-                       WithHighlight,
+                       WithLineHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()

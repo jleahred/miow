@@ -22,7 +22,7 @@ from Mixin import mixin
 from Event import Event
 
 from BaseWidget import BaseWidget
-from MqEdit import(WithHighlight,
+from MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager,
                    WithViewPortMargins,
@@ -153,7 +153,7 @@ class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
                                WithCompletion,
                                InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,
-                               WithHighlight,
+                               WithLineHighlight,
                                WithFixedFont,
                                WithMqEditIO,
                                BaseWidget,

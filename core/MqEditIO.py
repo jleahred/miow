@@ -3,7 +3,7 @@
 
 
 from PyQt4.QtGui import (QPlainTextEdit,)
-from MqEdit import WithHighlight, WithFixedFont
+from MqEdit import WithLineHighlight, WithFixedFont
 
 class WithMqEditIO(QPlainTextEdit):
     """"""
@@ -31,7 +31,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                        WithHighlight, 
+                        WithLineHighlight, 
                         WithFixedFont,
                         WithMqEditIO,
                         QPlainTextEdit)()

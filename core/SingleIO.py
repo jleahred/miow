@@ -8,7 +8,7 @@ from Mixin import mixin
 
 from BaseWidget import BaseWidget
 
-from MqEdit import(WithHighlight,
+from MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
                    
@@ -52,7 +52,7 @@ if(__name__ == '__main__'):
                                    WithBasicIdentationManager,
                                    WithWordCompletion,
                                    WithCompletion,
-                                   WithHighlight,
+                                   WithLineHighlight,
                                    WithFixedFont,
                                    WithMqEditIO,
                                    QPlainTextEdit)(self)
@@ -64,7 +64,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                        WithHighlight, 
+                        WithLineHighlight, 
                         WithFixedFont,
                         WithMqEditIO,
                         QPlainTextEdit)()

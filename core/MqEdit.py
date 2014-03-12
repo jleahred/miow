@@ -10,7 +10,7 @@ from PyQt4.QtGui import (QWidget, QPainter, QFrame,
 import re
 
 
-class WithHighlight(QPlainTextEdit):
+class WithLineHighlight(QPlainTextEdit):
     """Mixin to add Highlight on current line to QPlainTextEdit"""
 
     color_focus = QColor(255, 210, 255)
@@ -54,11 +54,11 @@ class WithHighlight(QPlainTextEdit):
         self.setExtraSelections(extra_selections)
 
     def focusInEvent(self, focus_event):
-        super(WithHighlight, self).focusInEvent(focus_event)
+        super(WithLineHighlight, self).focusInEvent(focus_event)
         self.highlight()
 
     def focusOutEvent(self, focus_event):
-        super(WithHighlight, self).focusOutEvent(focus_event)
+        super(WithLineHighlight, self).focusOutEvent(focus_event)
         self.highlight()
 
 
@@ -113,7 +113,7 @@ class WithViewPortMargins(QPlainTextEdit):
                 pass                
 
 
-class WithLineNumbers(QPlainTextEdit):
+class WithLineNumbers(WithViewPortMargins):
     """Mixin to add line numbers to QPlainTextEdit
     It requieres WithViewPortMargins"""
 
@@ -371,7 +371,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                       WithHighlight,
+                       WithLineHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()
@@ -387,7 +387,7 @@ if(__name__ == '__main__'):
                        WithBasicIdentationManager,
                        WithLineNumbers,
                        WithViewPortMargins,
-                       WithHighlight,
+                       WithLineHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()
