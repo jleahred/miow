@@ -17,12 +17,38 @@ class WithLineHighlight(QPlainTextEdit):
     color_no_focus = QColor(255, 210, 255, 120)
 
     def __init__(self, *args):
-        self.highlight()
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
         self.cursorPositionChanged.connect(self.highlight)
+        self.extra_selections_dict = {}
+        self.highlight()
 
+    def get_extra_selections(self, key):
+        return self.extra_selections_dict.get(key, [])
+    def set_extra_selections(self, key, extra_selections):
+        self.extra_selections_dict[key] = extra_selections
+        
+    def update_extra_selections(self):
+        extra_selections = []
+        for key, extra in list(self.extra_selections_dict.items()):
+            if key == 'current_line':
+                # Python 3 compatibility (weird): current line has to be 
+                # highlighted first
+                extra_selections = extra + extra_selections
+            else:
+                extra_selections += extra
+        self.setExtraSelections(extra_selections)
     def highlight(self):
-        """this method will hightlight current line"""
+        """Highlight current line"""
+        selection = QTextEdit.ExtraSelection()
+        selection.format.setProperty(QTextFormat.FullWidthSelection,
+                                     True)
+        selection.format.setBackground(self.color_focus)
+        selection.cursor = self.textCursor()
+        selection.cursor.clearSelection()
+        self.set_extra_selections('current_line', [selection])
+        self.update_extra_selections()
+    """def highlight(self):
+        " ""this method will hightlight current line" ""
         if self.hasFocus():
             color = self.color_focus
         else:
@@ -51,7 +77,7 @@ class WithLineHighlight(QPlainTextEdit):
                 selection.cursor.movePosition(QTextCursor.StartOfLine)
                 selection.cursor.movePosition(QTextCursor.PreviousCharacter)
 
-        self.setExtraSelections(extra_selections)
+        self.setExtraSelections(extra_selections)"""
 
     def focusInEvent(self, focus_event):
         super(WithLineHighlight, self).focusInEvent(focus_event)
