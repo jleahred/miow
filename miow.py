@@ -27,6 +27,8 @@ from core.Event  import Event
 MAIN_WINDOW = None
 
 
+def execfile(f):
+    exec(open(f).read())
 
 #-----------------------------------------------------
 # These will be readed at starting
@@ -180,7 +182,7 @@ class MiowApplication(QApplication):
 #             super(MiowApplication, self).notify(receiver, ker)
 #==============================================================================
             for key_as_text, method in self.keys_map:
-                if key_as_text == (unicode(key_text), unicode(text)):
+                if key_as_text == (key_text, text):
                     replace = method(key_event, key_as_text)
                     if replace == None:
                         return True

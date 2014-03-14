@@ -18,22 +18,22 @@ from PyQt4.QtCore import Qt
 
 from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
-from Mixin import mixin
-from Event import Event
+from core.Mixin import mixin
+from core.Event import Event
 
-from BaseWidget import BaseWidget
-from MqEdit import(WithLineHighlight,
+from core.BaseWidget import BaseWidget
+from core.MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager,
                    WithViewPortMargins,
                    WithLineNumbers)
 
-from MqEditIO import WithMqEditIO
-from MqEditFind import WithFind
+from core.MqEditIO import WithMqEditIO
+from core.MqEditFind import WithFind
 
-from Completion import WithCompletion, WithWordCompletionMulty_
+from core.Completion import WithCompletion, WithWordCompletionMulty_
 
-from SingleIO import WithSingleIO
+from core.SingleIO import WithSingleIO
 
 
 
@@ -43,7 +43,7 @@ from PyQt4.QtGui import (QTextCursor)
 # InterpreterEditor
 import code
 import sys
-from cStringIO import StringIO
+from io import StringIO
 
 # completer
 import os
@@ -248,10 +248,10 @@ class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
                     start_line = True
 
                 if (len(tc.selectedText())>1 and
-                            ord(unicode(tc.selectedText()[0])) == 8233):
-                    lines = ''.join(unicode(tc.selectedText()[1:]).splitlines(True))
+                            ord(tc.selectedText()[0]) == 8233):
+                    lines = ''.join(tc.selectedText()[1:].splitlines(True))
                 else:
-                    lines = ''.join(unicode(tc.selectedText()).splitlines(True))
+                    lines = ''.join(tc.selectedText().splitlines(True))
                 self.on_lines_event(lines)
 
                 tc.clearSelection()
@@ -357,14 +357,14 @@ It will delete the result console"""
                 if not partials or not self.previous_partial:
                     self._result_widget.appendPlainText(
                                  "__________________________________________")
-                    self._result_widget.appendPlainText(">>> " + unicode(line))
+                    self._result_widget.appendPlainText(">>> " + line)
                     for lines in results:
                         for line in lines.splitlines():
-                            self._result_widget.appendPlainText(unicode(line))
+                            self._result_widget.appendPlainText(line)
                     if not partials:
                         self._result_widget.appendPlainText("")
                 else:
-                    self._result_widget.appendPlainText("... " + unicode(line))
+                    self._result_widget.appendPlainText("... " + line)
                 self._result_widget.ensureCursorVisible()
 #==============================================================================
 #         if(partials and not self.previous_partial

@@ -9,7 +9,13 @@ Created on Mon Sep 16 23:00:23 2013
 """
 
 
-from PyQt4.QtCore import Qt, QString, QRegExp
+from PyQt4.QtCore import Qt, QRegExp
+
+try:  
+    from PyQt4.QtCore import QString  
+except ImportError:  
+    # we are using Python3 so QString is not defined  
+    QString = str  
 
 from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
                          QCompleter, QStringListModel,
@@ -19,7 +25,7 @@ from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
 import re
 
 
-WORD_SYMBOLS = u'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
+WORD_SYMBOLS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
 
 class WithCompletion(QPlainTextEdit):
     """\
@@ -81,7 +87,7 @@ Specific mixings will have to implement the get_text_completion_list method
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
             word_till_cursor = self.word_till_cursor()
-            if((word_till_cursor.size() > 2  or
+            if((len(word_till_cursor) > 2  or
                     (self.completer.popup().isVisible() and word_till_cursor.size() > 0))
                     and
                     ((event.text() != ""
@@ -100,6 +106,7 @@ Specific mixings will have to implement the get_text_completion_list method
             completion_words = self.get_text_completion_list()
         except:
             completion_words = []
+        print(completion_words)
         QApplication.restoreOverrideCursor()
 
         if not completion_words or len(completion_words) < 1:
@@ -120,19 +127,19 @@ Specific mixings will have to implement the get_text_completion_list method
     def word_under_cursor(self):
         result = ""
         for i in range(self.current_pos_init_of_word(), self.current_pos_end_of_word()):
-            result = result + unichr(self.document().characterAt(i).unicode())
+            result = result + self.document().characterAt(i)
         return QString(result)
 
     def word_till_cursor(self):
         result = ""
         for i in range(self.current_pos_init_of_word(), self.textCursor().position()):
-            result = result + unichr(self.document().characterAt(i).unicode())
+            result = result + self.document().characterAt(i)
         return QString(result)
 
     def current_pos_init_of_word(self):
         pos = self.textCursor().position()-1
         while True:
-            char = unichr(self.document().characterAt(pos).unicode())
+            char = self.document().characterAt(pos)
             if not char in WORD_SYMBOLS  or  pos<0:
             #if char=='\n' or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None  or pos==0:
                 break
@@ -142,7 +149,7 @@ Specific mixings will have to implement the get_text_completion_list method
     def current_pos_end_of_word(self):
         pos = self.textCursor().position()
         while True:
-            char = unichr(self.document().characterAt(pos).unicode())
+            char = self.document().characterAt(pos)
             if not char in WORD_SYMBOLS  or pos==self.document().characterCount():
             #if char.isSpace() or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None:
                 break
@@ -200,31 +207,39 @@ It will propose completion with words from current document
         pass
 
     def get_text_completion_list(self):
-        words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
-                                 QString.SkipEmptyParts)
+        print("----------------1")
+        #words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
+        #                         QString.SkipEmptyParts)
+        print("----------------2")
         word_till_cursor = self.word_till_cursor()
+        print("----------------3")
         word_under_cursor = self.word_under_cursor()
+        print("----------------4")
         words.removeDuplicates()
+        print("----------------5")
         words.sort()
+        print("----------------6")
         completion_list = []
         completion_list_not_start_with = []
+        print("----------------7")
         for word in words:
+            print(word)
             if(word != word_till_cursor  and  word != word_under_cursor  and
                     word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
                 completion_list.append(word)
             elif (word != word_till_cursor  and
-                        len(unicode(word)) > len(word_till_cursor)):
-                words_till_cursor = [x for x in unicode(word_till_cursor).split("_")
+                        len(word) > len(word_till_cursor)):
+                words_till_cursor = [x for x in word_till_cursor.split("_")
                                 if x!=""  and  len(x)>=2]
                 matches = 0
                 for word_tc in words_till_cursor:
-                    if unicode(word.toUpper()).find(word_tc.upper())>=0:
+                    if word.toUpper().find(word_tc.upper())>=0:
                         matches += 1
                 if matches == len(words_till_cursor):
                     completion_list.append(word)
                 elif matches*1.20 >= len(words_till_cursor):
                     completion_list_not_start_with.append(word)
-
+        print(completion_list)
         return (super(WithWordCompletionMulty_, self).get_text_completion_list()
                      + completion_list + completion_list_not_start_with)
 

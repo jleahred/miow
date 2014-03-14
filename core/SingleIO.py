@@ -4,15 +4,15 @@
 
 from PyQt4.QtGui import (QWidget, QPlainTextEdit,)
 
-from Mixin import mixin
+from core.Mixin import mixin
 
-from BaseWidget import BaseWidget
+from core.BaseWidget import BaseWidget
 
-from MqEdit import(WithLineHighlight,
+from core.MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
                    
-from Completion import WithCompletion, WithWordCompletion
+from core.Completion import WithCompletion, WithWordCompletion
 
 
 
@@ -20,7 +20,7 @@ class WithSingleIO(BaseWidget):
     """"""
 
     def __init__(self, params):
-        if params is not None  and  params.has_key("file"):
+        if params is not None  and  "file" in params:
             self.command_load_file(params["file"])
 
     def bw_add_command_list(self, command_list):

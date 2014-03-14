@@ -122,7 +122,7 @@ class WithViewPortMargins(QPlainTextEdit):
 
     def set_viewport_margins(self, name, margins):
         
-        if self.dict_margins.has_key(name):
+        if name in self.dict_margins:
             if margins == (0, 0) :
                 del self.dict_margins[name]
                 self.__update_viewport_margins()
@@ -156,7 +156,7 @@ class WithLineNumbers(WithViewPortMargins):
             QWidget.paintEvent(self, event)
 
         def adjustWidth(self, count):
-            width = self.fontMetrics().width(unicode(count)) + 8
+            width = self.fontMetrics().width("A", count) + 8
             if self.width() != width:
                 self.setFixedWidth(width)
 
@@ -347,7 +347,7 @@ Adding new lines with RETURN key, will keep previous line identation
 
     def delete_back(self, event):
         #  if spaces till previous tab point, remove all of them
-        if unicode(self.textCursor().selectedText()) != "":
+        if self.textCursor().selectedText() != "":
             self.textCursor().removeSelectedText()
         elif self.textCursor().atBlockStart():
             super(WithBasicIdentationManager, self).keyPressEvent(event)
@@ -358,7 +358,7 @@ Adding new lines with RETURN key, will keep previous line identation
                 dist_prev_tab = 4
             cursor.setPosition(cursor.position() - dist_prev_tab,
                                        QTextCursor.KeepAnchor)
-            if unicode(cursor.selectedText()).strip() == "":
+            if cursor.selectedText().strip() == "":
                 cursor.removeSelectedText()
             else:
                 super(WithBasicIdentationManager, self).keyPressEvent(event)

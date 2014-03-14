@@ -21,7 +21,7 @@ import core.InterpreterEditorCommands
 import core.InterpreterEditor
 
 
-from Event import Event
+from core.Event import Event
 
 EVENT_COMMAND_CLEAR = Event()
 EVENT_COMMAND_RESET = Event()

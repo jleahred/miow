@@ -8,9 +8,9 @@ from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QPainter, QFrame, QLineEdit, QHBoxLayout,
                          QKeyEvent, QSyntaxHighlighter, QTextCharFormat)
 
-from  BaseWidget import BaseWidget
+from  core.BaseWidget import BaseWidget
 
-from MqEdit import  (WithLineHighlight, WithFixedFont, 
+from core.MqEdit import  (WithLineHighlight, WithFixedFont, 
                     WithViewPortMargins, WithLineNumbers)
 
 
