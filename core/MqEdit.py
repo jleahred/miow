@@ -38,17 +38,7 @@ class WithLineHighlight(QPlainTextEdit):
                 extra_selections += extra
         self.setExtraSelections(extra_selections)
     def highlight(self):
-        """Highlight current line"""
-        selection = QTextEdit.ExtraSelection()
-        selection.format.setProperty(QTextFormat.FullWidthSelection,
-                                     True)
-        selection.format.setBackground(self.color_focus)
-        selection.cursor = self.textCursor()
-        selection.cursor.clearSelection()
-        self.set_extra_selections('current_line', [selection])
-        self.update_extra_selections()
-    """def highlight(self):
-        " ""this method will hightlight current line" ""
+        """this method will hightlight current line"""
         if self.hasFocus():
             color = self.color_focus
         else:
@@ -77,7 +67,7 @@ class WithLineHighlight(QPlainTextEdit):
                 selection.cursor.movePosition(QTextCursor.StartOfLine)
                 selection.cursor.movePosition(QTextCursor.PreviousCharacter)
 
-        self.setExtraSelections(extra_selections)"""
+        self.setExtraSelections(extra_selections)
 
     def focusInEvent(self, focus_event):
         super(WithLineHighlight, self).focusInEvent(focus_event)
@@ -156,7 +146,7 @@ class WithLineNumbers(WithViewPortMargins):
             QWidget.paintEvent(self, event)
 
         def adjustWidth(self, count):
-            width = self.fontMetrics().width("A", count) + 8
+            width = self.fontMetrics().width(str(count)) + 8
             if self.width() != width:
                 self.setFixedWidth(width)
 
@@ -372,7 +362,7 @@ Adding new lines with RETURN key, will keep previous line identation
                 tc.movePosition(QTextCursor.PreviousBlock)
                 tc.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
 
-            if tc.selectedText() < 2:
+            if len(tc.selectedText()) < 2:
                 return 0
             else:
                 found_spaces = re.search('[^ ]', tc.selectedText() + '.')
