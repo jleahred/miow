@@ -24,8 +24,18 @@ class WithLineHighlight(QPlainTextEdit):
         self.extra_selections_dict = {}
         self.highlight()
 
+    def paintEvent(self, event):
+        super(WithLineHighlight, self).paintEvent(event)
+        painter = QPainter(self.viewport())
+        block = self.document().findBlock(self.textCursor().position())
+        block_top = self.blockBoundingGeometry(block).translated(
+                                    self.contentOffset()).bottom()
+        painter.drawLine(5, block_top-1, self.viewport().width()-5, block_top-1)
+
     def highlight(self):
-        " ""this method will hightlight current line" ""
+        """this method will hightlight current line"""
+        self.viewport().update()
+        return
         if self.hasFocus():
             color = self.color_focus
         else:
