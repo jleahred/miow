@@ -9,13 +9,17 @@ Created on Mon Sep 16 23:00:23 2013
 """
 
 
+#import sip
+#sip.setapi('QString', 1)
+
 from PyQt4.QtCore import Qt, QRegExp
 
-try:  
-    from PyQt4.QtCore import QString  
-except ImportError:  
-    # we are using Python3 so QString is not defined  
-    QString = str  
+
+#try:  
+#    from PyQt4.QtCore import QString  
+#except ImportError:  
+#    # we are using Python3 so QString is not defined  
+#    QString = str  
 
 from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
                          QCompleter, QStringListModel,
@@ -102,11 +106,7 @@ Specific mixings will have to implement the get_text_completion_list method
 
     def show_completer(self, select_first):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        try:
-            completion_words = self.get_text_completion_list()
-        except:
-            completion_words = []
-        print(completion_words)
+        completion_words = self.get_text_completion_list()
         QApplication.restoreOverrideCursor()
 
         if not completion_words or len(completion_words) < 1:
@@ -128,18 +128,18 @@ Specific mixings will have to implement the get_text_completion_list method
         result = ""
         for i in range(self.current_pos_init_of_word(), self.current_pos_end_of_word()):
             result = result + self.document().characterAt(i)
-        return QString(result)
+        return result
 
     def word_till_cursor(self):
         result = ""
         for i in range(self.current_pos_init_of_word(), self.textCursor().position()):
             result = result + self.document().characterAt(i)
-        return QString(result)
+        return result
 
     def current_pos_init_of_word(self):
         pos = self.textCursor().position()-1
         while True:
-            char = self.document().characterAt(pos)
+            char = str(self.document().characterAt(pos))
             if not char in WORD_SYMBOLS  or  pos<0:
             #if char=='\n' or re.match("^[A-Za-z0-9_-ñÑ]*$", unicode(char)) == None  or pos==0:
                 break
@@ -207,25 +207,18 @@ It will propose completion with words from current document
         pass
 
     def get_text_completion_list(self):
-        print("----------------1")
         #words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
-        #                         QString.SkipEmptyParts)
-        print("----------------2")
+        #                           QString.SkipEmptyParts)
+        words = re.split('\W+',self.toPlainText())
         word_till_cursor = self.word_till_cursor()
-        print("----------------3")
         word_under_cursor = self.word_under_cursor()
-        print("----------------4")
-        words.removeDuplicates()
-        print("----------------5")
+        #words.removeDuplicates()
         words.sort()
-        print("----------------6")
         completion_list = []
         completion_list_not_start_with = []
-        print("----------------7")
         for word in words:
-            print(word)
             if(word != word_till_cursor  and  word != word_under_cursor  and
-                    word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
+                    word.upper().index(word_till_cursor.upper()) == 0):
                 completion_list.append(word)
             elif (word != word_till_cursor  and
                         len(word) > len(word_till_cursor)):
@@ -233,13 +226,12 @@ It will propose completion with words from current document
                                 if x!=""  and  len(x)>=2]
                 matches = 0
                 for word_tc in words_till_cursor:
-                    if word.toUpper().find(word_tc.upper())>=0:
+                    if word.upper().find(word_tc.upper())>=0:
                         matches += 1
                 if matches == len(words_till_cursor):
                     completion_list.append(word)
                 elif matches*1.20 >= len(words_till_cursor):
                     completion_list_not_start_with.append(word)
-        print(completion_list)
         return (super(WithWordCompletionMulty_, self).get_text_completion_list()
                      + completion_list + completion_list_not_start_with)
 
