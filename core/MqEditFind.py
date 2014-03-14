@@ -101,6 +101,8 @@ class WithFind(WithViewPortMargins):
             self.find1.setStyleSheet("background-color: rgb(255, 255, 230);")
             self.format1 = QTextCharFormat()
             self.format1.setBackground(QColor(255, 255, 200))
+            self.format1.setUnderlineColor(QColor(180, 150, 255))
+            self.format1.setUnderlineStyle(QTextCharFormat.SingleUnderline)
             
             self.find2.setStyleSheet("background-color: rgb(230, 255, 255);")
             self.format2 = QTextCharFormat()
