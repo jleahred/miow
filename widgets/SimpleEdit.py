@@ -21,7 +21,7 @@ from  core.MqEdit import (WithHighlight,
 
 from core.MqEditIO import WithMqEditIO
 from core.Completion import (WithCompletion,
-                             WithWordCompletion)
+                             WithWordCompletionMulty_)
 
 from core.SingleIO import WithSingleIO
 
@@ -32,7 +32,7 @@ class SimpleEdit(WithSingleIO,
                  WithHighlight,
                  WithLineNumbers,
                  WithViewPortMargins,
-                 WithWordCompletion,
+                 WithWordCompletionMulty_,
                  WithCompletion,
                  QPlainTextEdit,
                  ):
@@ -44,7 +44,7 @@ class SimpleEdit(WithSingleIO,
         QPlainTextEdit.__init__(self, parent)
         WithSingleIO.__init__(self, params)
         WithCompletion.__init__(self, parent)
-        WithWordCompletion.__init__(self, parent)
+        WithWordCompletionMulty_.__init__(self, parent)
         WithFixedFont.__init__(self, parent)
         WithViewPortMargins.__init__(self, parent)
         WithLineNumbers.__init__(self, parent)

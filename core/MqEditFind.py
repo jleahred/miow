@@ -1,6 +1,15 @@
 """Support to line highlight, line numbering...
 """
 
+
+if(__name__ == '__main__'):
+    import os
+    import sys
+    lib_path = os.path.abspath('..')
+    sys.path.append(lib_path)
+
+
+
 from PyQt4.QtCore import Qt, QRect, QRegExp
 
 from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
@@ -8,9 +17,9 @@ from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QPainter, QFrame, QLineEdit, QHBoxLayout,
                          QKeyEvent, QSyntaxHighlighter, QTextCharFormat)
 
-from  BaseWidget import BaseWidget
+from  core.BaseWidget import BaseWidget
 
-from MqEdit import  (WithLineHighlight, WithFixedFont, 
+from core.MqEdit import  (WithLineHighlight, WithFixedFont, 
                     WithViewPortMargins, WithLineNumbers)
 
 
@@ -32,6 +41,7 @@ class Highlighter_find(QSyntaxHighlighter):
             pattern, _format = pattern_format
             if len(pattern)>0:
                 expression = QRegExp(pattern)
+                expression.setCaseSensitivity(False)
                 index = expression.indexIn(text);
                 while index >= 0:
                     length = expression.matchedLength()
@@ -40,7 +50,7 @@ class Highlighter_find(QSyntaxHighlighter):
         return        
 
 
-class WithFind(WithViewPortMargins):
+class WithFind(WithViewPortMargins, BaseWidget):
     """Mixin to add find command
     It requieres WithViewPortMargins"""
 
@@ -109,18 +119,21 @@ class WithFind(WithViewPortMargins):
             self.find3.setStyleSheet("background-color: rgb(230, 255, 230);")
             self.format3 = QTextCharFormat()
             self.format3.setBackground(QColor(200, 255, 200))
+
+            self.format_selection = QTextCharFormat()
+            self.format_selection.setBackground(QColor(200, 200, 250))
             
             layout.setMargin(0)
             layout.setSpacing(0)
             layout.setContentsMargins(0,0,0,0)
             self.setLayout(layout)
             self.find1.setFocus()
-
+            
 
         def __text_changed(self, text):
-            self.highlighter.update_word(0, self.find1.text(), self.format1)
-            self.highlighter.update_word(1, self.find2.text(), self.format2)
-            self.highlighter.update_word(2, self.find3.text(), self.format3)
+            self.highlighter.update_word(3, self.find1.text(), self.format1)
+            self.highlighter.update_word(2, self.find2.text(), self.format2)
+            self.highlighter.update_word(1, self.find3.text(), self.format3)
             self.highlighter.rehighlight()
             #self.update_highlight()
 
@@ -157,6 +170,8 @@ class WithFind(WithViewPortMargins):
         self.updateRequest.connect(self.find_line.updateContents)
         self.updateRequest.connect(self.updateContents)
         self.__adjust_height()
+        
+        self.selectionChanged.connect(self.__on_selecction_changed)
 
         #BaseWidget.__init__(self, args)
 
@@ -197,7 +212,7 @@ class WithFind(WithViewPortMargins):
         #                               self.find_line.find1.height()-4))
 
     def bw_add_command_list(self, command_list):
-        super(WithFind, self).bw_add_command_list(command_list)
+        super().bw_add_command_list(command_list)
         if self.hasFocus():
             command_list += [
                         ("find text",    "ff", 0.5, 
@@ -210,6 +225,14 @@ class WithFind(WithViewPortMargins):
                          "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
                          "_self.show_find(False);"),
                        ]
+        command_list += [
+                    ("clear finds",    "fc cf", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self.find_line.find1.setText('');"
+                     "_self.find_line.find2.setText('');"
+                     "_self.find_line.find3.setText('');"
+                     ),
+                   ]
 
     def show_find(self, show):
         self.find_line.setVisible(show)
@@ -218,6 +241,12 @@ class WithFind(WithViewPortMargins):
         else:
             self.setFocus()
         self.__adjust_height()
+
+    def __on_selecction_changed(self):
+        self.find_line.highlighter.update_word(4, 
+                                        self.textCursor().selectedText(), 
+                                        self.find_line.format_selection)
+        self.find_line.highlighter.rehighlight()
 
 
 if(__name__ == '__main__'):

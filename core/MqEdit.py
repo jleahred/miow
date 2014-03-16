@@ -20,7 +20,7 @@ class WithLineHighlight(QPlainTextEdit):
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
         self.cursorPositionChanged.connect(self.highlight)
         self.extra_selections_dict = {}
-        self.current_block = -1
+        self.previous_pos = -1, False
         self.highlight()
 
     def paintEvent(self, event):
@@ -38,7 +38,7 @@ class WithLineHighlight(QPlainTextEdit):
         painter.drawRect(1, block_top-1, self.viewport().width()-1-1, block_bottom-block_top)
         super(WithLineHighlight, self).paintEvent(event)
         painter2 = QPainter(self.viewport())
-        painter2.setPen(self.color_focus.darker(125))
+        painter2.setPen(self.color_focus.darker(120))
         block = self.document().findBlock(self.textCursor().position())
         block_top = self.blockBoundingGeometry(block).translated(
                                     self.contentOffset()).top()
@@ -48,9 +48,10 @@ class WithLineHighlight(QPlainTextEdit):
 
     def highlight(self):
         """this method will hightlight current line"""
-        if self.current_block != self.document().findBlock(self.textCursor().position()):
+        if self.previous_pos != (self.document().findBlock(
+                            self.textCursor().position()), self.hasFocus()):
             self.viewport().update()
-            self.current_block = self.document().findBlock(self.textCursor().position())
+            self.previous_pos = self.document().findBlock(self.textCursor().position()), self.hasFocus()
         return
         """ it doesn't work properly
         

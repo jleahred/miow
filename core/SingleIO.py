@@ -12,7 +12,7 @@ from core.MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
                    
-from core.Completion import WithCompletion, WithWordCompletion
+from core.Completion import WithCompletion, WithWordCompletionMulty_
 
 
 
@@ -20,6 +20,7 @@ class WithSingleIO(BaseWidget):
     """"""
 
     def __init__(self, params):
+        self.file_name = None
         if params is not None  and  "file" in params:
             self.command_load_file(params["file"])
 
@@ -36,7 +37,8 @@ class WithSingleIO(BaseWidget):
         self._editor_widget.load_file(self.file_name)
 
     def command_save_file(self):
-        self._editor_widget.save_file(self.file_name)
+        if self.file_name:
+            self._editor_widget.save_file(self.file_name)
 
 
 
@@ -50,7 +52,7 @@ if(__name__ == '__main__'):
             # create widgets
             self._editor_widget = mixin(
                                    WithBasicIdentationManager,
-                                   WithWordCompletion,
+                                   WithWordCompletionMulty_,
                                    WithCompletion,
                                    WithLineHighlight,
                                    WithFixedFont,

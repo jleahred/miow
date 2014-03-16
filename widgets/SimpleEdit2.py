@@ -23,7 +23,7 @@ from  core.MqEdit import (WithHighlight,
                           WithLineNumbers)
 from core.MqEditIO import WithMqEditIO
 
-from core.Completion import (WithCompletion, WithWordCompletion)
+from core.Completion import (WithCompletion, WithWordCompletionMulty_)
 from core.SingleIO import WithSingleIO
 
 
@@ -44,7 +44,7 @@ class SimpleEdit2(WithSingleIO, QWidget):
                        WithHighlight,
                        WithLineNumbers,
                        WithViewPortMargins,
-                       WithWordCompletion,
+                       WithWordCompletionMulty_,
                        WithCompletion,
                        QPlainTextEdit)(self)
         layout = QVBoxLayout(self)

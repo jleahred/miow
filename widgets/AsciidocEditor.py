@@ -128,7 +128,7 @@ class AsciidocEditor(WithSingleIO, QWidget):
 
     def proc_compile_error(self, q_process_error):
         self.log("compilation error")
-        print q_process_error
+        print(q_process_error)
     def proc_compile_readyReadStandardOutput(self):
         result = self.proc_compile.readAllStandardOutput();
         self.log(str(QString(result)))

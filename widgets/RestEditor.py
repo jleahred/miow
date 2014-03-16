@@ -15,8 +15,7 @@ from  PyQt4.QtWebKit import QWebView
 
 from  PyQt4.QtCore import (Qt,
                            QUrl,
-                           QProcess,
-                           QString)
+                           QProcess)
 
 if(__name__ == '__main__'):
     import os
@@ -25,17 +24,18 @@ if(__name__ == '__main__'):
     sys.path.append(lib_path)
 
 from  core.Mixin import mixin
-from  core.MqEdit import (WithHighlight,
+from  core.MqEdit import (WithLineHighlight,
                           WithFixedFont,
                           WithLineNumbers,
                           WithViewPortMargins,
                           WithBasicIdentationManager)
 
 from core.Completion import (WithCompletion,
-                             WithWordCompletion)
+                             WithWordCompletionMulty_)
 from core.MqEditIO import WithMqEditIO
 
 from core.SingleIO import WithSingleIO
+from core.MqEditFind import WithFind
 
 
 import os
@@ -55,13 +55,14 @@ class RestEditor(WithSingleIO, QWidget):
 
         # create widgets
         self._editor_widget = mixin(
+                        WithFind,
                         WithMqEditIO,
                         WithBasicIdentationManager,
-                        WithHighlight,
+                        WithLineHighlight,
                         WithFixedFont,
                         WithLineNumbers,
                         WithViewPortMargins,
-                        WithWordCompletion,
+                        WithWordCompletionMulty_,
                         WithCompletion,
                         QPlainTextEdit)(self)
         self.webview = QWebView(self)
@@ -96,6 +97,15 @@ class RestEditor(WithSingleIO, QWidget):
                 ("generate preview restructuretext",    "pp", 1.0, "self.get_current_widget().command_generate_preview('rst2html')"),
                ]
         super(RestEditor, self).bw_add_command_list(command_list)
+        self._editor_widget.bw_add_command_list(command_list)
+        command_list += [
+                    ("focus editor",    "fe", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self._editor_widget.setFocus();"),
+                    ("focus preview",    "fp", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self.webview.setFocus();"),
+            ]
 
 
     def command_generate_preview(self, backend):
@@ -103,7 +113,7 @@ class RestEditor(WithSingleIO, QWidget):
         if not os.path.exists(TEMP_DIR):
             os.mkdir(TEMP_DIR)
         temp_source_file = open(TEMP_DIR + 'pr.rst','wt')
-        temp_source_file.write(self._editor_widget.toPlainText().toUtf8())
+        temp_source_file.write(self._editor_widget.toPlainText())
         temp_source_file.close()
         self.compile(backend + " --stylesheet=./widgets/rst2html.style " + TEMP_DIR + "pr.rst" + "   " + self.get_html_output())
         if self.webview.url() != QUrl("file://" + self.get_html_output()):
@@ -132,14 +142,14 @@ class RestEditor(WithSingleIO, QWidget):
 
     def proc_compile_error(self, q_process_error):
         self.log("compilation error")
-        print q_process_error
+        print(q_process_error)
     def proc_compile_readyReadStandardOutput(self):
         result = self.proc_compile.readAllStandardOutput();
-        self.log(str(QString(result)))
+        self.log(result)
 
     def proc_compile_readyReadStandardError(self):
-        result = self.proc_compile.readAllStandardError();
-        self.log(str(QString(result)))
+        result = str(self.proc_compile.readAllStandardError())
+        self.log(result)
 
     def log(self, text):
         self.log_widget.appendPlainText(text)

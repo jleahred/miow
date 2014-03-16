@@ -92,7 +92,7 @@ Specific mixings will have to implement the get_text_completion_list method
             pressed_key_as_string = QKeySequence(event.key()).toString()
             word_till_cursor = self.word_till_cursor()
             if((len(word_till_cursor) > 2  or
-                    (self.completer.popup().isVisible() and word_till_cursor.size() > 0))
+                    (self.completer.popup().isVisible() and len(word_till_cursor) > 0))
                     and
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
@@ -169,7 +169,7 @@ Specific mixings will have to implement the get_text_completion_list method
         self.setTextCursor(tc)
 
 
-class WithWordCompletion(QPlainTextEdit):
+class old_WithWordCompletion(QPlainTextEdit):
     """\
 Mixin to add simple word completion to WithCompletion
 
@@ -213,12 +213,13 @@ It will propose completion with words from current document
         word_till_cursor = self.word_till_cursor()
         word_under_cursor = self.word_under_cursor()
         #words.removeDuplicates()
-        words.sort()
+        #words.sort()
+        words = sorted(set(words))
         completion_list = []
         completion_list_not_start_with = []
         for word in words:
             if(word != word_till_cursor  and  word != word_under_cursor  and
-                    word.upper().index(word_till_cursor.upper()) == 0):
+                    word.upper().find(word_till_cursor.upper()) == 0):
                 completion_list.append(word)
             elif (word != word_till_cursor  and
                         len(word) > len(word_till_cursor)):

@@ -2,6 +2,9 @@ TODO
 ==================
 
 
+Next
+    * More emacs key redefinition
+    * finish find
 
 
 General
