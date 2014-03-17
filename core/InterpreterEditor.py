@@ -18,16 +18,22 @@ from PyQt4.QtCore import Qt
 
 from PyQt4.QtGui import QWidget, QSplitter, QVBoxLayout, QPlainTextEdit
 
-from Mixin import mixin
-from Event import Event
-from MqEdit import(WithHighlight,
+from core.Mixin import mixin
+from core.Event import Event
+
+from core.BaseWidget import BaseWidget
+from core.MqEdit import(WithLineHighlight,
                    WithFixedFont,
-                   WithBasicIdentationManager)
-from MqEditIO import WithMqEditIO
+                   WithBasicIdentationManager,
+                   WithViewPortMargins,
+                   WithLineNumbers)
 
-from Completion import WithCompletion, WithWordCompletionMulty_
+from core.MqEditIO import WithMqEditIO
+from core.MqEditFind import WithFind
 
-from SingleIO import WithSingleIO
+from core.Completion import WithCompletion, WithWordCompletionMulty_
+
+from core.SingleIO import WithSingleIO
 
 
 
@@ -118,7 +124,7 @@ Wellcome to myow... InterpreterEditor
 
 
 
-class InterpreterEditor(QWidget, WithSingleIO):
+class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
     """InterpreterEditor component
     """
 
@@ -139,14 +145,18 @@ class InterpreterEditor(QWidget, WithSingleIO):
 
         # create widgets
         self._editor_widget = mixin(
+                               WithFind,
+                               WithLineNumbers,
+                               WithViewPortMargins,
                                WithWordCompletionMulty_,
                                InterpreterEditor.WithInterpreterCompletion,
                                WithCompletion,
                                InterpreterEditor.WidthLineEnterEvent,
                                WithBasicIdentationManager,
-                               WithHighlight,
+                               WithLineHighlight,
                                WithFixedFont,
                                WithMqEditIO,
+                               BaseWidget,
                                QPlainTextEdit)(self)
         self._editor_widget.on_lines_event += self._process_lines
         if self.is_global:
@@ -168,6 +178,8 @@ class InterpreterEditor(QWidget, WithSingleIO):
         self.setLayout(layout)
         self.reset()
         WithSingleIO.__init__(self, params)
+        BaseWidget.__init__(self, params)
+        #QWidget.__init__(self, parent)
 
 
 
@@ -321,6 +333,18 @@ It will delete the result console"""
     def bw_lock_command_window(self):
         return self.editor_widget.completer.popup().isVisible()
 
+    def bw_add_command_list(self, command_list):
+        super(InterpreterEditor, self).bw_add_command_list(command_list)
+        self._editor_widget.bw_add_command_list(command_list)
+        command_list += [
+                    ("focus commands",    "fc", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self._editor_widget.setFocus();"),
+                    ("focus result",    "fr", 0.5, 
+                     "import ctypes; _self = ctypes.cast(" + str(id(self)) + ", ctypes.py_object).value;"
+                     "_self._result_widget.setFocus();"),
+            ]
+            
     def focusInEvent(self, focus_event):
         super(InterpreterEditor, self).focusInEvent(focus_event)
         self._editor_widget.setFocus()

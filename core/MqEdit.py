@@ -5,24 +5,56 @@ from PyQt4.QtCore import Qt, QRect
 
 from PyQt4.QtGui import (QWidget, QPainter, QFrame,
                          QTextEdit, QPlainTextEdit, QColor,
-                         QTextFormat, QTextCursor, QFont)
+                         QTextFormat, QTextCursor, QFont, QPen)
 
 import re
 
 
-class WithHighlight(QPlainTextEdit):
+class WithLineHighlight(QPlainTextEdit):
     """Mixin to add Highlight on current line to QPlainTextEdit"""
 
     color_focus = QColor(255, 210, 255)
     color_no_focus = QColor(255, 210, 255, 120)
 
     def __init__(self, *args):
-        self.highlight()
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
         self.cursorPositionChanged.connect(self.highlight)
+        self.extra_selections_dict = {}
+        self.previous_pos = -1, False
+        self.highlight()
+
+    def paintEvent(self, event):
+        if self.hasFocus():
+            color = self.color_focus
+        else:
+            color = self.color_no_focus
+        painter = QPainter(self.viewport())
+        painter.setBrush(color)
+        block = self.document().findBlock(self.textCursor().position())
+        block_top = self.blockBoundingGeometry(block).translated(
+                                    self.contentOffset()).top()
+        block_bottom = self.blockBoundingGeometry(block).translated(
+                                    self.contentOffset()).bottom()
+        painter.drawRect(1, block_top-1, self.viewport().width()-1-1, block_bottom-block_top+1)
+        super(WithLineHighlight, self).paintEvent(event)
+        painter2 = QPainter(self.viewport())
+        painter2.setPen(self.color_focus.darker(120))
+        block = self.document().findBlock(self.textCursor().position())
+        block_top = self.blockBoundingGeometry(block).translated(
+                                    self.contentOffset()).top()
+        block_bottom = self.blockBoundingGeometry(block).translated(
+                                    self.contentOffset()).bottom()
+        painter2.drawRect(1, block_top-1, self.viewport().width()-1-1, block_bottom-block_top+1)
 
     def highlight(self):
         """this method will hightlight current line"""
+        if self.previous_pos != (self.document().findBlock(
+                            self.textCursor().position()), self.hasFocus()):
+            self.viewport().update()
+            self.previous_pos = self.document().findBlock(self.textCursor().position()), self.hasFocus()
+        return
+        """ it doesn't work properly
+        
         if self.hasFocus():
             color = self.color_focus
         else:
@@ -52,13 +84,14 @@ class WithHighlight(QPlainTextEdit):
                 selection.cursor.movePosition(QTextCursor.PreviousCharacter)
 
         self.setExtraSelections(extra_selections)
-
+        """
+        
     def focusInEvent(self, focus_event):
-        super(WithHighlight, self).focusInEvent(focus_event)
+        super(WithLineHighlight, self).focusInEvent(focus_event)
         self.highlight()
 
     def focusOutEvent(self, focus_event):
-        super(WithHighlight, self).focusOutEvent(focus_event)
+        super(WithLineHighlight, self).focusOutEvent(focus_event)
         self.highlight()
 
 
@@ -85,15 +118,18 @@ class WithViewPortMargins(QPlainTextEdit):
         left, top, right, bottom = 0,0,0,0
         for _n, margins in self.dict_margins.items():
             left += margins[0]
-            top += margins[0]
-            right += margins[0]
-            bottom += margins[0]
+            top += margins[1]
+            right += margins[2]
+            bottom += margins[3]
+        
         self.catched_margins = left, top, right, bottom
-            
+        self.setViewportMargins(left, top, right, bottom)
+
+           
 
     def set_viewport_margins(self, name, margins):
         
-        if self.dict_margins.has_key(name):
+        if name in self.dict_margins:
             if margins == (0, 0) :
                 del self.dict_margins[name]
                 self.__update_viewport_margins()
@@ -110,7 +146,7 @@ class WithViewPortMargins(QPlainTextEdit):
                 pass                
 
 
-class WithLineNumbers(QPlainTextEdit):
+class WithLineNumbers(WithViewPortMargins):
     """Mixin to add line numbers to QPlainTextEdit
     It requieres WithViewPortMargins"""
 
@@ -127,7 +163,7 @@ class WithLineNumbers(QPlainTextEdit):
             QWidget.paintEvent(self, event)
 
         def adjustWidth(self, count):
-            width = self.fontMetrics().width(unicode(count)) + 5
+            width = self.fontMetrics().width(str(count)) + 8
             if self.width() != width:
                 self.setFixedWidth(width)
 
@@ -156,7 +192,10 @@ class WithLineNumbers(QPlainTextEdit):
         painter = QPainter(number_bar)
         #painter.fillRect(event.rect(), Qt.lightGray)#self.palette().base())
         painter.fillRect(event.rect(), QColor(230, 230, 230))
-
+        painter.setPen(QPen(QColor(180, 180, 180)))
+        painter.drawLine(event.rect().width()-1, 0, event.rect().width()-1, 
+                                         event.rect().height()-1)
+        
         # Iterate over all visible text blocks in the document.
         while block.isValid():
             line_count += 1
@@ -181,11 +220,11 @@ class WithLineNumbers(QPlainTextEdit):
                 painter.setPen(QColor(160, 160, 160))
 
             # Draw the line number right justified at the position of the line.
-            left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
+            #left, top, right, bottom = super(WithLineNumbers, self).get_viewport_margins()
             left = number_bar.width()
             super(WithLineNumbers, self).set_viewport_margins("line_number", 
-                                                (left, top, right, bottom))
-            paint_rect = QRect(0, block_top, number_bar.width(),
+                                                (left, 0, 0, 0))
+            paint_rect = QRect(0, block_top, number_bar.width()-3,
                                                font_metrics.height())
             painter.drawText(paint_rect, Qt.AlignRight, str(line_count))
 
@@ -315,7 +354,7 @@ Adding new lines with RETURN key, will keep previous line identation
 
     def delete_back(self, event):
         #  if spaces till previous tab point, remove all of them
-        if unicode(self.textCursor().selectedText()) != "":
+        if self.textCursor().selectedText() != "":
             self.textCursor().removeSelectedText()
         elif self.textCursor().atBlockStart():
             super(WithBasicIdentationManager, self).keyPressEvent(event)
@@ -340,7 +379,7 @@ Adding new lines with RETURN key, will keep previous line identation
                 tc.movePosition(QTextCursor.PreviousBlock)
                 tc.movePosition(QTextCursor.EndOfBlock, QTextCursor.KeepAnchor)
 
-            if tc.selectedText() < 2:
+            if len(tc.selectedText()) < 2:
                 return 0
             else:
                 found_spaces = re.search('[^ ]', tc.selectedText() + '.')
@@ -365,7 +404,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                       WithHighlight,
+                       WithLineHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()
@@ -381,7 +420,7 @@ if(__name__ == '__main__'):
                        WithBasicIdentationManager,
                        WithLineNumbers,
                        WithViewPortMargins,
-                       WithHighlight,
+                       WithLineHighlight,
                        WithFixedFont,
                        QPlainTextEdit)()
         widget.show()

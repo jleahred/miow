@@ -4,24 +4,28 @@
 
 from PyQt4.QtGui import (QWidget, QPlainTextEdit,)
 
-from Mixin import mixin
+from core.Mixin import mixin
 
-from MqEdit import(WithHighlight,
+from core.BaseWidget import BaseWidget
+
+from core.MqEdit import(WithLineHighlight,
                    WithFixedFont,
                    WithBasicIdentationManager)
                    
-from Completion import WithCompletion, WithWordCompletion
+from core.Completion import WithCompletion, WithWordCompletionMulty_
 
 
 
-class WithSingleIO:
+class WithSingleIO(BaseWidget):
     """"""
 
     def __init__(self, params):
-        if params is not None  and  params.has_key("file"):
+        self.file_name = None
+        if params is not None  and  "file" in params:
             self.command_load_file(params["file"])
 
     def bw_add_command_list(self, command_list):
+        super(WithSingleIO, self).bw_add_command_list(command_list)
         if self.file_name:
             command_list += [
                     #("load examples/pyinterpreter.ipy",    "", 0.0, "self.get_current_widget().command_load_file('examples/pyinterpreter.ipy')"),
@@ -33,7 +37,8 @@ class WithSingleIO:
         self._editor_widget.load_file(self.file_name)
 
     def command_save_file(self):
-        self._editor_widget.save_file(self.file_name)
+        if self.file_name:
+            self._editor_widget.save_file(self.file_name)
 
 
 
@@ -47,9 +52,9 @@ if(__name__ == '__main__'):
             # create widgets
             self._editor_widget = mixin(
                                    WithBasicIdentationManager,
-                                   WithWordCompletion,
+                                   WithWordCompletionMulty_,
                                    WithCompletion,
-                                   WithHighlight,
+                                   WithLineHighlight,
                                    WithFixedFont,
                                    WithMqEditIO,
                                    QPlainTextEdit)(self)
@@ -61,7 +66,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                        WithHighlight, 
+                        WithLineHighlight, 
                         WithFixedFont,
                         WithMqEditIO,
                         QPlainTextEdit)()

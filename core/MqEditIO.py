@@ -3,7 +3,7 @@
 
 
 from PyQt4.QtGui import (QPlainTextEdit,)
-from MqEdit import WithHighlight, WithFixedFont
+from core.MqEdit import WithLineHighlight, WithFixedFont
 
 class WithMqEditIO(QPlainTextEdit):
     """"""
@@ -14,12 +14,12 @@ class WithMqEditIO(QPlainTextEdit):
     def load_file(self, file_name):
         self.file_name = file_name
         f = open(self.file_name, 'r')
-        self.setPlainText(unicode(f.read().decode('utf-8')))
+        self.setPlainText(f.read())
         self.update()
 
     def save_file(self, file_name):
         f = open(self.file_name, 'w')
-        f.write(unicode(self.toPlainText()).encode('utf-8'))
+        f.write(self.toPlainText())
 
 
 
@@ -31,7 +31,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                        WithHighlight, 
+                        WithLineHighlight, 
                         WithFixedFont,
                         WithMqEditIO,
                         QPlainTextEdit)()

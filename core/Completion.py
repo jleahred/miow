@@ -9,7 +9,7 @@ Created on Mon Sep 16 23:00:23 2013
 """
 
 
-from PyQt4.QtCore import Qt, QString, QRegExp
+from PyQt4.QtCore import Qt, QString
 
 from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
                          QCompleter, QStringListModel,
@@ -80,9 +80,9 @@ Specific mixings will have to implement the get_text_completion_list method
             pass
         else:
             pressed_key_as_string = QKeySequence(event.key()).toString()
-            word_till_cursor = self.word_till_cursor()
-            if((word_till_cursor.size() > 2  or
-                    (self.completer.popup().isVisible() and word_till_cursor.size() > 0))
+            word_till_cursor = unicode(self.word_till_cursor())
+            if((len(word_till_cursor) > 2  or
+                    (self.completer.popup().isVisible() and len(word_till_cursor) > 0))
                     and
                     ((event.text() != ""
                     and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
@@ -96,10 +96,7 @@ Specific mixings will have to implement the get_text_completion_list method
 
     def show_completer(self, select_first):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        try:
-            completion_words = self.get_text_completion_list()
-        except:
-            completion_words = []
+        completion_words = self.get_text_completion_list()
         QApplication.restoreOverrideCursor()
 
         if not completion_words or len(completion_words) < 1:
@@ -162,7 +159,7 @@ Specific mixings will have to implement the get_text_completion_list method
         self.setTextCursor(tc)
 
 
-class WithWordCompletion(QPlainTextEdit):
+class old_WithWordCompletion(QPlainTextEdit):
     """\
 Mixin to add simple word completion to WithCompletion
 
@@ -187,7 +184,7 @@ It will propose completion with words from current file
             elif(word != word_till_cursor  and
                     word.toUpper().indexOf(word_till_cursor.toUpper()) > 0):
                 completion_list_not_start_with.append(word)
-        return (super(WithWordCompletion, self).get_text_completion_list()
+        return (super(old_WithWordCompletion, self).get_text_completion_list()
                      + completion_list + completion_list_not_start_with)
 
 class WithWordCompletionMulty_(QPlainTextEdit):
@@ -200,31 +197,32 @@ It will propose completion with words from current document
         pass
 
     def get_text_completion_list(self):
-        words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
-                                 QString.SkipEmptyParts)
-        word_till_cursor = self.word_till_cursor()
-        word_under_cursor = self.word_under_cursor()
-        words.removeDuplicates()
-        words.sort()
+        #words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
+        #                           QString.SkipEmptyParts)
+        words = re.split('\W+', unicode(self.toPlainText()))
+        word_till_cursor = unicode(self.word_till_cursor())
+        word_under_cursor = unicode(self.word_under_cursor())
+        #words.removeDuplicates()
+        #words.sort()
+        words = sorted(set(words))
         completion_list = []
         completion_list_not_start_with = []
         for word in words:
             if(word != word_till_cursor  and  word != word_under_cursor  and
-                    word.toUpper().indexOf(word_till_cursor.toUpper()) == 0):
+                    word.upper().find(word_till_cursor.upper()) == 0):
                 completion_list.append(word)
             elif (word != word_till_cursor  and
-                        len(unicode(word)) > len(word_till_cursor)):
-                words_till_cursor = [x for x in unicode(word_till_cursor).split("_")
+                        len(word) > len(word_till_cursor)):
+                words_till_cursor = [x for x in word_till_cursor.split("_")
                                 if x!=""  and  len(x)>=2]
                 matches = 0
                 for word_tc in words_till_cursor:
-                    if unicode(word.toUpper()).find(word_tc.upper())>=0:
+                    if word.upper().find(word_tc.upper())>=0:
                         matches += 1
                 if matches == len(words_till_cursor):
                     completion_list.append(word)
                 elif matches*1.20 >= len(words_till_cursor):
                     completion_list_not_start_with.append(word)
-
         return (super(WithWordCompletionMulty_, self).get_text_completion_list()
                      + completion_list + completion_list_not_start_with)
 
@@ -238,7 +236,7 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = mixin(
-                       WithWordCompletion,
+                       old_WithWordCompletion,
                        WithCompletion,
                        QPlainTextEdit)()
         widget.show()

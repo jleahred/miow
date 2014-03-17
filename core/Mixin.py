@@ -54,15 +54,15 @@ if(__name__ == '__main__'):
         MixedClass_ = mixin(MyClass, WithAdd)
         MixedClass = mixin(MixedClass_, WithSubs)
         my_instance = MixedClass(4)
-        print my_instance.add(2)
-        print my_instance.subtract(2)
+        print(my_instance.add(2))
+        print(my_instance.subtract(2))
 
     def test_n():
         """simple test mixing 3 at once"""
         MixedClass = mixin(MyClass, WithAdd, WithSubs)
         my_instance = MixedClass(40)
-        print my_instance.add(2)
-        print my_instance.subtract(2)
+        print(my_instance.add(2))
+        print(my_instance.subtract(2))
 
     test_2()
     test_n()

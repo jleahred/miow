@@ -27,6 +27,8 @@ from core.Event  import Event
 MAIN_WINDOW = None
 
 
+def execfile(f):
+    exec(open(f).read(), globals())
 
 #-----------------------------------------------------
 # These will be readed at starting
@@ -43,7 +45,7 @@ execfile('miow.init')
 
 def get_keyevent__from_key_as_text(key_as_text, text):
     return QKeyEvent(QEvent.KeyPress,
-        PyQt4.QtGui.QKeySequence(key_as_text)[0],
+        PyQt4.QtGui.QKeySequence(key_as_text),
         Qt.KeyboardModifiers(0),      # modifiers
         text,     # text
         False,  # autorepeat
@@ -151,7 +153,7 @@ class MiowApplication(QApplication):
             elif (key_text, text) == KEY_STOP_RECORDING and self.recording:
                 self.recording = False
             elif self.recording:
-                self._keys_recorded.append((str(key_text), str(text)))
+                self._keys_recorded.append((key_text, unicode(text)))
 
             if (key_text, text) == KEY_START_RECORDING:
                 self.recording = True
@@ -180,7 +182,7 @@ class MiowApplication(QApplication):
 #             super(MiowApplication, self).notify(receiver, ker)
 #==============================================================================
             for key_as_text, method in self.keys_map:
-                if key_as_text == (unicode(key_text), unicode(text)):
+                if key_as_text == (key_text, text):
                     replace = method(key_event, key_as_text)
                     if replace == None:
                         return True

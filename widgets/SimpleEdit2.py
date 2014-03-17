@@ -17,13 +17,13 @@ if(__name__ == '__main__'):
     sys.path.append(lib_path)
 
 from  core.Mixin import mixin
-from  core.MqEdit import (WithHighlight,
+from  core.MqEdit import (WithLineHighlight,
                           WithFixedFont,
                           WithViewPortMargins,
                           WithLineNumbers)
 from core.MqEditIO import WithMqEditIO
 
-from core.Completion import (WithCompletion, WithWordCompletion)
+from core.Completion import (WithCompletion, WithWordCompletionMulty_)
 from core.SingleIO import WithSingleIO
 
 
@@ -41,10 +41,10 @@ class SimpleEdit2(WithSingleIO, QWidget):
         self._editor_widget = mixin(
                        WithMqEditIO,
                        WithFixedFont,
-                       WithHighlight,
+                       WithLineHighlight,
                        WithLineNumbers,
                        WithViewPortMargins,
-                       WithWordCompletion,
+                       WithWordCompletionMulty_,
                        WithCompletion,
                        QPlainTextEdit)(self)
         layout = QVBoxLayout(self)

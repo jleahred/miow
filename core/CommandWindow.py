@@ -18,7 +18,7 @@ from PyQt4.QtGui import (QWidget, QFrame, QVBoxLayout, QLineEdit,
                          QFont, QListWidget, QKeyEvent, QPlainTextEdit,
                          QSizePolicy, QLabel, QHBoxLayout)
 
-from Event import Event
+from core.Event import Event
 
 
 
@@ -130,7 +130,7 @@ class CommandWindow(QFrame):
               or key_event.key() == Qt.Key_Up):
                 return self.list_widget.keyPressEvent(event)
             elif((event.key() == Qt.Key_Enter  or  event.key() == Qt.Key_Return)
-                    and self.list_widget.currentItem().text()):
+                    and self.list_widget.currentItem()>=0):
                 self.hide()
                 self.event_selected_command(str(self.full_command.toPlainText()))
         return super(CommandWindow, self).keyPressEvent(event)
@@ -158,7 +158,7 @@ class CommandWindow(QFrame):
         text = str(text).upper()
 
         def get_item_map_def0(_map, key):
-            if(_map.has_key(key)):
+            if(key in _map):
                 return _map[key]
             else:
                 return 0.
@@ -182,7 +182,7 @@ class CommandWindow(QFrame):
                                                     command)
                                                     - located_tag_weight)
             for command, _, current_weight, _ in command_list:
-                if result_map.has_key(command):
+                if command in result_map:
                     result_map[command] -= current_weight
             return sorted(result_map, key=result_map.get)
 
@@ -217,7 +217,7 @@ if(__name__ == '__main__'):
             self.cw.show_hide(None)
 
         def on_selected_command(self, command):
-            print command
+            print(command)
 
         def get_command_list(self, context):
             return [("command", "", 0.0, "lala"),
