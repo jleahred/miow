@@ -3,8 +3,16 @@ TODO
 
 
 Next
+    * Fix error selecting * on a document
+      As we are making a dynamic highlight based on regular expresion...
+      A solution could be to scape the characters * .
     * More emacs key redefinition
     * finish find
+    
+      * incremental search
+      * enter key goes next
+
+   
 
 
 General
@@ -16,10 +24,9 @@ General
       Also closing parenthesis like
     * **multi command selection**
     * **tab agregation**
-    
-        * tabs inside tabs
-        
-    * **more emacs key replacement**
+
+      * tabs inside tabs
+
     * check key recording not working with some keys
     * show modif recorded keys
     * tabs movement
@@ -27,7 +34,7 @@ General
 mqeditor widget
     * **find**
     
-        * multifind with diferent colors
+      * multifind with diferent colors
         
     * **replace**
     * **mark words**
@@ -35,7 +42,8 @@ mqeditor widget
     * **global find and marks view with scroll bar**
     * **snipshet inserts**
     * **completion with aditional files**
-    * **trailing**
+    * **auto trailing**
+    * ortograph check
 
 
 python interpreter
@@ -51,26 +59,26 @@ RestEditor
     * **internal links**
     * **mqexec directive**
     
-        * testing with graphviz and similars
+      * testing with graphviz and similars
 
     * **insert directives and other templates**
     * command to generate pretty pdf
-    * ortograph check
     * commands to generate presentations
+    * Generate slides
+    * miow links to get other documents
+    * delete file when save emtpy
 
 
 miow.widget
     * Save status file
 
 
-commandEditor
-    * when enter, process all lines in a block
-      or working multiline with shift-enter
 
 
 
 
 DONE
+    * fix completion word with á
     * Multi word completion
     * On enter or control-enter on pyinterpreter, the cursor goes to the end of line and enter on end of line modifies the identation on next line
     * if code completion is visible, esc will hide it and nothing else
@@ -87,8 +95,8 @@ DONE
     * Save status
     * command window with params
     
-        * Depending on param, it will show and execute diferent things
-        * first command  open adoc | this will open a new command window with files adoc
+      * Depending on param, it will show and execute diferent things
+      * first command  open adoc | this will open a new command window with files adoc
         
     * params on command window
     * keys to save

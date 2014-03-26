@@ -27,8 +27,6 @@ from core.Event  import Event
 MAIN_WINDOW = None
 
 
-def execfile(f):
-    exec(open(f).read(), globals())
 
 #-----------------------------------------------------
 # These will be readed at starting

@@ -16,7 +16,9 @@ from PyQt4.QtGui import (QPlainTextEdit, QTextCursor,
                          QKeySequence,
                          QApplication, QCursor,
                          QFont)
-import re
+#import re  #but with unicode??
+import regex
+
 
 
 WORD_SYMBOLS = u'ABCDEFGHIJKLMNÑOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz0123456789_ÁÉÍÓÚáéíóú'
@@ -85,7 +87,7 @@ Specific mixings will have to implement the get_text_completion_list method
                     (self.completer.popup().isVisible() and len(word_till_cursor) > 0))
                     and
                     ((event.text() != ""
-                    and re.match("^[A-Za-z0-9_-]*$", pressed_key_as_string[0]))
+                    and regex.match("^[A-Za-z0-9_-]*$", unicode(pressed_key_as_string[0])))
                     or  self.completer.popup().isVisible())):
                 self.show_completer(self.completer.popup()
                                                 .currentIndex().row() >= 0)
@@ -199,7 +201,8 @@ It will propose completion with words from current document
     def get_text_completion_list(self):
         #words = self.toPlainText().split(QRegExp("[^a-zA-Z0-9_]"),
         #                           QString.SkipEmptyParts)
-        words = re.split('\W+', unicode(self.toPlainText()))
+        words = regex.split('\W+', unicode(self.toPlainText()), 
+                                    flags=regex.UNICODE)
         word_till_cursor = unicode(self.word_till_cursor())
         word_under_cursor = unicode(self.word_under_cursor())
         #words.removeDuplicates()

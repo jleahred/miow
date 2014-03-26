@@ -293,12 +293,17 @@ Mixin to add interpreter word completion to WithCompletion
             cursor = self.textCursor()
             cursor.movePosition(cursor.StartOfBlock, QTextCursor.KeepAnchor)
             #cursor.movePosition(cursor.Start, QTextCursor.KeepAnchor)
-            line_till_cursor = str(cursor.selectedText())
+            line_till_cursor = unicode(cursor.selectedText())
 
             script = core.jedi.api.Interpreter(line_till_cursor, [namespace])
 
             completion_list = []
-            for completion in script.completions():
+            script_completions = []
+            try:
+                script_completions = script.completions()
+            except:
+                pass
+            for completion in script_completions:
                 completion_list.append(completion.name)
 
             return (super(InterpreterEditor.WithInterpreterCompletion, self)
