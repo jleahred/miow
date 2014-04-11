@@ -1,21 +1,51 @@
-TODO
-==================
+= TODO
 
 
-Next
-    * Fix error selecting * on a document
-      As we are making a dynamic highlight based on regular expresion...
-      A solution could be to scape the characters * .
+
+== Next
+
+    * Enter on command-param, has to introduce param. To add a \n, ctrl-enter
+    * delete /tmp/miow on start application
+    * Last command on first option (if it exists)
+    * Fix error selecting +*+ on a document
+      ** As we are making a dynamic highlight based on regular expresion...
+      ** A solution could be to scape the characters * .
     * More emacs key redefinition
     * finish find
-    
       * incremental search
       * enter key goes next
+    * Avoid completion current word when writting in the middle of a word
+    * Problem on asciidoc with non ascii characters
+        ** It doesn't produce preview
 
+   * +AsciidocEditor+
+        ** no pr.adoc intermediate file
+        ** no fixed path in a2x and document generation
+        ** Documentation
+        ** mq_red links more visible
+            *** A bit less red on code text
+        ** Work with links
+        ** Error unicode writting in log
+        ** Detect non ascii con titles and generate "link"
+        ** relative stylesheets path
+        ** increase and reduce font on webview
+        ** fix path to icons
+        ** no pr.adoc intermediate file
+        ** no fixed path in a2x and document generation
+        ** Documentation
+        ** Let configure compile line in document
+        ** Examples
+            *** basic asciidoc (tables, sections, quotes...)
+            *** diagrams generation
+            *** slides with deckjs
+            *** pdf generation
+            *** spanish documents
+            *** code highlight (for pdf and html trick)
+        
    
 
 
-General
+== General
     * **Go tabs with keys**
     * Change tabs with commands
     * description tab (used in go automatic command)
@@ -31,7 +61,7 @@ General
     * show modif recorded keys
     * tabs movement
         
-mqeditor widget
+== mqeditor widget
     * **find**
     
       * multifind with diferent colors
@@ -46,14 +76,14 @@ mqeditor widget
     * ortograph check
 
 
-python interpreter
+== python interpreter
     * Avoid duplicates in code completion
     * **syntax highlight**
     * log (activation and deactivation, clear, rotation)
     * status bar with component type and...
 
 
-RestEditor
+== RestEditor
     * **wordwrap**
     * **syntax highlight**
     * **internal links**
@@ -69,7 +99,7 @@ RestEditor
     * delete file when save emtpy
 
 
-miow.widget
+== miow.widget
     * Save status file
 
 
@@ -77,7 +107,12 @@ miow.widget
 
 
 
-DONE
+== DONE
+    * Install slidy2, test, example and support
+    * +AsciidocEditor+
+        ** relative stylesheets path
+        ** fix path to icons
+        ** increase and reduce font on webview
     * fix completion word with á
     * Multi word completion
     * On enter or control-enter on pyinterpreter, the cursor goes to the end of line and enter on end of line modifies the identation on next line
@@ -105,10 +140,11 @@ DONE
 
 
 
-Keys notes
-    ::
+== Keys notes
+
+--------
     
-        repeat key F4 executing macro
+        repeat key F4 executing macro.
         
         
         
@@ -460,3 +496,4 @@ Keys notes
         0x01020004 Qt::Key_Sleep
         0x01020006 Qt::Key_Zoom
         0x01020001 Qt::Key_Cancel
+--------

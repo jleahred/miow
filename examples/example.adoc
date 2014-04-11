@@ -1,0 +1,40 @@
+= Title
+:author: José Luis Esteban
+//:doctype: book
+:toc:
+:icons:
+:data-uri:
+:lang: es
+//:encoding: iso-8859-1 
+:backend: slidy
+
+
+
+== This is a test
+
+    - Hi there
+    - Another
+        * idented
+    - asdfasdf
+    
+    
+Another line
+
+== New title
+
+    * asfasdfasdf
+        - sadfasdf
+            ** sadfasfasdfasdfasdf
+            
+            
+== Testing toguether
+
+    * Testing
+ifdef::backend-slidy[<<<]
+
+    * testing2
+    
+    
+== Testing toguether 2
+
+    * Testing

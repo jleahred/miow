@@ -1,0 +1,78 @@
+= Blockdiag examples
+
+
+http://blockdiag.com/en/blockdiag/attributes/diagram.attributes.html
+http://blockdiag.com/en/blockdiag/attributes/node.attributes.html
+
+
+
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('blockdiag -Tsvg /tmp/adoc/ex1.diag', '', 'wt')]
+
+file_name='ex1.diag'
+
+blockdiag {
+   // set default shape
+   default_shape = roundedbox
+
+   A -> B 
+   B -> C
+   B -> D
+group{
+   C -> A [color="red"]
+}
+   D -> B [color="blue"]
+}
+
++++++++++++++++++++++++++
+
+
+image::/tmp/adoc/ex1.svg[]
+
+
+
+
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('blockdiag -Tsvg /tmp/adoc/ex2.diag', '', 'wt')]
+
+file_name='ex2.diag'
+
+blockdiag {
+   // standard node shapes
+   box [shape = "box"];
+   roundedbox [shape = "roundedbox"];
+   diamond [shape = "diamond"];
+   ellipse [shape = "ellipse"];
+   note [shape = "note"];
+
+   cloud [shape = "cloud"];
+   mail [shape = "mail"];
+   beginpoint [shape = "beginpoint"];
+   endpoint [shape = "endpoint"];
+   minidiamond [shape = "minidiamond"];
+   actor [shape = "actor"];
+   dots [shape = "dots"];
+
+   box -> roundedbox -> diamond -> ellipse;
+   cloud -> note -> mail -> actor;
+   minidiamond -> beginpoint -> endpoint -> dots;
+
+   // node shapes for flowcharts
+   condition [shape = "flowchart.condition"];
+   database [shape = "flowchart.database"];
+   input [shape = "flowchart.input"];
+   loopin [shape = "flowchart.loopin"];
+   loopout [shape = "flowchart.loopout"];
+   terminator [shape = "flowchart.terminator"];
+
+   condition -> database -> terminator -> input;
+   loopin -> loopout;
+}
++++++++++++++++++++++++++
+
+
+image::/tmp/adoc/ex2.svg[]

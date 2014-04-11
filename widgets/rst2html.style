@@ -109,7 +109,7 @@ body {
   margin: 40px;
   margin-right: auto;
   margin-left: auto;
-  width: 700px;
+  width: 1000px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
@@ -803,7 +803,8 @@ pre.address {
 
 pre.literal-block, pre.doctest-block, pre.math, pre.code {
   margin-left: 2em ;
-  margin-right: 2em }
+  margin-right: 2em;
+}
 
 pre.code .ln { color: grey; } /* line numbers */
 pre.code, code { background-color: #eeeeee }

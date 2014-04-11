@@ -1,0 +1,76 @@
+= Seqdiag examples
+
+
+http://blockdiag.com/en/seqdiag/examples.html
+
+
+
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('seqdiag -Tsvg /tmp/adoc/ex1.diag', '', 'wt')]
+
+file_name='ex1.diag'
+
+seqdiag {
+  // edge label
+  A -> B [label = "call"];
+  A <- B [label = "return"];
+
+  // diagonal edge
+  A -> B [diagonal, label = "diagonal edge"];
+  A <- B [diagonal, label = "return diagonal edge"];
+
+  // color of edge
+  A -> B [label = "colored label", color = red];
+
+  // failed edge
+  A -> B [label = "failed edge", failed];
+}
++++++++++++++++++++++++++
+
+
+image::/tmp/adoc/ex1.svg[]
+
+
+
+
+
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('seqdiag -Tsvg /tmp/adoc/ex2.diag', '', 'wt')]
+
+file_name='ex2.diag'
+
+seqdiag {
+    activation = none;
+
+    // diagonal edge
+    CLI -> PLAT -> MK [diagonal, label = "RQ_NW"];
+
+    CLI <- PLAT <- MK [diagonal, label = "CF_NW"];
+
+    PLAT <- MK [diagonal, label = "CF_EX"];
+
+    CLI -> PLAT  [diagonal, label = "RQ_MD"];
+
+    PLAT <- MK [diagonal, label = "CF_EX"];
+
+    PLAT -> MK [diagonal, label = "RQ_MD"];
+
+    PLAT -> CLI [diagonal, label = "CF_EX"];
+    PLAT -> CLI [diagonal, label = "CF_EX"];
+
+
+    CLI <- PLAT <- MK [diagonal, label = "RJ_MD"];
+
+}
++++++++++++++++++++++++++
+
+
+image::/tmp/adoc/ex2.svg[]
+
+
+
+

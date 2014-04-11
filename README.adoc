@@ -1,0 +1,66 @@
+= README
+
+
+
+
+== Dependencies
+
+
+
+=== Externals
+
+Requieres instalation
+
+
+
+    Global::
+    
+    
+        * Python2
+        
+        * PyQt4
+        
+        * regex (pip install regex or easy_install regex)
+        
+          ** It's necessary to work properly with Unicode
+              
+          ** It's uses a .so file, therefore, it doesn't look a good idea to copy it on local folder
+    
+    
+    
+    
+    RestEditor::
+    
+        * rst2html
+        
+    AsciidocEditor::
+        
+        * asciidoc
++
+---------
+sudo apt-get install asciidoc
+---------
+        
+        * https://github.com/houqp/asciidoc-deckjs[deckjs]
++
+---------
+asciidoc --backend install deckjs-X.Y.Z.zip
+---------
+
+        * http://code.google.com/p/asciidoc-slidy2-backend-plugin/[slidy2]
++
+---------
+asciidoc --backend install slidy2-X.Y.Z.zip
+---------
++
+        * Look on asciidoc examples slidy2
+
+ 
+=== Internals
+
+Doesn't requiere instalation, the code (generally python) has been copied on project folder
+
+    Python interpreter::
+
+
+        * Jedi for completion

@@ -1,0 +1,27 @@
+= Actdiag
+
+http://blockdiag.com/en/actdiag/sphinxcontrib.html
+
+
+
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('actdiag -Tsvg /tmp/adoc/ex1.diag', '', 'wt')]
+
+file_name='ex1.diag'
+actdiag {
+  write -> convert -> image
+
+  lane user {
+     label = "User"
+     write [label = "Writing reST"];
+     image [label = "Get diagram IMAGE"];
+  }
+  lane actdiag {
+     convert [label = "Convert reST to Image"];
+  }
+}
++++++++++++++++++++++++++
+
+image::/tmp/adoc/ex1.svg[]

@@ -1,0 +1,52 @@
+= Conectividad
+
+
+
+
+== Diagrama
+
+[jle_temp_and_run]
+++++++++++++++++++++++++
+run=[('nwdiag -Tpng /tmp/adoc/pr.diag', '', 'wt')]
+
+file_name='pr.diag'
+
+
+{
+    VT -- cloud -- r_cimd_vt;
+    r_cimd_vt [label=""]
+    cloud[shape="cloud" label=""]
+    
+    network cimd_BME {
+        //address = "x.x.x.x/x"
+        
+        r_cimd_vt
+        vtcimd_prc [address = "100.100.16.182"];
+        vtcimd_trd [address = "10.12.54.135"];
+    }
+
+
+    network CIMD {
+        address = "192.168.x.x.x/x";
+        vtcimd_prc [address = "192.168.8.61" label="vt prc"];
+        vtcimd_trd [address = "192.168.9.1" label="vt trd"];
+        R[label=""]
+        21 [address = "192.168.8.21" label="21\nprices"];
+        OMS_VT [address = "192.168.8.31" label="OMS VT\nprices"];
+        OMS_VTb [address = "192.168.8.41" label="OMS_VT(b)\nprices"];
+    }
+    
+    
+    R -- cloud_sifox -- rSIFOX;
+    cloud_sifox[shape="cloud" label=""]
+    
+    network PORTUGAL {
+        //address = "x.x.x.x/X";
+        rSIFOX[label="" ]
+        SIFOX [label="SIFOX"];
+    }
+}
++++++++++++++++++++++++++
+
+
+image::/tmp/adoc/pr.png[]

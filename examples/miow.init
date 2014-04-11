@@ -5,13 +5,16 @@ def examples_register_find_files_context(context, command_list):
         find_files_by_name(['examples'], '.rst', command_list, "widgets", "RestEditor")
     if context == 'example_open_ipy':
         find_files_by_name(['examples'], '.ipy', command_list, "core", "InterpreterEditor", '"global": False')
+    if context == 'example_open_asciidoc':
+        find_files_by_name(['examples'], '.adoc', command_list, "widgets", "AsciidocEditor")
         
 
 EVENT_REQUEST_COMMAND_CONTEXT += examples_register_find_files_context
 
 COMMAND_LIST += [
-        ("open examples rest file", "find rst restructuredtext", 0.0, "MAIN_WINDOW.show_command_window('example_open_rst')"),
+        #("open examples rest file", "find rst restructuredtext", 0.0, "MAIN_WINDOW.show_command_window('example_open_rst')"),
         ("open examples interpreter file", "find interpreter ipy", 0.0, "MAIN_WINDOW.show_command_window('example_open_ipy')"),
+        ("open examples asciidoc file", "find asciidoc adoc", 0.2, "MAIN_WINDOW.show_command_window('example_open_asciidoc')"),
         ]
 
 
