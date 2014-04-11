@@ -9,8 +9,9 @@ if(__name__ == '__main__'):
     sys.path.append(lib_path)
 
 
+import time
 
-from PyQt4.QtCore import Qt, QRect, QRegExp
+from PyQt4.QtCore import Qt, QRect, QRegExp, QTimer
 
 from PyQt4.QtGui import (QPlainTextEdit, QColor, QWidget,
                          QTextFormat, QTextCursor, QFont,
@@ -25,18 +26,26 @@ from core.MqEdit import  (WithLineHighlight, WithFixedFont,
 
 import re
 
+from core.highlighters.MqHighlight import WidthMqHighlighter
 
 
-class Highlighter_find(QSyntaxHighlighter):
+
+class Highlighter_find(object):
     
-    def __init__(self, parent):
-        super(Highlighter_find, self).__init__(parent)
+    def __init__(self, highlighter):
+        super(Highlighter_find, self).__init__()
         self.words = dict() # word, format
+        self.highlighter = highlighter
+
+        self.current_rehighlight_block = -1
+        self.finish_rehighlight_block = -1
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._check_highlight)
 
     def update_word(self, index, word, _format):
         self.words[index] = (word, _format)
 
-    def highlightBlock(self, text):
+    def mq_highlightBlock(self, text):
         for index_words, pattern_format in self.words.items():
             pattern, _format = pattern_format
             if len(pattern)>0:
@@ -45,12 +54,42 @@ class Highlighter_find(QSyntaxHighlighter):
                 index = expression.indexIn(text);
                 while index >= 0:
                     length = expression.matchedLength()
-                    self.setFormat(index, length, _format)
+                    self.highlighter.setFormat(index, length, _format)
                     index = expression.indexIn(text, index + length)
-        return        
 
+    def _check_highlight(self):
+        t0 = time.clock()
+        if self.current_rehighlight_block >= 0:
+            counter = 0
+            #for l in xrange(self.current_rehighlight_block, self.highlighter.document().blockCount()):
+            while True:
+                self.highlighter.rehighlightBlock(self.highlighter.document().findBlockByNumber(self.current_rehighlight_block))
+                self.current_rehighlight_block += 1
+                self.current_rehighlight_block %= self.highlighter.document().blockCount()
 
-class WithFind(WithViewPortMargins, BaseWidget):
+                if self.current_rehighlight_block == self.finish_rehighlight_block:
+                    self.current_rehighlight_block = -1
+                    self.timer.stop()
+                    break
+                
+                counter += 1
+                if counter > 20:
+                    if time.clock() - t0 > 0.002:
+                        break
+                    else:
+                        counter = 10
+            
+    def mq_rehighlight_all(self, current_block):
+        current_block -= 100
+        if current_block < 0:
+            current_block = 0
+        self.current_rehighlight_block = current_block
+        self.finish_rehighlight_block = current_block
+        if self.timer.isActive() == False:
+            self.timer.start(10)
+                    
+
+class WithFind(WidthMqHighlighter, WithViewPortMargins, BaseWidget):
     """Mixin to add find command
     It requieres WithViewPortMargins"""
 
@@ -85,7 +124,9 @@ class WithFind(WithViewPortMargins, BaseWidget):
             QWidget.__init__(self, edit)
 
             self.edit = edit
-            self.highlighter = Highlighter_find(edit.document())
+            self.find_highlighter = Highlighter_find(self.edit.highlighter)
+            self.edit.highlighter._event += self.find_highlighter.mq_highlightBlock
+
             
             layout = QHBoxLayout(self)
 
@@ -131,10 +172,11 @@ class WithFind(WithViewPortMargins, BaseWidget):
             
 
         def __text_changed(self, text):
-            self.highlighter.update_word(3, self.find1.text(), self.format1)
-            self.highlighter.update_word(2, self.find2.text(), self.format2)
-            self.highlighter.update_word(1, self.find3.text(), self.format3)
-            self.highlighter.rehighlight()
+            self.find_highlighter.update_word(3, self.find1.text(), self.format1)
+            self.find_highlighter.update_word(2, self.find2.text(), self.format2)
+            self.find_highlighter.update_word(1, self.find3.text(), self.format3)
+            self.find_highlighter.mq_rehighlight_all(self.edit.textCursor().blockNumber())
+            #self.edit.highlighter.rehighlight()
             #self.edit.find(text)
             #self.update_highlight()
 
@@ -173,6 +215,7 @@ class WithFind(WithViewPortMargins, BaseWidget):
         self.__adjust_height()
         
         self.selectionChanged.connect(self.__on_selecction_changed)
+        self.selection_highlight = True
 
         #BaseWidget.__init__(self, args)
 
@@ -243,17 +286,25 @@ class WithFind(WithViewPortMargins, BaseWidget):
             self.setFocus()
         self.__adjust_height()
 
+
     def __on_selecction_changed(self):
         selection = self.textCursor().selectedText()
-        if len(selection) < 85:
-            self.find_line.highlighter.update_word(4, 
+        if len(selection) < 20  and  len(selection)>=1:
+            self.find_line.find_highlighter.update_word(4, 
                                             self.textCursor().selectedText(), 
                                             self.find_line.format_selection)
-        else:
-            self.find_line.highlighter.update_word(4, 
+            #self.highlighter.rehighlight()
+            self.find_line.find_highlighter.mq_rehighlight_all(self.textCursor().blockNumber())
+            self.selection_highlight = True
+        elif self.selection_highlight == True:
+            # remove selection
+            self.find_line.find_highlighter.update_word(4, 
                                             "", 
                                             self.find_line.format_selection)
-        self.find_line.highlighter.rehighlight()
+            self.selection_highlight = False
+            #self.highlighter.rehighlight()
+            self.find_line.find_highlighter.mq_rehighlight_all(self.textCursor().blockNumber())
+
 
 
 if(__name__ == '__main__'):
@@ -265,6 +316,7 @@ if(__name__ == '__main__'):
         app = QApplication([])
         widget = mixin(
                        WithFind,
+                       WidthMqHighlighter, 
                        WithLineNumbers,
                        WithViewPortMargins,
                        WithLineHighlight,

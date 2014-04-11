@@ -5,16 +5,20 @@
 
 
 def examples_register_find_files_context(context, command_list):
-    if context == 'locals_open_rst':
-        find_files_by_name(['locals'], '.rst', command_list, "widgets", "RestEditor")
+    if context == 'locals_open_adoc':
+        find_files_by_name(['locals/doc_miow/asciidoc'], '.adoc', command_list, "widgets", "AsciidocEditor")
     if context == 'locals_open_ipy':
         find_files_by_name(['locals'], '.ipy', command_list, "core", "InterpreterEditor", '"global": False')
+    if context == 'locals_open_adoc_old':
+        find_files_by_name(['locals/doc_miow/old_asciidoc', 'locals/doc_miow/old_asciidoc2'], '.adoc', command_list, "widgets", "AsciidocEditor")
+        
         
 
 EVENT_REQUEST_COMMAND_CONTEXT += examples_register_find_files_context
 
 COMMAND_LIST += [
-        ("open local rest file", "find rst restructuredtext", 0.0, "MAIN_WINDOW.show_command_window('locals_open_rst')"),
+        ("open local asciidoc file", "find asciidoc", 0.0, "MAIN_WINDOW.show_command_window('locals_open_adoc')"),
+        ("open local/old asciidoc file", "find asciidoc old", 0.0, "MAIN_WINDOW.show_command_window('locals_open_adoc_old')"),
         ("open local interpreter file", "find interpreter ipy", 0.0, "MAIN_WINDOW.show_command_window('locals_open_ipy')"),
         ("open redmine", "", 0.0, """
 from core.InterpreterEditor import InterpreterEditor
@@ -22,4 +26,6 @@ MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_a
 MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_support.ipy", "global": True })
 	"""),
         ]
+
+
 

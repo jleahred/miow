@@ -35,6 +35,9 @@ from core.Completion import WithCompletion, WithWordCompletionMulty_
 
 from core.SingleIO import WithSingleIO
 
+from core.highlighters.MqHighlight import  WidthMqHighlighter
+from core.highlighters.PythonHighlight import WidthPythonHighlighter
+
 
 
 #WidthLineEnterEvent
@@ -146,6 +149,8 @@ class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
         # create widgets
         self._editor_widget = mixin(
                                WithFind,
+                               WidthPythonHighlighter,
+                               WidthMqHighlighter,
                                WithLineNumbers,
                                WithViewPortMargins,
                                WithWordCompletionMulty_,
@@ -295,7 +300,10 @@ Mixin to add interpreter word completion to WithCompletion
             #cursor.movePosition(cursor.Start, QTextCursor.KeepAnchor)
             line_till_cursor = unicode(cursor.selectedText())
 
-            script = core.jedi.api.Interpreter(line_till_cursor, [namespace])
+            try:
+                script = core.jedi.api.Interpreter(line_till_cursor, [namespace])
+            except:
+                pass    # we could have errors due to non ascii characters
 
             completion_list = []
             script_completions = []
