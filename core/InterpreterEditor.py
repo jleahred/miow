@@ -148,8 +148,8 @@ class InterpreterEditor(WithSingleIO, BaseWidget, QWidget):
 
         # create widgets
         self._editor_widget = mixin(
-                               WithFind,
                                WidthPythonHighlighter,
+                               WithFind,
                                WidthMqHighlighter,
                                WithLineNumbers,
                                WithViewPortMargins,
@@ -373,7 +373,7 @@ It will delete the result console"""
                     self._result_widget.appendPlainText(">>> " + unicode(line))
                     for lines in results:
                         for line in lines.splitlines():
-                            self._result_widget.appendPlainText(unicode(line))
+                            self._result_widget.appendPlainText(unicode(line, "utf-8"))
                     if not partials:
                         self._result_widget.appendPlainText("")
                 else:

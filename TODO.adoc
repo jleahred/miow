@@ -7,16 +7,15 @@
     * Enter on command-param, has to introduce param. To add a \n, ctrl-enter
     * delete /tmp/miow on start application
     * Last command on first option (if it exists)
-    * Fix error selecting +*+ on a document
+    * Fix error selecting +.*+ on a document or a find
       ** As we are making a dynamic highlight based on regular expresion...
-      ** A solution could be to scape the characters * .
+      ** A solution could be to scape the characters *.
+      ** Nop, what is necessary is to check that selected on highlight >= 1
     * More emacs key redefinition
     * finish find
-      * incremental search
-      * enter key goes next
+      ** incremental search
+      ** enter key goes next
     * Avoid completion current word when writting in the middle of a word
-    * Problem on asciidoc with non ascii characters
-        ** It doesn't produce preview
 
    * +AsciidocEditor+
         ** no pr.adoc intermediate file
@@ -108,6 +107,8 @@
 
 
 == DONE
+    * Problem on asciidoc with non ascii characters
+        ** It doesn't produce preview
     * Install slidy2, test, example and support
     * +AsciidocEditor+
         ** relative stylesheets path
