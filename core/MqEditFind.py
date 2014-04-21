@@ -54,6 +54,8 @@ class Highlighter_find(object):
                 index = expression.indexIn(text);
                 while index >= 0:
                     length = expression.matchedLength()
+                    if length == 0:
+                        length = 1
                     self.highlighter.setFormat(index, length, _format)
                     index = expression.indexIn(text, index + length)
 

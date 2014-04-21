@@ -16,7 +16,7 @@ COMMAND_LIST += [
         ("open local asciidoc file", "find asciidoc", 0.0, "MAIN_WINDOW.show_command_window('locals_open_adoc')"),
         ("open local/old asciidoc file", "find asciidoc old", 0.0, "MAIN_WINDOW.show_command_window('locals_open_adoc_old')"),
         ("open local interpreter file", "find interpreter ipy", 0.0, "MAIN_WINDOW.show_command_window('locals_open_ipy')"),
-        ("open redmine", "", 0.0, """
+        ("open redmine", "", 0.0, """\
 from core.InterpreterEditor import InterpreterEditor
 MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_addtime.ipy", "global": True })
 MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_support.ipy", "global": True })
