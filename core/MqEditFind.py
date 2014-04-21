@@ -291,7 +291,7 @@ class WithFind(WidthMqHighlighter, WithViewPortMargins, BaseWidget):
 
     def __on_selecction_changed(self):
         selection = self.textCursor().selectedText()
-        if len(selection) < 20  and  len(selection)>=1:
+        if len(selection) < 60  and  len(selection)>=1:
             self.find_line.find_highlighter.update_word(4, 
                                             self.textCursor().selectedText(), 
                                             self.find_line.format_selection)

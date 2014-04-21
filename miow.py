@@ -76,7 +76,7 @@ class MainWindow(QWidget):
         self.command_window.event_selected_command += self.cw_selected_command
 
         import shutil
-        shutil.rmtree('/tmp/miow/')
+        shutil.rmtree('/tmp/miow/', True)
 
 
     def cw_selected_command(self, command):
