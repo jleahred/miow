@@ -4,6 +4,10 @@
 
 == Next
 
+    * fe command abreviation on python interpreter
+    * asciidoc, wordwrap activation
+    * syntax highlight on asciidoc
+    * bash console
     * Enter on command-param, has to introduce param. To add a \n, ctrl-enter
     * Last command on first option (if it exists)
     * More emacs key redefinition
