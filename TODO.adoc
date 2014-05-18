@@ -4,6 +4,7 @@
 
 == Next
 
+    * No se pueden abrir nombres de fichero con tildes
     * fe command abreviation on python interpreter
     * asciidoc, wordwrap activation
     * syntax highlight on asciidoc
