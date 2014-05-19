@@ -11,8 +11,7 @@ if(__name__ == '__main__'):
 from PyQt4.QtGui import QApplication, QMainWindow
 
 
-from widgets.console.pyqterm import TerminalWidget
-#from pyqterm.procinfo import ProcessInfo
+from core.console.pyqterm import TerminalWidget
 
 
 if __name__ == "__main__":
@@ -28,6 +27,7 @@ if __name__ == "__main__":
         mw.show()
         #term.send("""ls ~""")
         term.signal_mouse_down.connect(on_mouse_down)
+        term.set_font_size(14)
         app.exec_()
     test()
     

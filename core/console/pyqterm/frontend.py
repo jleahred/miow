@@ -18,7 +18,7 @@ class TerminalWidget(QWidget):
         1: "#b00",
         2: "#0b0",
         3: "#bb0",
-        4: "#0ff",
+        4: "#0dd",
         5: "#b0b",
         6: "#0bb",
         7: "#bbb",
@@ -29,7 +29,7 @@ class TerminalWidget(QWidget):
         12: "#00f",  # concelaed
         13: "#f0f",
         14: "#000",  # negative
-        15: "#fff",  # default
+        15: "#ddd",  # default
     }
     background_color_map = {
         0: "#000",
@@ -42,7 +42,7 @@ class TerminalWidget(QWidget):
         7: "#bbb",
         12: "#aaa",  # cursor
         14: "#000",  # default
-        15: "#fff",  # negative
+        15: "#ddd",  # negative
     }
     keymap = {
         Qt.Key_Backspace: chr(127),
@@ -136,7 +136,7 @@ class TerminalWidget(QWidget):
             return
         if self._timer_id is not None:
             self.killTimer(self._timer_id)
-        self._timer_id = self.startTimer(250)
+        self._timer_id = self.startTimer(125)
         self.update_screen()
 
     def focusOutEvent(self, event):
@@ -266,8 +266,8 @@ class TerminalWidget(QWidget):
                     
                     # JLE
                     if str(item).upper().find("ERROR") >= 0:
-                        error_pen = QPen(QColor(Qt.red))
-                        error_brush = QBrush(QColor(Qt.black))
+                        error_pen = QPen(QColor(Qt.black))
+                        error_brush = QBrush(QColor(220, 0, 0))
                         painter_setPen(error_pen)
                         painter_fillRect(rect, error_brush)
                         painter_drawText(rect, align, item)
@@ -306,6 +306,15 @@ class TerminalWidget(QWidget):
             rect = QRect(x, y, width, height)
             # painter.drawRect(rect)
             painter.fillRect(rect, brush)
+
+    def set_font_size(self, size):
+        font = self.font()
+        font.setPixelSize(size)
+        self.setFont(font)
+        self._reset()
+
+    def get_font_size(self):
+        return self.font().pixelSize()
 
     def zoom_in(self):
         font = self.font()
