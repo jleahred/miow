@@ -4,6 +4,9 @@
 
 == Next
 
+    * qterminal rompe qprocess de asciidoc
+    * Revisar tamaño de los splits en Elixir
+    * Si el comando anterior existe en el contexto actual, poner en primer lugar
     * No se pueden abrir nombres de fichero con tildes
     * fe command abreviation on python interpreter
     * asciidoc, wordwrap activation

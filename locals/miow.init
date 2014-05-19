@@ -7,6 +7,8 @@ def examples_register_find_files_context(context, command_list):
         find_files_by_name(['locals'], '.ipy', command_list, "core", "InterpreterEditor", '"global": False')
     if context == 'locals_open_adoc_old':
         find_files_by_name(['locals/doc_miow/old_asciidoc', 'locals/doc_miow/old_asciidoc2'], '.adoc', command_list, "widgets", "AsciidocEditor")
+    if context == 'locals_elixir':
+        find_files_by_name(['locals/elixir/'], 'mix.ex', command_list, "widgets", "ElixirEditor")
         
         
 
@@ -21,6 +23,7 @@ from core.InterpreterEditor import InterpreterEditor
 MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_addtime.ipy", "global": True })
 MAIN_WINDOW._add_widget(InterpreterEditor, { "file":  "locals/doc_miow/redmine_support.ipy", "global": True })
 	"""),
+        ("open local elixir file", "find elixir", 0.0, "MAIN_WINDOW.show_command_window('locals_elixir')"),
         ]
 
 
