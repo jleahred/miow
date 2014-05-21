@@ -14,6 +14,37 @@ DEBUG = False
 class TerminalWidget(QWidget):
 
     foreground_color_map = {
+        0: "#eee",
+        1: "#b00",
+        2: "#0b0",
+        3: "#bb0",
+        4: "#0aa",
+        5: "#b0b",
+        6: "#0bb",
+        7: "#bbb",
+        8: "#666",
+        9: "#f00",
+        10: "#0f0",
+        11: "#ff0",
+        12: "#00f",  # concelaed
+        13: "#f0f",
+        14: "#eee",  # negative
+        15: "#000",  # default
+    }
+    background_color_map = {
+        0: "#000",
+        1: "#b00",
+        2: "#0b0",
+        3: "#bb0",
+        4: "#00b",
+        5: "#b0b",
+        6: "#0bb",
+        7: "#bbb",
+        12: "#aaa",  # cursor
+        14: "#fff",  # default
+        15: "#000",  # negative
+    }
+    foreground_color_map_dark = {
         0: "#000",
         1: "#b00",
         2: "#0b0",
@@ -31,7 +62,7 @@ class TerminalWidget(QWidget):
         14: "#000",  # negative
         15: "#ddd",  # default
     }
-    background_color_map = {
+    background_color_map_dark = {
         0: "#000",
         1: "#b00",
         2: "#0b0",
@@ -318,6 +349,16 @@ class TerminalWidget(QWidget):
         font.setPixelSize(font.pixelSize() - 2)
         self.setFont(font)
         self._reset()
+        
+    def set_font_size(self, size):
+        font = self.font()
+        font.setPixelSize(size)
+        self.setFont(font)
+        self._reset()
+
+    def get_font_size(self):
+        return self.font().pixelSize()
+
 
     return_pressed = pyqtSignal()
 

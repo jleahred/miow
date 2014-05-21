@@ -19,7 +19,7 @@ from core.Completion import WithCompletion, WithWordCompletionMulty_
 class WithSingleIO(BaseWidget):
     """"""
 
-    def __init__(self, params):
+    def __init__(self, *params):
         self.file_name = None
         if params is not None  and  "file" in params:
             self.command_load_file(params["file"])
