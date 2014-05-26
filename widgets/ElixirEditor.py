@@ -132,7 +132,6 @@ class ElixirEditor(BaseWidget, QWidget):
         
     def go_file(self, file_name):
         _editor_widget = mixin(
-                        WithSingleIO,
                         WithFind,
                         WidthMqHighlighter,
                         WithMqEditIO,
