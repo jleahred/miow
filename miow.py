@@ -77,6 +77,7 @@ class MainWindow(QWidget):
 
         import shutil
         shutil.rmtree('/tmp/miow/', True)
+        os.makedirs('/tmp/miow/')
 
 
     def cw_selected_command(self, command):

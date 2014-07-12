@@ -40,6 +40,7 @@ from core.highlighters.MqHighlight import  WidthMqHighlighter
 from core.MqEditFind import WithFind
 
 
+
 import os
 
 TEMP_DIR= '/tmp/miow/'
@@ -98,13 +99,13 @@ class AsciidocEditor(WithSingleIO, QWidget):
 
     def bw_add_command_list(self, command_list):
         command_list += [
-                ("generate preview asciidoc",    "pp", 1.0, "self.get_current_widget().command_generate_preview('asciidoc -a data-uri -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
-                ("generate preview asciidoc style_sheet no images embeded",    "pp", 1.0, "self.get_current_widget().command_generate_preview('asciidoc --attribute  stylesheet="+self.base_dir+"/adoc/mq_red.css  -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
-                ("generate preview asciidoc style_sheet",    "pp", 1.2, "self.get_current_widget().command_generate_preview('asciidoc --attribute  stylesheet="+self.base_dir+"/adoc/mq_red.css    -a data-uri -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
-                ("generate preview slidy", "pp slides", 0.8, "self.get_current_widget().command_generate_preview('asciidoc  -b slidy    -a data-uri -a icons')"),
-                ("generate preview slidy2", "pp slides", 0.9, "self.get_current_widget().command_generate_preview('asciidoc  -b slidy2    -a data-uri -a icons')"),
-                ("generate preview asciidoctor", "pp", 0.7, "self.get_current_widget().command_generate_preview('asciidoctor  -a data-uri -a icons')"),
-                ("generate preview deck.js", "pp slides", 0.7, "self.get_current_widget().command_generate_preview('asciidoc  -b deckjs    -a data-uri -a icons')"),
+                ("generate preview asciidoc",    "pp", 1.0, "self.get_current_widget().command_generate_preview('asciidoc -a toc -a data-uri -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
+                ("generate preview asciidoc style_sheet no images embeded",    "pp", 1.0, "self.get_current_widget().command_generate_preview('asciidoc -a toc --attribute  stylesheet="+self.base_dir+"/adoc/mq_red.css  -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
+                ("generate preview asciidoc style_sheet",    "pp", 1.2, "self.get_current_widget().command_generate_preview('asciidoc -a toc --attribute  stylesheet="+self.base_dir+"/adoc/mq_red.css    -a data-uri -a icons  -a iconsdir="+self.base_dir+"/adoc/icons/')"),
+                ("generate preview slidy", "pp slides", 0.8, "self.get_current_widget().command_generate_preview('asciidoc  -a toc -b slidy    -a data-uri -a icons')"),
+                ("generate preview slidy2", "pp slides", 0.9, "self.get_current_widget().command_generate_preview('asciidoc -a toc  -b slidy2    -a data-uri -a icons')"),
+                ("generate preview asciidoctor", "pp", 0.7, "self.get_current_widget().command_generate_preview('asciidoctor -a toc  -a data-uri -a icons')"),
+                ("generate preview deck.js", "pp slides", 0.7, "self.get_current_widget().command_generate_preview('asciidoc -a toc  -b deckjs    -a data-uri -a icons')"),
 
                 ("generate pdf small", "", 0., """self.get_current_widget().command_generate_document('a2x --verbose -d article --icons --dblatex-opts "-T native -P doc.pdfcreator.show=0 -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 -P table.title.top" -f pdf  -D /tmp/adoc/ ')"""),
                 ("generate pdf book", "", 0., """self.get_current_widget().command_generate_document('a2x --verbose -d book --icons --dblatex-opts "-T native -P doc.pdfcreator.show=0 -P doc.collab.show=0 -P latex.output.revhistory=0 -P doc.toc.show=1 -P table.title.top" -f pdf  -D /tmp/adoc/ ')"""),
@@ -128,27 +129,25 @@ class AsciidocEditor(WithSingleIO, QWidget):
             ]
 
 
-    def command_generate_preview(self, adoc_command):
-        self.command_save_file()
+    def copy2tmp(self):
         if not os.path.exists(TEMP_DIR):
             os.mkdir(TEMP_DIR)
-        temp_source_file = open(TEMP_DIR + 'pr.adoc','wt')
-        temp_source_file.write(self._editor_widget.toPlainText().toUtf8())
-        temp_source_file.close()
+        source = os.listdir(self.base_dir)
+        destination = TEMP_DIR
+        for files in source:
+            shutil.move(files,destination)        
+
+    def command_generate_preview(self, adoc_command):
+        self.command_save_file()
         #self.compile(backend + " -b deckjs  -o " + self.get_html_output() + "  " + TEMP_DIR + "pr.adoc")
         #asciidoc --verbose -a data-uri -a icons -a toc -a max-width=55em -o __builds/index.html /home/maiquel/Documents/qadoc/adoc/index.adoc
         #self.compile(adoc_command + " --attribute  stylesheet=/home/maiquel/inet.prj/miow/widgets/adoc/mq_red.css    -a data-uri -a icons  -o " + self.get_html_output() + "  " + TEMP_DIR + "pr.adoc")
-        self.compile(adoc_command + ' -o ' +self.get_html_output() + "  " + TEMP_DIR + "pr.adoc")
+        self.compile(adoc_command + ' -o ' +self.get_html_output() + '  ./"' +  self.file_name + '"')
         if self.webview.url() != QUrl("file://" + self.get_html_output()):
             self.webview.load(QUrl(self.get_html_output()))
 
     def command_generate_document(self, adoc_command):
         self.command_save_file()
-        if not os.path.exists(TEMP_DIR):
-            os.mkdir(TEMP_DIR)
-        temp_source_file = open(TEMP_DIR + 'pr.adoc','wt')
-        temp_source_file.write(self._editor_widget.toPlainText().toUtf8())
-        temp_source_file.close()
         self.compile(adoc_command + "  " + TEMP_DIR + "pr.adoc")
         if self.webview.url() != QUrl("file://" + self.get_html_output()):
             self.webview.load(QUrl(self.get_html_output()))
@@ -196,7 +195,8 @@ if(__name__ == '__main__'):
 
         app = QApplication([])
         widget = AsciidocEditor(None)
-        widget._editor_widget.setPlainText("""\
+        temp_source_file = open(TEMP_DIR + 'pr.adoc','wt')
+        temp_source_file.write("""
 deck.js Support for Asciidoc
 =============================
 :author: Foo Bar
@@ -252,6 +252,9 @@ deck.js Support for Asciidoc
 
 That's all.
 """)
+        temp_source_file.close()        
+        widget.command_load_file(TEMP_DIR + 'pr.adoc')
+
         widget.show()
         widget.command_generate_preview("asciidoc")
         app.exec_()
